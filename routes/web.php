@@ -5,7 +5,7 @@ use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
 //index route
-Route::get('/', [MainController::class, 'index']);
+Route::get('/', [MainController::class, 'index'])->name('/');
 
 //auth routes
 Route::get('/login', [AuthController::class, 'login']);

@@ -2,7 +2,11 @@
 
 @section('content')
     <div class="w-full flex justify-center bg-green-950 py-7">
-        <form class="w-3/5 bg-green-900 p-8 rounded-xl shadow-md text-white font-inter">
+
+        <form action="{{ route('loginSubmit') }}" method="post"
+            class="w-3/5 bg-green-900 p-8 rounded-xl shadow-md text-white font-inter">
+
+            @csrf
             <div class="space-y-12">
 
                 <div class="pb-6 border-b border-green-600">
@@ -13,7 +17,6 @@
                 </div>
 
                 <div class="pb-6 border-b border-green-600">
-
 
                     <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-6">
 
@@ -30,12 +33,13 @@
                         </div>
 
                     </div>
+
                 </div>
 
                 <div class="mt-6 flex items-center justify-end gap-x-4">
                     <button type="submit"
                         class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 transition duration-300 shadow-md">
-                        Salvar
+                        Login
                     </button>
                 </div>
 

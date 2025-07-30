@@ -12,7 +12,7 @@
 
     @include('top_bar')
 
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 w-full">
         @yield('content')
     </main>
 

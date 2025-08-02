@@ -33,4 +33,9 @@ class Branch extends Model
     {
         return $this->belongsTo(Employer::class);
     }
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class);
+    }
 }

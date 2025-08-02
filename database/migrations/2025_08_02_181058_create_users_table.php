@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement();
+            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+
             $table->string('email', 100)->unique();
             $table->string('password');
-            $table->string('name');
             $table->boolean('active')->default(true);
             $table->dateTime('last_login')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

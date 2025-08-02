@@ -12,7 +12,8 @@ class Department extends Model
 
     protected $fillable = [
         'branch_id',
-        'name'
+        'name',
+        'active'
     ];
 
     protected $casts = [

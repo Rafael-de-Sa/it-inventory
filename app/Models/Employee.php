@@ -11,6 +11,7 @@ class Employee extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'department_id',
         'first_name',
         'last_name',
         'cpf',
@@ -21,11 +22,17 @@ class Employee extends Model
 
     protected $casts = [
         'phones' => 'array',
+        'dismissal_date' => 'date',
         'active' => 'boolean'
     ];
 
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
     }
 }

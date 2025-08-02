@@ -6,26 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Department extends Model
+class Employee extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'branch_id',
-        'name'
+        'first_name',
+        'last_name',
+        'cpf',
+        'registration',
+        'dismissal_date',
+        'active'
     ];
 
     protected $casts = [
+        'phones' => 'array',
         'active' => 'boolean'
     ];
 
-    public function branch()
+    public function department()
     {
-        return $this->belongsTo(Branch::class);
-    }
-
-    public function employees()
-    {
-        return $this->hasMany(Employee::class);
+        return $this->belongsTo(Department::class);
     }
 }

@@ -20,6 +20,7 @@ class Branch extends Model
         'city',
         'state',
         'zipcode',
+        'active',
         'phones',
         'email',
     ];

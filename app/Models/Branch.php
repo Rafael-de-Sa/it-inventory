@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Employer extends Model
+class Branch extends Model
 {
     use HasFactory, SoftDeletes;
 
-    // Campos que podem ser preenchidos via create/update
     protected $fillable = [
+        'employer_id',
         'trade_name',
-        'corporate_name',
-        'cnpj',
         'street',
         'number',
         'complement',
@@ -22,21 +20,17 @@ class Employer extends Model
         'city',
         'state',
         'zipcode',
-        'website',
-        'email',
-        'active',
         'phones',
-        'logo_path'
+        'email',
     ];
 
-    // Casts para tipos específicos
     protected $casts = [
         'phones' => 'array',
         'active' => 'boolean'
     ];
 
-    public function branches()
+    public function employer()
     {
-        return $this->hasMany(Branch::class);
+        return $this->belongsTo(Employer::class);
     }
 }

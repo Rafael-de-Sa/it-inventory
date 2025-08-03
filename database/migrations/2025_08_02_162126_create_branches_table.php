@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('branches', function (Blueprint $table) {
-            $table->id();
+            $table->id()->autoIncrement();
 
             $table->foreignId('employer_id')->constrained('employers')->onDelete('cascade');
 

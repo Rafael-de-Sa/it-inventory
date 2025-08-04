@@ -25,4 +25,9 @@ class Attribute extends Model
             ->withPivot('value')
             ->withTimestamps();
     }
+
+    public function equipmentAttributes()
+    {
+        return $this->hasMany(EquipmentAttribute::class);
+    }
 }

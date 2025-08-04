@@ -28,4 +28,16 @@ class Equipment extends Model
     {
         return $this->belongsTo(EquipmentType::class);
     }
+
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class, 'equipment_attributes')
+            ->withPivot('value')
+            ->withTimestamps();
+    }
+
+    public function equipmentAttributes()
+    {
+        return $this->hasMany(EquipmentAttribute::class);
+    }
 }

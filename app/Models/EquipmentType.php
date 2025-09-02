@@ -18,4 +18,9 @@ class EquipmentType extends Model
     protected $casts = [
         'active' => 'boolean'
     ];
+
+    public function equipments()
+    {
+        return $this->hasMany(Equipment::class);
+    }
 }

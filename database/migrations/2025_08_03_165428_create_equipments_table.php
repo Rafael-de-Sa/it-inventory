@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('purchase_date')->nullable();
             $table->double('purchase_value')->nullable();
             $table->foreignId('equipment_type_id')->constrained('equipment_types')->onDelete('restrict');
-            $table->enum('state', ['uso', 'defeituoso', 'descartado', 'estoque']);
+            $table->enum('state', ['in_use', 'defective', 'discarded', 'available'])->default('available');
             $table->boolean('active')->default(true);
             $table->text('description');
             $table->string('patrimony')->unique()->nullable();

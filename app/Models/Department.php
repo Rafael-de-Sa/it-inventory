@@ -11,7 +11,7 @@ class Department extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'branch_id',
+        'employer_id',
         'name',
         'active'
     ];
@@ -20,13 +20,18 @@ class Department extends Model
         'active' => 'boolean'
     ];
 
-    public function branch()
+    public function employer()
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Employer::class);
     }
 
     public function employees()
     {
         return $this->hasMany(Employee::class);
+    }
+
+    public function movements()
+    {
+        return $this->hasMany(Movement::class);
     }
 }

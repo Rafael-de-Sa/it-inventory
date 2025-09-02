@@ -11,7 +11,7 @@ class Movement extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'observation',
+        'note',
         'department_id',
         'employee_id',
         'responsibility_term',

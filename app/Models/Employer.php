@@ -35,8 +35,8 @@ class Employer extends Model
         'active' => 'boolean'
     ];
 
-    public function branches()
+    public function departments()
     {
-        return $this->hasMany(Branch::class);
+        return $this->hasMany(Department::class);
     }
 }

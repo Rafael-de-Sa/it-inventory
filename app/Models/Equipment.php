@@ -11,16 +11,19 @@ class Equipment extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'acquisition_date',
-        'acquisition_value',
+        'purchase_date',
+        'purchase_value',
         'equipment_type_id',
-        'status',
-        'active'
+        'state',
+        'active',
+        'description',
+        'patrimony',
+        'serial_number'
     ];
 
     protected $casts = [
-        'acquisition_date' => 'date',
-        'acquisition_value' => 'double',
+        'purchase_date' => 'date',
+        'purchase_value' => 'decimal:2',
         'active' => 'boolean'
     ];
 
@@ -29,15 +32,10 @@ class Equipment extends Model
         return $this->belongsTo(EquipmentType::class);
     }
 
-    public function attributes()
+    public function movements()
     {
-        return $this->belongsToMany(Attribute::class, 'equipment_attributes')
-            ->withPivot('value')
-            ->withTimestamps();
+        return $this->hasMany(Movement::class);
     }
 
-    public function equipmentAttributes()
-    {
-        return $this->hasMany(EquipmentAttribute::class);
-    }
+    //TODO: Ajustar desse mdoel para frente nos relacionamentos
 }

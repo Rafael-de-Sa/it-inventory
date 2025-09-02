@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('restrict');
+            $table->foreignId('employee_id')->unique()->constrained('employees')->onDelete('restrict');
 
             $table->string('email', 100)->unique();
             $table->string('password');

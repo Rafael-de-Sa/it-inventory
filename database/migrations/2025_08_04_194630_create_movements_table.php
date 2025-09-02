@@ -16,10 +16,12 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained('departments')->onDelete('restrict');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('restrict');
 
-            $table->string('observation', 200)->nullable();
+            $table->string('note', 200)->nullable();
             $table->string('responsibility_term', 200)->nullable();
 
             $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+
+            $table->timestamp('confirmed_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

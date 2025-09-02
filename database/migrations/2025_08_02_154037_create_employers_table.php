@@ -28,7 +28,6 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->json('phones')->nullable();
 
-            //TODO: Ver como salvar no sistema
             $table->string('logo_path')->nullable();
 
             $table->timestamps();

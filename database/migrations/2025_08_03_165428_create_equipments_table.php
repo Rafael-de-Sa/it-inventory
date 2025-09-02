@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('equipments', function (Blueprint $table) {
             $table->id()->autoIncrement();
 
-            $table->date('acquisition_date');
-            $table->double('acquisition_value');
-            $table->foreignId('equipment_type_id')->constrained('equipment_types');
-            $table->enum('status', ['uso', 'defeituoso', 'descartado', 'estoque']);
+            $table->date('purchase_date')->nullable();
+            $table->double('purchase_value')->nullable();
+            $table->foreignId('equipment_type_id')->constrained('equipment_types')->onDelete('restrict');
+            $table->enum('state', ['uso', 'defeituoso', 'descartado', 'estoque']);
             $table->boolean('active')->default(true);
+            $table->text('description');
+            $table->string('patrimony')->unique()->nullable();
+            $table->string('serial_number')->unique()->nullable();
 
             $table->timestamps();
             $table->softDeletes();

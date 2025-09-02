@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
+            $table->foreignId('employer_id')->constrained('employers')->onDelete('restrict');
 
             $table->string('name', 50);
             $table->boolean('active')->default(true);

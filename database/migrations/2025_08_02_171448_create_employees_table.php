@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained('departments')->onDelete('restrict');
 
-            $table->string('first_name', 20);
+            $table->string('first_name', 30);
             $table->string('last_name', 50);
 
             //Não deixei como unique pois posso contratar um colaborador novamente e 

@@ -12,6 +12,7 @@ class Equipamento extends Model
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
+    const DELETED_AT = 'apagado_em';
 
     protected $fillable = [
         'tipo_equipamento_id',
@@ -45,6 +46,6 @@ class Equipamento extends Model
 
     public function movimentacoes()
     {
-        return $this->hasMany(MovimentacaoEquipamento::class);
+        return $this->belongsToMany(Movimentacao::class, 'movimentacao_equipamentos');
     }
 }

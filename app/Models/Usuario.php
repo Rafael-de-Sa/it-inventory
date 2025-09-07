@@ -12,6 +12,7 @@ class Usuario extends Model
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
+    const DELETED_AT = 'apagado_em';
 
     protected $fillable = [
         'funcionario_id',

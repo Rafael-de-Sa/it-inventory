@@ -11,9 +11,4 @@ class MainController extends Controller
     {
         return view('index');
     }
-
-    public function NewEmployer()
-    {
-        return  view('employers.create');
-    }
 }

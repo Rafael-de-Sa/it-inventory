@@ -13,31 +13,35 @@ class EmpresaController extends Controller
 
     public function store(Request $request)
     {
-        // 1) Para validar rapidamente o envio, descomente:
-        dd($request->all(), $request->file('logo'));
 
-        // 2) Se quiser já “simular” um save e voltar com sucesso:
-        $dados = $request->only([
-            'nome_fantasia',
-            'razao_social',
-            'cnpj',
-            'cep',
-            'rua',
-            'numero',
-            'bairro',
-            'complemento',
-            'cidade',
-            'estado',
-            'site',
-            'email',
-            'telefones'
-        ]);
+        //dd($request);
 
-        // upload opcional (já testando o input file)
-        //$logoPath = $request->file('logo')?->store('logos', 'public'); // requer `php artisan storage:link`
+        $request->validate(
+            [
+                'nome_fantasia' => ['required', 'min:3', 'max:100'],
+                'razao_social' => ['required', 'min:3', 'max:100'],
+                'cnpj' => ['required', 'min:14', 'max:14'],
+                'rua' => ['required', 'min:3', 'max:100'],
+                'numero' => ['required', 'max:8'],
+                'complemento' => ['max:50'],
+                'bairro' => ['required', 'min:3', 'max:50'],
+                'cidade' => ['required', 'min:3', 'max:30'],
+                'estado' => ['required', 'min:2', 'max:2'],
+                'cep' => ['required', 'min:8', 'max:8'],
+                'site' => ['max:40'],
+                'email' => ['required', 'email', 'max:60'],
+                'telefones' => [],
+                'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:280']
+            ],
+            []
+        );
 
-        // aqui você só confirma que chegou:
-        return back()->with('ok', 'Formulário recebido com sucesso!')
-            ->with('debug', ['dados' => $dados]);
+
+        if ($request->file('logo') != null) {
+            //Tá salvando o logo
+            $path = $request->file('logo')->store('logo');
+        };
+
+        echo $request->input('nome_fantasia');
     }
 }

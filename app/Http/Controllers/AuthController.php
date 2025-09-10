@@ -13,13 +13,11 @@ class AuthController extends Controller
 
     public function loginSubmit(Request $request)
     {
-        //form validation
         $request->validate(
             [
                 'email' => ['required', 'email'],
                 'password' => ['required']
             ],
-            //error messages
             [
                 'email.required' => 'O e-mail é obrigatório',
                 'email.email' => 'O e-mail deve ser válido',
@@ -27,7 +25,6 @@ class AuthController extends Controller
             ]
         );
 
-        //get user input
         $email = $request->input('email');
         $password = $request->input('password');
 

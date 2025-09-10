@@ -30,14 +30,14 @@
             {{-- Nome Fantasia --}}
             <div>
                 <label for="nome_fantasia" class="{{ $label }}">Nome Fantasia</label>
-                <input id="nome_fantasia" name="nome_fantasia" type="text" placeholder="Ex.: ACME LTDA"
+                <input id="nome_fantasia" name="nome_fantasia" type="text" placeholder="EMPRESA LTDA"
                     class="{{ $input }}">
             </div>
 
             {{-- Razão Social --}}
             <div>
                 <label for="razao_social" class="{{ $label }}">Razão Social</label>
-                <input id="razao_social" name="razao_social" type="text" class="{{ $input }}">
+                <input id="razao_social" name="razao_social" type="text" class="{{ $input }}" placeholder="EMPRESA">
             </div>
 
             {{-- CNPJ --}}
@@ -65,17 +65,19 @@
                     </div>
                     <div class="md:col-span-9">
                         <label for="rua" class="{{ $label }}">Rua</label>
-                        <input id="rua" name="rua" type="text" disabled class="{{ $inputDisabled }}">
+                        <input id="rua" name="rua" type="text" {{-- disabled --}}
+                            class="{{ $input {{-- $inputDisabled --}} }}"placeholder="Av. Paraná">
                     </div>
 
                     {{-- Número + Bairro + Complemento --}}
                     <div class="md:col-span-3">
                         <label for="numero" class="{{ $label }}">Número</label>
-                        <input id="numero" name="numero" type="text" class="{{ $input }}">
+                        <input id="numero" name="numero" type="text" class="{{ $input }}" placeholder="1234">
                     </div>
                     <div class="md:col-span-4">
                         <label for="bairro" class="{{ $label }}">Bairro</label>
-                        <input id="bairro" name="bairro" type="text" disabled class="{{ $inputDisabled }}">
+                        <input id="bairro" name="bairro" type="text" {{-- disabled --}}
+                            class="{{ $input {{-- $inputDisabled --}} }}" placeholder="Centro">
                     </div>
                     <div class="md:col-span-5">
                         <label for="complemento" class="{{ $label }}">Complemento</label>
@@ -86,11 +88,13 @@
                     {{-- Cidade + Estado --}}
                     <div class="md:col-span-8">
                         <label for="cidade" class="{{ $label }}">Cidade</label>
-                        <input id="cidade" name="cidade" type="text" disabled class="{{ $inputDisabled }}">
+                        <input id="cidade" name="cidade" type="text" {{-- disabled --}}
+                            class="{{ $input {{-- $inputDisabled --}} }}" placeholder="Umuarama">
                     </div>
                     <div class="md:col-span-4">
                         <label for="estado" class="{{ $label }}">Estado</label>
-                        <input id="estado" name="estado" type="text" disabled class="{{ $inputDisabled }}">
+                        <input id="estado" name="estado" type="text" {{-- disabled --}}
+                            class="{{ $input {{-- $inputDisabled --}} }}" placeholder="PR">
                     </div>
                 </div>
             </fieldset>

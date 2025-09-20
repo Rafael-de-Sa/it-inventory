@@ -37,7 +37,7 @@ class StoreEmpresaRequest extends FormRequest
             'cidade'        => ['required', 'string', 'min:3', 'max:30'],
             'estado'        => ['required', 'string', 'size:2', 'alpha'],
             'email'         => ['required', 'string', 'email', 'max:60'],
-            'telefones'     => ['nullable'],
+            'telefone' => ['nullable', 'regex:/^\d{10,11}$/']
         ];
     }
 
@@ -54,6 +54,7 @@ class StoreEmpresaRequest extends FormRequest
 
             'cnpj.regex' => 'O CNPJ deve conter apenas dígitos (somente números), com 14 caracteres.',
             'cep.regex'  => 'O CEP deve conter apenas dígitos (somente números), com 8 caracteres.',
+            'telefone.regex' => 'Informe um telefone válido com DDD (10 ou 11 dígitos).'
         ];
     }
 
@@ -71,7 +72,7 @@ class StoreEmpresaRequest extends FormRequest
             'estado'        => 'UF',
             'cep'           => 'CEP',
             'email'         => 'e-mail',
-            'telefones'     => 'telefones',
+            'telefone'     => 'telefone',
         ];
     }
 }

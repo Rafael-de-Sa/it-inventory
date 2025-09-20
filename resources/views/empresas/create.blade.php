@@ -23,7 +23,7 @@
             <div>
                 <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia</label>
                 <input id="nome_fantasia" name="nome_fantasia" type="text" maxlength="100" autocomplete="organization"
-                    placeholder="EMPRESA LTDA" value="{{ old('nome_fantasia') }}" @class([
+                    placeholder="EMPRESA" value="{{ old('nome_fantasia') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'nome_fantasia'),
@@ -40,14 +40,14 @@
                         {{ $errors->first('nome_fantasia') }}
                     </p>
                 @else
-                    <p id="nome_fantasia_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA LTDA</p>
+                    <p id="nome_fantasia_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA</p>
                 @endif
             </div>
 
             {{-- Razão Social --}}
             <div>
                 <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social</label>
-                <input id="razao_social" name="razao_social" type="text" maxlength="100" placeholder="EMPRESA"
+                <input id="razao_social" name="razao_social" type="text" maxlength="100" placeholder="EMPRESA LTDA"
                     value="{{ old('razao_social') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -65,7 +65,7 @@
                         {{ $errors->first('razao_social') }}
                     </p>
                 @else
-                    <p id="razao_social_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA</p>
+                    <p id="razao_social_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA LTDA</p>
                 @endif
             </div>
 
@@ -306,27 +306,27 @@
                 @endif
             </div>
 
-            {{-- Telefones --}}
+            {{-- Telefone --}}
             <div>
-                <label for="telefones" class="block mb-1 text-sm font-medium text-green-100">Telefones</label>
-                <input id="telefones" name="telefones" type="text" placeholder="(44) 9 9999-9999, (44) 3333-3333"
-                    value="{{ old('telefones') }}" @class([
+                <label for="telefone" class="block mb-1 text-sm font-medium text-green-100">Telefone</label>
+                <input id="telefone" name="telefone" type="text" placeholder="(44) 99999-9999 ou (44) 3333-3333"
+                    value="{{ old('telefone') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
-                            'telefones'),
+                            'telefone'),
                         'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
-                            'telefones'),
+                            'telefone'),
                     ])
-                    aria-invalid="{{ $errors->has('telefones') ? 'true' : 'false' }}" aria-describedby="telefones_help">
-                @if ($errors->has('telefones'))
-                    <p id="telefones_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
+                    aria-invalid="{{ $errors->has('telefone') ? 'true' : 'false' }}" aria-describedby="telefone_help">
+                @if ($errors->has('telefone'))
+                    <p id="telefone_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
                         </svg>
-                        {{ $errors->first('telefones') }}
+                        {{ $errors->first('telefone') }}
                     </p>
                 @else
-                    <p id="telefones_help" class="mt-1 text-xs text-green-200">Separe múltiplos números por vírgula</p>
+                    <p id="telefone_help" class="mt-1 text-xs text-green-200">Ex: (44) 99999-9999 ou (44) 3333-3333</p>
                 @endif
             </div>
 

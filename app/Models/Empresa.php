@@ -27,11 +27,10 @@ class Empresa extends Model
         'cep',
         'email',
         'ativo',
-        'telefones'
+        'telefone'
     ];
 
     protected $casts = [
-        'telefones' => 'array',
         'ativo' => 'boolean',
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',

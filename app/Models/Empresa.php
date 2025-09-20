@@ -28,8 +28,7 @@ class Empresa extends Model
         'site',
         'email',
         'ativo',
-        'telefones',
-        'caminho_logo'
+        'telefones'
     ];
 
     protected $casts = [

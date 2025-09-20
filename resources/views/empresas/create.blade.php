@@ -288,25 +288,6 @@
                 @endif
             </div>
 
-            {{-- Logo --}}
-            <div>
-                <label for="logo" class="{{ $label }}">Logo</label>
-                <input id="logo" name="logo" type="file" accept="image/png,image/jpeg"
-                    class="block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-green-700 file:text-white
-                          file:px-4 file:py-2 file:hover:bg-green-600 file:cursor-pointer file:font-medium
-                          rounded-lg bg-white text-gray-900 border border-green-700 px-3 py-2">
-                @if ($hasErr('logo'))
-                    <p class="{{ $msgErr }}">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('logo') }}
-                    </p>
-                @else
-                    <p class="{{ $msgHelp }}">PNG/JPG até 5 MB</p>
-                @endif
-            </div>
-
             {{-- Ações --}}
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ url()->previous() }}"
@@ -320,52 +301,4 @@
             </div>
         </form>
     </div>
-
-    {{-- Máscaras (CEP e CNPJ) + limpeza antes do submit --}}
-    <script>
-        (function() {
-            const form = document.getElementById('empresaForm');
-            const cep = document.getElementById('cep');
-            const cnpj = document.getElementById('cnpj');
-
-            function onlyDigits(s) {
-                return (s || '').replace(/\D/g, '');
-            }
-
-            function maskCEP(v) {
-                v = onlyDigits(v).slice(0, 8);
-                return v.replace(/^(\d{5})(\d)/, '$1-$2');
-            }
-
-            function maskCNPJ(v) {
-                v = onlyDigits(v).slice(0, 14);
-                v = v.replace(/^(\d{2})(\d)/, '$1.$2');
-                v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                v = v.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4');
-                v = v.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5');
-                return v;
-            }
-
-            if (cep) cep.addEventListener('input', () => {
-                cep.value = maskCEP(cep.value);
-            });
-            if (cnpj) cnpj.addEventListener('input', () => {
-                cnpj.value = maskCNPJ(cnpj.value);
-            });
-
-            // Aplica máscara se veio valor do old()
-            document.addEventListener('DOMContentLoaded', () => {
-                if (cep) cep.value = maskCEP(cep.value);
-                if (cnpj) cnpj.value = maskCNPJ(cnpj.value);
-            });
-
-            // Antes de enviar, remove pontuação para casar com a validação (regex de dígitos)
-            if (form) {
-                form.addEventListener('submit', () => {
-                    if (cep) cep.value = onlyDigits(cep.value);
-                    if (cnpj) cnpj.value = onlyDigits(cnpj.value);
-                });
-            }
-        })();
-    </script>
 @endsection

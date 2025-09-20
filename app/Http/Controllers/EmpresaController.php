@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEmpresaRequest;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 
 class EmpresaController extends Controller
@@ -29,8 +30,23 @@ class EmpresaController extends Controller
     public function store(StoreEmpresaRequest $request)
     {
 
+        $empresa = new Empresa();
 
-        echo $request->input('nome_fantasia');
+        $empresa->nome_fantasia = $request->nome_fantasia;
+        $empresa->razao_social = $request->razao_social;
+        $empresa->cnpj = $request->cnpj;
+        $empresa->rua = $request->rua;
+        $empresa->numero = $request->numero;
+        $empresa->complemento = $request->complemento;
+        $empresa->bairro = $request->bairro;
+        $empresa->cidade = $request->cidade;
+        $empresa->estado = $request->estado;
+        $empresa->cep = $request->cep;
+        $empresa->email = $request->email;
+        $empresa->telefones = $request->telefones;
+
+
+        $empresa->save();
     }
 
     /**

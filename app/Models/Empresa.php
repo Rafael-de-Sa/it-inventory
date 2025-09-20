@@ -25,7 +25,6 @@ class Empresa extends Model
         'cidade',
         'estado',
         'cep',
-        'site',
         'email',
         'ativo',
         'telefones'

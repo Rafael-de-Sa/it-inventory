@@ -14,5 +14,5 @@ Route::post('loginSubmit', [AuthController::class, 'loginSubmit'])->name('loginS
 Route::get('/logout', [AuthController::class, 'logout'])->name('/logout');
 
 //employers routes
-Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('/empresas.create');
-Route::post('/empresas',        [EmpresaController::class, 'store'])->name('empresas.store');
+Route::get('/empresa/create', [EmpresaController::class, 'create'])->name('/empresa.create');
+Route::post('/empresa',        [EmpresaController::class, 'store'])->name('empresa.store');

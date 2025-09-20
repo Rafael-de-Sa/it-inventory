@@ -20,6 +20,7 @@
         &copy; {{ date('Y') }} IT Inventory. Todos os direitos reservados.
     </footer>
 
+    @stack('scripts')
 </body>
 
 </html>

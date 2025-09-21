@@ -35,7 +35,6 @@ async function fetchEndereco(endpointTemplate, cep8) {
         return data;
     }
 
-    // trata erros conhecidos
     if (resp.status === 404) {
         throw new Error('CEP não encontrado.');
     }
@@ -45,7 +44,6 @@ async function fetchEndereco(endpointTemplate, cep8) {
         throw new Error(msg);
     }
 
-    // outros erros (timeout reverso / 5xx mapeado no controller como 502)
     throw new Error('Falha ao consultar serviço de CEP.');
 }
 

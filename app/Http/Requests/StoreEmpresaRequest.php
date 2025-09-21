@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\CnpjValido;
+use App\Enums\Uf;
+use Illuminate\Validation\Rule;
 
 class StoreEmpresaRequest extends FormRequest
 {
@@ -51,7 +53,7 @@ class StoreEmpresaRequest extends FormRequest
             'complemento'   => ['nullable', 'string', 'max:50'],
             'bairro'        => ['required', 'string', 'min:3', 'max:50'],
             'cidade'        => ['required', 'string', 'min:3', 'max:30'],
-            'estado'        => ['required', 'string', 'size:2', 'alpha'],
+            'estado'        => ['required', 'string', 'size:2', 'alpha', Rule::in(Uf::values())],
             'email'         => ['required', 'string', 'email', 'max:60'],
             'telefone' => ['nullable', 'digits_between:10,11']
         ];
@@ -70,7 +72,9 @@ class StoreEmpresaRequest extends FormRequest
 
             'cnpj.digits'           => 'O CNPJ deve conter exatamente 14 dígitos.',
             'cep.digits'            => 'O CEP deve conter exatamente 8 dígitos.',
-            'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).'
+            'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).',
+            'estado.size' => 'UF deve ter 2 letras.',
+            'estado.in' => 'UF inválida.',
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Support\Mask;
 
 class Empresa extends Model
 {
@@ -44,5 +45,18 @@ class Empresa extends Model
     public function setores()
     {
         return $this->hasMany(Setor::class);
+    }
+
+    public function getCnpjMaskedAttribute(): string
+    {
+        return Mask::cnpj($this->cnpj);
+    }
+    public function getCepMaskedAttribute(): string
+    {
+        return Mask::cep($this->cep);
+    }
+    public function getTelefoneMaskedAttribute(): string
+    {
+        return Mask::telefone($this->telefone);
     }
 }

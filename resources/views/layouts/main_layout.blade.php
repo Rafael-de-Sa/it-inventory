@@ -13,6 +13,26 @@
     @include('top_bar')
 
     <main class="flex-1 p-6 w-full">
+        @if (session('success'))
+            <div id="flash-success"
+                class="mx-auto mt-4 w-full max-w-3xl rounded-lg border border-green-700 bg-green-900/40 px-4 py-3 text-green-100 flex items-start gap-2 mb-6">
+                <svg class="h-5 w-5 mt-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 106.293 10.707l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <div class="flex-1">
+                    <strong class="font-semibold">Sucesso!</strong>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button type="button" class="ml-2 hover:opacity-75"
+                    onclick="document.getElementById('flash-success')?.remove()">✕</button>
+            </div>
+            <script>
+                setTimeout(() => document.getElementById('flash-success')?.remove(), 5000);
+            </script>
+        @endif
+
         @yield('content')
     </main>
 

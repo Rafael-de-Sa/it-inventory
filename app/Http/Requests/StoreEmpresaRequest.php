@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CnpjValido;
 
 class StoreEmpresaRequest extends FormRequest
 {
@@ -21,14 +22,29 @@ class StoreEmpresaRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
+    protected function prepareForValidation(): void
+    {
+        $onlyDigits = fn($v) => is_string($v) ? preg_replace('/\D+/', '', $v) : $v;
+
+
+        $this->merge([
+            'cnpj'     => $onlyDigits($this->input('cnpj')),
+            'cep'      => $onlyDigits($this->input('cep')),
+            'telefone' => $onlyDigits($this->input('telefone')),
+            'estado'   => strtoupper((string) $this->input('estado'))
+        ]);
+    }
+
+
     public function rules(): array
     {
         return [
             'nome_fantasia' => ['required', 'string', 'min:3', 'max:100'],
             'razao_social'  => ['required', 'string', 'min:3', 'max:100'],
 
-            'cnpj'          => ['required', 'string', 'size:14', 'regex:/^\d{14}$/'],
-            'cep'           => ['required', 'string', 'size:8', 'regex:/^\d{8}$/'],
+            'cnpj' => ['required', 'digits:14', new CnpjValido],
+            'cep'  => ['required', 'digits:8'],
 
             'rua'           => ['required', 'string', 'min:3', 'max:100'],
             'numero'        => ['required', 'string', 'max:8'],
@@ -37,7 +53,7 @@ class StoreEmpresaRequest extends FormRequest
             'cidade'        => ['required', 'string', 'min:3', 'max:30'],
             'estado'        => ['required', 'string', 'size:2', 'alpha'],
             'email'         => ['required', 'string', 'email', 'max:60'],
-            'telefone' => ['nullable', 'regex:/^\d{10,11}$/']
+            'telefone' => ['nullable', 'digits_between:10,11']
         ];
     }
 
@@ -52,9 +68,9 @@ class StoreEmpresaRequest extends FormRequest
             'alpha'    => 'O campo :attribute deve conter apenas letras.',
             'email'    => 'Informe um :attribute válido.',
 
-            'cnpj.regex' => 'O CNPJ deve conter apenas dígitos (somente números), com 14 caracteres.',
-            'cep.regex'  => 'O CEP deve conter apenas dígitos (somente números), com 8 caracteres.',
-            'telefone.regex' => 'Informe um telefone válido com DDD (10 ou 11 dígitos).'
+            'cnpj.digits'           => 'O CNPJ deve conter exatamente 14 dígitos.',
+            'cep.digits'            => 'O CEP deve conter exatamente 8 dígitos.',
+            'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).'
         ];
     }
 

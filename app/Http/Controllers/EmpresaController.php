@@ -43,8 +43,7 @@ class EmpresaController extends Controller
         $empresa->estado = $request->estado;
         $empresa->cep = $request->cep;
         $empresa->email = $request->email;
-        $empresa->telefones = $request->telefones;
-
+        $empresa->telefone = $request->telefone;
 
         $empresa->save();
     }

@@ -74,14 +74,16 @@
             <div>
                 <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ</label>
                 <input id="cnpj" name="cnpj" type="text" inputmode="numeric" maxlength="18"
-                    placeholder="00.000.000/0000-00" value="{{ old('cnpj') }}" @class([
+                    placeholder="00.000.000/0000-00"
+                    value="{{ old('cnpj') ? \App\Support\Mask::cnpj(old('cnpj')) : $empresa->cnpj_masked ?? '' }}"
+                    @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'cnpj'),
                         'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
                             'cnpj'),
-                    ])
-                    aria-invalid="{{ $errors->has('cnpj') ? 'true' : 'false' }}" aria-describedby="cnpj_help">
+                    ]) aria-invalid="{{ $errors->has('cnpj') ? 'true' : 'false' }}"
+                    aria-describedby="cnpj_help">
                 @if ($errors->has('cnpj'))
                     <p id="cnpj_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -103,7 +105,8 @@
                     <div class="md:col-span-3">
                         <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP</label>
                         <input id="cep" name="cep" type="text" inputmode="numeric" maxlength="9"
-                            placeholder="87500-000" autocomplete="postal-code" value="{{ old('cep') }}"
+                            placeholder="87500-000" autocomplete="postal-code"
+                            value="{{ old('cep') ? \App\Support\Mask::cep(old('cep')) : $empresa->cep_masked ?? '' }}"
                             @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                                 'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -311,14 +314,15 @@
             <div>
                 <label for="telefone" class="block mb-1 text-sm font-medium text-green-100">Telefone</label>
                 <input id="telefone" name="telefone" type="text" placeholder="(44) 99999-9999 ou (44) 3333-3333"
-                    value="{{ old('telefone') }}" @class([
+                    value="{{ old('telefone') ? \App\Support\Mask::telefone(old('telefone')) : $empresa->telefone_masked ?? '' }}"
+                    @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'telefone'),
                         'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
                             'telefone'),
-                    ])
-                    aria-invalid="{{ $errors->has('telefone') ? 'true' : 'false' }}" aria-describedby="telefone_help">
+                    ]) aria-invalid="{{ $errors->has('telefone') ? 'true' : 'false' }}"
+                    aria-describedby="telefone_help">
                 @if ($errors->has('telefone'))
                     <p id="telefone_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">

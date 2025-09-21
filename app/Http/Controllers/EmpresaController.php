@@ -30,22 +30,11 @@ class EmpresaController extends Controller
     public function store(StoreEmpresaRequest $request)
     {
 
-        $empresa = new Empresa();
+        $data = $request->validated();
+        $empresa = Empresa::create($data);
 
-        $empresa->nome_fantasia = $request->nome_fantasia;
-        $empresa->razao_social = $request->razao_social;
-        $empresa->cnpj = $request->cnpj;
-        $empresa->rua = $request->rua;
-        $empresa->numero = $request->numero;
-        $empresa->complemento = $request->complemento;
-        $empresa->bairro = $request->bairro;
-        $empresa->cidade = $request->cidade;
-        $empresa->estado = $request->estado;
-        $empresa->cep = $request->cep;
-        $empresa->email = $request->email;
-        $empresa->telefone = $request->telefone;
-
-        $empresa->save();
+        return to_route('empresa.create')
+            ->with('success', 'Empresa criada com sucesso!');
     }
 
     /**

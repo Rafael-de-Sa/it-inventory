@@ -9,6 +9,7 @@
     <nav class="space-x-4">
         <a href="#" class="hover:text-green-300 transition">Dashboard</a>
         <a href="#" class="hover:text-green-300 transition">Equipamentos</a>
-        <a href="#" class="hover:text-green-300 transition">Sair</a>
+        <a href="#" class="hover:text-green-300 transition"> <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Sair</a>
     </nav>
 </header>

@@ -339,11 +339,11 @@
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ url()->previous() }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 transition">
-                    Cancelar
+                    <i class="fa-solid fa-arrow-left"></i>Cancelar
                 </a>
                 <button type="submit"
                     class="px-5 py-2 rounded-lg bg-green-700 hover:bg-green-600 transition font-medium">
-                    Salvar
+                    <i class="fa-solid fa-floppy-disk"></i> Salvar
                 </button>
             </div>
         </form>

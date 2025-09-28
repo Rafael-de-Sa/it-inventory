@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="w-full flex justify-center">
-        <form id="empresaForm" action="{{ route('empresa.store') }}" method="POST" enctype="multipart/form-data"
+        <form id="empresaForm" action="{{ route('empresas.store') }}" method="POST" enctype="multipart/form-data"
             class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6"
-            data-cep-endpoint="{{ route('empresa.cep', ['cep' => '00000000']) }}">
+            data-cep-endpoint="{{ route('empresas.cep', ['cep' => '00000000']) }}">
             @csrf
 
             {{-- Cabeçalho --}}
@@ -339,11 +339,11 @@
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ url()->previous() }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 transition">
-                    Cancelar
+                    <i class="fa-solid fa-arrow-left"></i>Cancelar
                 </a>
                 <button type="submit"
                     class="px-5 py-2 rounded-lg bg-green-700 hover:bg-green-600 transition font-medium">
-                    Salvar
+                    <i class="fa-solid fa-floppy-disk"></i> Salvar
                 </button>
             </div>
         </form>

@@ -14,6 +14,7 @@ class EmpresaController extends Controller
     public function index()
     {
         //
+        echo "index";
     }
 
     /**
@@ -33,7 +34,7 @@ class EmpresaController extends Controller
         $data = $request->validated();
         $empresa = Empresa::create($data);
 
-        return to_route('empresa.create')
+        return to_route('empresas.create')
             ->with('success', 'Empresa criada com sucesso!');
     }
 

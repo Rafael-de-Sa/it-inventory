@@ -15,6 +15,8 @@ Route::post('loginSubmit', [AuthController::class, 'loginSubmit'])->name('loginS
 Route::get('/logout', [AuthController::class, 'logout'])->name('/logout');
 
 //rotas da empresa
-Route::get('/empresa/create', [EmpresaController::class, 'create'])->name('empresa.create');
-Route::post('/empresa',        [EmpresaController::class, 'store'])->name('empresa.store');
-Route::get('/empresa/cep/{cep}', [ViaCepController::class, 'show'])->name('empresa.cep');
+//Route::get('/empresa/create', [EmpresaController::class, 'create'])->name('empresa.create');
+//Route::post('/empresa',        [EmpresaController::class, 'store'])->name('empresa.store');
+Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
+
+Route::resource('empresas', EmpresaController::class);

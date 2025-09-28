@@ -19,10 +19,6 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-wide">Empresas</h1>
-                <p class="text-xs text-green-200">
-                    Use a busca e escolha o campo (exceto “Ativo”, que tem filtro próprio). Endereço é exibido em colunas
-                    separadas.
-                </p>
             </div>
 
             @can('create', \App\Models\Empresa::class)
@@ -81,8 +77,6 @@
                         'cidade' => 'Cidade',
                         'estado' => 'UF',
                         'ativo' => 'Ativo',
-                        'criado_em' => 'Criada em',
-                        'atualizado_em' => 'Atualizada em',
                     ];
                     $colunaAtual = $colunaOrdenacao ?? request('ordenar_por', 'id');
                 @endphp
@@ -126,25 +120,25 @@
         {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
             <table class="min-w-full text-sm">
-                <thead class="bg-green-900/60 text-green-100">
+                <thead class="bg-green-900/60 text-green-100 text-center">
                     <tr>
-                        <th class="px-4 py-2 text-left">ID</th>
-                        <th class="px-4 py-2 text-left">Nome Fantasia</th>
-                        <th class="px-4 py-2 text-left">Razão Social</th>
-                        <th class="px-4 py-2 text-left">CNPJ</th>
-                        <th class="px-4 py-2 text-left">E-mail</th>
-                        <th class="px-4 py-2 text-left">Telefone</th>
-                        <th class="px-4 py-2 text-left">Rua</th>
-                        <th class="px-4 py-2 text-left">Número</th>
-                        <th class="px-4 py-2 text-left">Compl.</th>
-                        <th class="px-4 py-2 text-left">Bairro</th>
-                        <th class="px-4 py-2 text-left">CEP</th>
-                        <th class="px-4 py-2 text-left">Cidade</th>
-                        <th class="px-4 py-2 text-left">UF</th>
-                        <th class="px-4 py-2 text-left">Ativo</th>
-                        <th class="px-4 py-2 text-left">Criada em</th>
-                        <th class="px-4 py-2 text-left">Atualizada em</th>
-                        <th class="px-4 py-2 text-right">Ações</th>
+                        <th class="px-4 py-2 ">ID</th>
+                        <th class="px-4 py-2 ">Nome Fantasia</th>
+                        <th class="px-4 py-2 ">Razão Social</th>
+                        <th class="px-4 py-2 ">CNPJ</th>
+                        <th class="px-4 py-2 ">E-mail</th>
+                        <th class="px-4 py-2 ">Telefone</th>
+                        <th class="px-4 py-2 ">Rua</th>
+                        <th class="px-4 py-2 ">Número</th>
+                        <th class="px-4 py-2 ">Compl.</th>
+                        <th class="px-4 py-2 ">Bairro</th>
+                        <th class="px-4 py-2 ">CEP</th>
+                        <th class="px-4 py-2 ">Cidade</th>
+                        <th class="px-4 py-2 ">UF</th>
+                        <th class="px-4 py-2 ">Ativo</th>
+                        <th class="px-4 py-2 ">Criada em</th>
+                        <th class="px-4 py-2 ">Atualizada em</th>
+                        <th class="px-4 py-2 ">Ações</th>
                     </tr>
                 </thead>
 
@@ -171,22 +165,29 @@
 
                             {{-- Ações: Editar / Excluir --}}
                             <td class="px-4 py-2 text-right">
-                                <div class="inline-flex items-center gap-3">
-                                    @can('update', $empresaAtual)
-                                        <a class="underline" href="{{ route('empresas.edit', $empresaAtual) }}">Editar</a>
-                                    @endcan
+                                <div class="inline-flex items-center gap-2">
+                                    {{-- Editar --}}
+                                    <a href="{{ route('empresas.edit', $empresaAtual) }}"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
+              hover:bg-green-800/20 focus:outline-none cursor-pointer"
+                                        title="Editar" aria-label="Editar">
+                                        <i class="fa-solid fa-pen-to-square text-base align-middle" aria-hidden="true"></i>
+                                    </a>
 
-                                    @can('delete', $empresaAtual)
-                                        <form method="POST" action="{{ route('empresas.destroy', $empresaAtual) }}"
-                                            onsubmit="return confirm('Tem certeza que deseja excluir esta empresa?');"
-                                            class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="underline text-red-200 hover:text-red-100">
-                                                Excluir
-                                            </button>
-                                        </form>
-                                    @endcan
+                                    {{-- Excluir --}}
+                                    <form method="POST" action="{{ route('empresas.destroy', $empresaAtual) }}"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir esta empresa?');"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline
+                     hover:bg-red-900/10 focus:outline-none transition-colors cursor-pointer"
+                                            title="Excluir" aria-label="Excluir">
+                                            <i class="fa-solid fa-trash text-base align-middle text-red-300 group-hover:text-red-500 transition-colors"
+                                                aria-hidden="true"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

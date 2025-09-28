@@ -46,5 +46,10 @@ class IndexRequest extends FormRequest
                 'cnpj' => preg_replace('/\D+/', '', (string) $this->cnpj),
             ]);
         }
+
+        // prepareForValidation()
+        if ($this->filled('estado') && is_string($this->estado)) {
+            $this->merge(['estado' => strtoupper($this->estado)]);
+        }
     }
 }

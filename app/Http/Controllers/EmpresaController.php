@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Empresas\IndexRequest;
 use App\Http\Requests\Empresas\StoreEmpresasRequest;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
@@ -11,10 +12,49 @@ class EmpresaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexRequest $request)
     {
-        //
-        echo "index";
+        $dadosValidados = $request->validated();
+
+
+        $termoBusca = $dadosValidados['busca'] ?? null;
+        $colunaOrdenacao = $dadosValidados['ordenar_por'] ?? 'id';
+        $direcaoOrdenacao = $dadosValidados['direcao'] ?? 'asc';
+        $paginacao = 10;
+        $campo = $dadosValidados['campo'] ?? null;
+        $ativo = $dadosValidados['ativo'] ?? null;
+
+        $listaDeEmpresas = Empresa::query()
+            ->when($termoBusca, function ($consulta) use ($termoBusca, $campo) {
+                $consulta->where(function ($grupo) use ($termoBusca, $campo) {
+                    // se escolher um campo, aplica só nele; senão, busca global
+                    if ($campo) {
+                        $grupo->where($campo, 'like', "%{$termoBusca}%");
+                        return;
+                    }
+                    $grupo->where('razao_social', 'like', "%{$termoBusca}%")
+                        ->orWhere('nome_fantasia', 'like', "%{$termoBusca}%")
+                        ->orWhere('email', 'like', "%{$termoBusca}%")
+                        ->orWhere('cidade', 'like', "%{$termoBusca}%")
+                        ->orWhere('estado', 'like', "%{$termoBusca}%")
+                        ->orWhere('id', 'like', "%{$termoBusca}%")
+                        ->orWhere('cnpj', 'like', "%{$termoBusca}%");
+                });
+            })
+            ->when(
+                $ativo !== null && $ativo !== '',
+                fn($q) => $q->where('ativo', (int)$ativo)
+            )
+            ->orderBy($colunaOrdenacao, $direcaoOrdenacao)
+            ->paginate($paginacao)
+            ->withQueryString();
+
+        return view('empresas.index', [
+            'listaDeEmpresas' => $listaDeEmpresas,
+            'termoBusca' => $termoBusca,
+            'colunaOrdenacao' => $colunaOrdenacao,
+            'direcaoOrdenacao' => $direcaoOrdenacao,
+        ]);
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Empresas;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\CnpjValido;
 use App\Enums\Uf;
 use Illuminate\Validation\Rule;
 
-class StoreEmpresaRequest extends FormRequest
+class StoreEmpresasRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

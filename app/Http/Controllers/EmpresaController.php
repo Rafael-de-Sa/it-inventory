@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreEmpresaRequest;
+use App\Http\Requests\Empresas\StoreEmpresasRequest;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
 
@@ -28,7 +28,7 @@ class EmpresaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEmpresaRequest $request)
+    public function store(StoreEmpresasRequest $request)
     {
 
         $data = $request->validated();

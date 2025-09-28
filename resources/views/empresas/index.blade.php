@@ -109,10 +109,10 @@
 
             <div class="md:col-span-12 flex items-end gap-2">
                 <button class="rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 hover:bg-green-700/40">
-                    Aplicar
+                    <i class="fa-solid fa-filter"></i> Aplicar
                 </button>
                 <a href="{{ route('empresas.index') }}" class="rounded-lg border border-green-700 px-4 py-2">
-                    Limpar
+                    <i class="fa-solid fa-rotate-left"></i> Limpar
                 </a>
             </div>
         </form>

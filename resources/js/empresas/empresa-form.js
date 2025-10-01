@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initCepAutofill();
 
     // Normalização final antes de enviar (coerente com as rules do backend)
-    const form = document.getElementById('empresaForm');
+    const form = document.getElementById('empresaForm')
+        || document.getElementById('empresaEditForm');
     if (!form) return;
 
     form.addEventListener('submit', () => {

@@ -131,26 +131,26 @@
 
         {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
-            <table class="min-w-full text-sm">
+            <table class="min-w-full text-sm table-auto">
                 <thead class="bg-green-900/60 text-green-100 text-center">
                     <tr>
-                        <th class="px-4 py-2 ">ID</th>
-                        <th class="px-4 py-2 ">Nome Fantasia</th>
-                        <th class="px-4 py-2 ">Razão Social</th>
-                        <th class="px-4 py-2 ">CNPJ</th>
-                        <th class="px-4 py-2 ">E-mail</th>
-                        <th class="px-4 py-2 ">Telefone</th>
-                        <th class="px-4 py-2 ">Rua</th>
-                        <th class="px-4 py-2 ">Número</th>
-                        <th class="px-4 py-2 ">Compl.</th>
-                        <th class="px-4 py-2 ">Bairro</th>
-                        <th class="px-4 py-2 ">CEP</th>
-                        <th class="px-4 py-2 ">Cidade</th>
-                        <th class="px-4 py-2 ">UF</th>
-                        <th class="px-4 py-2 ">Ativo</th>
-                        <th class="px-4 py-2 ">Criada em</th>
-                        <th class="px-4 py-2 ">Atualizada em</th>
-                        <th class="px-4 py-2 ">Ações</th>
+                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Nome Fantasia</th>
+                        <th class="px-4 py-2">Razão Social</th>
+                        <th class="px-4 py-2">CNPJ</th>
+                        <th class="px-4 py-2">E-mail</th>
+                        <th class="px-4 py-2">Telefone</th>
+                        <th class="px-4 py-2">Rua</th>
+                        <th class="px-4 py-2">Número</th>
+                        <th class="px-4 py-2">Compl.</th>
+                        <th class="px-4 py-2">Bairro</th>
+                        <th class="px-4 py-2">CEP</th>
+                        <th class="px-4 py-2">Cidade</th>
+                        <th class="px-4 py-2">UF</th>
+                        <th class="px-4 py-2">Ativo</th>
+                        <th class="px-4 py-2">Criada em</th>
+                        <th class="px-4 py-2">Atualizada em</th>
+                        <th class="px-4 py-2">Ações</th>
                     </tr>
                 </thead>
 
@@ -161,14 +161,14 @@
                             <td class="px-4 py-2">{{ $empresa->id }}</td>
                             <td class="px-4 py-2">{{ $empresa->nome_fantasia }}</td>
                             <td class="px-4 py-2">{{ $empresa->razao_social }}</td>
-                            <td class="px-4 py-2">{{ $empresa->cnpj }}</td>
+                            <td class="px-4 py-2">{{ \App\Support\Mask::cnpj($empresa->cnpj) }}</td>
                             <td class="px-4 py-2">{{ $empresa->email }}</td>
-                            <td class="px-4 py-2">{{ $empresa->telefone }}</td>
+                            <td class="px-4 py-2">{{ \App\Support\Mask::telefone($empresa->telefone) }}</td>
                             <td class="px-4 py-2">{{ $empresa->rua }}</td>
                             <td class="px-4 py-2">{{ $empresa->numero }}</td>
                             <td class="px-4 py-2">{{ $empresa->complemento }}</td>
                             <td class="px-4 py-2">{{ $empresa->bairro }}</td>
-                            <td class="px-4 py-2">{{ $empresa->cep }}</td>
+                            <td class="px-4 py-2">{{ \App\Support\Mask::cep($empresa->cep) }}</td>
                             <td class="px-4 py-2">{{ $empresa->cidade }}</td>
                             <td class="px-4 py-2">{{ $empresa->estado }}</td>
                             <td class="px-4 py-2">{{ $empresa->ativo ? 'Ativo' : 'Inativo' }}</td>

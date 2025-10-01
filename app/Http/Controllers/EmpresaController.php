@@ -92,7 +92,8 @@ class EmpresaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $empresa = Empresa::findOrFail($id);
+        return view('empresas.edit', compact('empresa'));
     }
 
     /**

@@ -48,7 +48,8 @@ async function fetchEndereco(endpointTemplate, cep8) {
 }
 
 export function initCepAutofill() {
-    const form = document.getElementById('empresaForm');
+    const form = document.getElementById('empresaForm')
+        || document.getElementById('empresaEditForm');
     if (!form) return;
 
     const endpointTemplate = form.dataset.cepEndpoint || ''; // ex.: /empresas/cep/00000000

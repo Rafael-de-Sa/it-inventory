@@ -83,7 +83,8 @@ class EmpresaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $empresa = Empresa::findOrFail($id);
+        return view('empresas.show', compact('empresa'));
     }
 
     /**
@@ -107,6 +108,7 @@ class EmpresaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $empresa = Empresa::findOrFail($id);
+        dd($empresa);
     }
 }

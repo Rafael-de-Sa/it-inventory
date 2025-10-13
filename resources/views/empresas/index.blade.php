@@ -23,8 +23,8 @@
 
 
             <a href="{{ route('empresas.create') }}"
-                class="inline-flex items-center rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40">
-                Nova Empresa
+                class="inline-flex items-center rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40 gap-2">
+                <i class="fa-solid fa-plus"></i> Nova Empresa
             </a>
 
         </div>
@@ -41,7 +41,7 @@
                         'nome_fantasia' => 'Nome Fantasia',
                         'razao_social' => 'Razão Social',
                         'cnpj' => 'CNPJ',
-                        'email' => 'E-mail',
+                        // 'email' => 'E-mail',
                         'cidade' => 'Cidade',
                         'estado' => 'UF',
                     ];
@@ -71,7 +71,7 @@
                         'nome_fantasia' => 'Nome Fantasia',
                         'razao_social' => 'Razão Social',
                         'cnpj' => 'CNPJ',
-                        'email' => 'E-mail',
+                        // 'email' => 'E-mail',
                         'cidade' => 'Cidade',
                         'estado' => 'UF',
                         'ativo' => 'Ativo',
@@ -138,18 +138,18 @@
                         <th class="px-4 py-2">Nome Fantasia</th>
                         <th class="px-4 py-2">Razão Social</th>
                         <th class="px-4 py-2">CNPJ</th>
-                        <th class="px-4 py-2">E-mail</th>
+                        {{-- <th class="px-4 py-2">E-mail</th>
                         <th class="px-4 py-2">Telefone</th>
                         <th class="px-4 py-2">Rua</th>
                         <th class="px-4 py-2">Número</th>
                         <th class="px-4 py-2">Compl.</th>
                         <th class="px-4 py-2">Bairro</th>
-                        <th class="px-4 py-2">CEP</th>
+                        <th class="px-4 py-2">CEP</th> --}}
                         <th class="px-4 py-2">Cidade</th>
                         <th class="px-4 py-2">UF</th>
                         <th class="px-4 py-2">Ativo</th>
-                        <th class="px-4 py-2">Criada em</th>
-                        <th class="px-4 py-2">Atualizada em</th>
+                        {{-- <th class="px-4 py-2">Criada em</th>
+                        <th class="px-4 py-2">Atualizada em</th> --}}
                         <th class="px-4 py-2">Ações</th>
                     </tr>
                 </thead>
@@ -162,18 +162,18 @@
                             <td class="px-4 py-2">{{ $empresa->nome_fantasia }}</td>
                             <td class="px-4 py-2">{{ $empresa->razao_social }}</td>
                             <td class="px-4 py-2">{{ \App\Support\Mask::cnpj($empresa->cnpj) }}</td>
-                            <td class="px-4 py-2">{{ $empresa->email }}</td>
+                            {{-- <td class="px-4 py-2">{{ $empresa->email }}</td>
                             <td class="px-4 py-2">{{ \App\Support\Mask::telefone($empresa->telefone) }}</td>
                             <td class="px-4 py-2">{{ $empresa->rua }}</td>
                             <td class="px-4 py-2">{{ $empresa->numero }}</td>
                             <td class="px-4 py-2">{{ $empresa->complemento }}</td>
                             <td class="px-4 py-2">{{ $empresa->bairro }}</td>
-                            <td class="px-4 py-2">{{ \App\Support\Mask::cep($empresa->cep) }}</td>
+                            <td class="px-4 py-2">{{ \App\Support\Mask::cep($empresa->cep) }}</td> --}}
                             <td class="px-4 py-2">{{ $empresa->cidade }}</td>
                             <td class="px-4 py-2">{{ $empresa->estado }}</td>
                             <td class="px-4 py-2">{{ $empresa->ativo ? 'Ativo' : 'Inativo' }}</td>
-                            <td class="px-4 py-2">{{ optional($empresa->criado_em)->format('d/m/Y H:i') }}</td>
-                            <td class="px-4 py-2">{{ optional($empresa->atualizado_em)->format('d/m/Y H:i') }}</td>
+                            {{-- <td class="px-4 py-2">{{ optional($empresa->criado_em)->format('d/m/Y H:i') }}</td>
+                            <td class="px-4 py-2">{{ optional($empresa->atualizado_em)->format('d/m/Y H:i') }}</td> --}}
 
                             {{-- Ações: Editar / Excluir --}}
                             <td class="px-4 py-2 text-right">
@@ -191,8 +191,7 @@
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
               hover:bg-green-800/20 focus:outline-none cursor-pointer"
                                         title="Editar" aria-label="Editar">
-                                        <i class="fa-solid fa-pen-to-square text-base align-middle"
-                                            aria-hidden="true"></i>
+                                        <i class="fa-solid fa-pen-to-square text-base align-middle" aria-hidden="true"></i>
                                     </a>
 
                                     {{-- Excluir --}}

@@ -34,7 +34,7 @@ class EmpresaController extends Controller
                     }
                     $grupo->where('razao_social', 'like', "%{$termoBusca}%")
                         ->orWhere('nome_fantasia', 'like', "%{$termoBusca}%")
-                        ->orWhere('email', 'like', "%{$termoBusca}%")
+                        // ->orWhere('email', 'like', "%{$termoBusca}%")
                         ->orWhere('cidade', 'like', "%{$termoBusca}%")
                         ->orWhere('estado', 'like', "%{$termoBusca}%")
                         ->orWhere('id', 'like', "%{$termoBusca}%")

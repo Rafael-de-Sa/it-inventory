@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Empresas\IndexRequest;
-use App\Http\Requests\Empresas\StoreEmpresasRequest;
+use App\Http\Requests\Empresas\StoreEmpresaRequest;
+use App\Http\Requests\Empresas\UpdateEmpresaRequest;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
 
@@ -49,7 +50,7 @@ class EmpresaController extends Controller
             ->paginate($paginacao)
             ->withQueryString();
 
-        return view('empresas.index', [
+        return view('empresa.index', [
             'listaDeEmpresas' => $listaDeEmpresas,
             'termoBusca' => $termoBusca,
             'colunaOrdenacao' => $colunaOrdenacao,
@@ -62,19 +63,19 @@ class EmpresaController extends Controller
      */
     public function create()
     {
-        return  view('empresas.create');
+        return  view('empresa.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEmpresasRequest $request)
+    public function store(StoreEmpresaRequest $request)
     {
 
         $data = $request->validated();
         $empresa = Empresa::create($data);
 
-        return to_route('empresas.create')
+        return to_route('empresa.index')
             ->with('success', 'Empresa criada com sucesso!');
     }
 
@@ -84,7 +85,7 @@ class EmpresaController extends Controller
     public function show(string $id)
     {
         $empresa = Empresa::findOrFail($id);
-        return view('empresas.show', compact('empresa'));
+        return view('empresa.show', compact('empresa'));
     }
 
     /**
@@ -93,15 +94,21 @@ class EmpresaController extends Controller
     public function edit(string $id)
     {
         $empresa = Empresa::findOrFail($id);
-        return view('empresas.edit', compact('empresa'));
+        return view('empresa.edit', compact('empresa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateEmpresaRequest $request, string $id)
     {
-        //
+        $data = $request->validated();
+
+        $empresa = Empresa::findOrFail($id);
+        $empresa->update($data);
+
+        return to_route('empresa.index')
+            ->with('success', 'Empresa atualizada com sucesso!');
     }
 
     /**
@@ -109,7 +116,23 @@ class EmpresaController extends Controller
      */
     public function destroy(string $id)
     {
-        $empresa = Empresa::findOrFail($id);
-        dd($empresa);
+        $empresa = Empresa::withCount('setores')->findOrFail($id);
+
+        if ($empresa->setores_count > 0) {
+            return back()->with(
+                'error',
+                "Não é possível excluir: há {$empresa->setores_count} setor(es) vinculado(s) à empresa."
+            );
+        }
+
+        try {
+            $empresa->delete();
+
+            return to_route('empresa.index')
+                ->with('success', 'Empresa excluída com sucesso!');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->with('error', 'Erro ao excluir a empresa. Tente novamente.');
+        }
     }
 }

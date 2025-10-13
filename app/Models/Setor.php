@@ -9,6 +9,7 @@ class Setor extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'setores';
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
@@ -33,7 +34,7 @@ class Setor extends Model
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(Empresa::class, 'empresa_id', 'id');
     }
 
     public function funcionarios()

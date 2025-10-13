@@ -166,7 +166,7 @@
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
                 {{-- Voltar para a lista --}}
-                <a href="{{ route('empresas.index') }}"
+                <a href="{{ route('empresa.index') }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"
                     title="Voltar" aria-label="Voltar">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -175,7 +175,7 @@
 
                 <div class="flex items-center gap-3">
                     {{-- Editar --}}
-                    <a href="{{ route('empresas.edit', $empresa->id) }}"
+                    <a href="{{ route('empresa.edit', $empresa->id) }}"
                         class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"
                         title="Editar" aria-label="Editar">
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -183,7 +183,7 @@
                     </a>
 
                     {{-- Excluir --}}
-                    <form method="POST" action="{{ route('empresas.destroy', $empresa->id) }}"
+                    <form method="POST" action="{{ route('empresa.destroy', $empresa->id) }}"
                         onsubmit="return confirm('Excluir a empresa {{ addslashes($empresa->razao_social) }}?');"
                         class="inline">
                         @csrf

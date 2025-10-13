@@ -3,18 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Mensagens de feedback --}}
-        @if (session('success'))
-            <div class="rounded-lg border border-green-700 bg-green-900/40 px-4 py-3 text-green-100">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="rounded-lg border border-red-700 bg-red-900/30 px-4 py-3 text-red-100">
-                {{ session('error') }}
-            </div>
-        @endif
-
         {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -22,7 +10,7 @@
             </div>
 
 
-            <a href="{{ route('empresas.create') }}"
+            <a href="{{ route('empresa.create') }}"
                 class="inline-flex items-center rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40 gap-2">
                 <i class="fa-solid fa-plus"></i> Nova Empresa
             </a>
@@ -120,7 +108,7 @@
                         <span>Aplicar</span>
                     </button>
 
-                    <a href="{{ route('empresas.index') }}"
+                    <a href="{{ route('empresa.index') }}"
                         class="rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40 inline-flex items-center gap-2">
                         <i class="fa-solid fa-rotate-left"></i>
                         <span>Limpar</span>
@@ -179,7 +167,7 @@
                             <td class="px-4 py-2 text-right">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
-                                    <a href="{{ route('empresas.show', $empresa->id) }}"
+                                    <a href="{{ route('empresa.show', $empresa->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
           hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         title="Exibir" aria-label="Exibir">
@@ -187,7 +175,7 @@
                                     </a>
 
                                     {{-- Editar --}}
-                                    <a href="{{ route('empresas.edit', $empresa->id) }}"
+                                    <a href="{{ route('empresa.edit', $empresa->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
               hover:bg-green-800/20 focus:outline-none cursor-pointer"
                                         title="Editar" aria-label="Editar">
@@ -195,7 +183,7 @@
                                     </a>
 
                                     {{-- Excluir --}}
-                                    <form method="POST" action="{{ route('empresas.destroy', $empresa->id) }}"
+                                    <form method="POST" action="{{ route('empresa.destroy', $empresa->id) }}"
                                         onsubmit="return confirm('Tem certeza que deseja excluir esta empresa?');"
                                         class="inline">
                                         @csrf

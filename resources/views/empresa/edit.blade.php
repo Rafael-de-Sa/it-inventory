@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="w-full flex justify-center">
-        <form id="empresaEditForm" action="{{ route('empresas.update', $empresa->id) }}" method="POST"
+        <form id="empresaEditForm" action="{{ route('empresa.update', $empresa->id) }}" method="POST"
             enctype="multipart/form-data"
             class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6"
-            data-cep-endpoint="{{ route('empresas.cep', ['cep' => '00000000']) }}">
+            data-cep-endpoint="{{ route('empresa.cep', ['cep' => '00000000']) }}">
             @csrf
             @method('PUT')
 
@@ -41,6 +41,7 @@
                 <div class="md:col-span-3">
                     <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativa</label>
                     <div class="h-[42px] flex items-center gap-3">
+                        <input type="hidden" name="ativo" value="0">
                         <input id="ativo" name="ativo" type="checkbox" value="1" @checked(old('ativo', $empresa->ativo))
                             @class([
                                 'h-5 w-5 rounded focus:ring-0 focus:outline-none',

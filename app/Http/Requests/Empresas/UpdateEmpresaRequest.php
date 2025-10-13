@@ -7,13 +7,11 @@ use App\Rules\CnpjValido;
 use App\Enums\Uf;
 use Illuminate\Validation\Rule;
 
-class StoreEmpresasRequest extends FormRequest
+class UpdateEmpresaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-
-    //true = não valida autorização
     public function authorize(): bool
     {
         return true;
@@ -38,14 +36,16 @@ class StoreEmpresasRequest extends FormRequest
         ]);
     }
 
-
     public function rules(): array
     {
+        $param = $this->route('empresa');
+        $empresaId = is_object($param) ? $param->id : (int) $param;
+
         return [
             'nome_fantasia' => ['required', 'string', 'min:3', 'max:100'],
             'razao_social' => ['required', 'string', 'min:3', 'max:100'],
 
-            'cnpj' => ['required', 'digits:14', new CnpjValido],
+            'cnpj' => ['required', 'digits:14', new CnpjValido, Rule::unique('empresas', 'cnpj')->ignore($empresaId)],
             'cep' => ['required', 'digits:8'],
 
             'rua' => ['required', 'string', 'min:3', 'max:100'],
@@ -55,7 +55,8 @@ class StoreEmpresasRequest extends FormRequest
             'cidade' => ['required', 'string', 'min:3', 'max:30'],
             'estado' => ['required', 'string', 'size:2', 'alpha', Rule::in(Uf::values())],
             'email' => ['required', 'string', 'email', 'max:60'],
-            'telefone' => ['nullable', 'digits_between:10,11']
+            'telefone' => ['nullable', 'digits_between:10,11'],
+            'ativo' => ['required', 'boolean']
         ];
     }
 
@@ -69,12 +70,14 @@ class StoreEmpresasRequest extends FormRequest
             'size' => 'O campo :attribute deve conter exatamente :size caracteres.',
             'alpha' => 'O campo :attribute deve conter apenas letras.',
             'email' => 'Informe um :attribute válido.',
+            'boolean' => 'Informe um :attribute válido.',
 
             'cnpj.digits' => 'O CNPJ deve conter exatamente 14 dígitos.',
             'cep.digits' => 'O CEP deve conter exatamente 8 dígitos.',
             'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).',
             'estado.size' => 'UF deve ter 2 letras.',
             'estado.in' => 'UF inválida.',
+            'cnpj.unique' => 'Há uma outra empresa cadastrada com o mesmo CNPJ',
         ];
     }
 
@@ -93,6 +96,7 @@ class StoreEmpresasRequest extends FormRequest
             'cep' => 'CEP',
             'email' => 'e-mail',
             'telefone' => 'telefone',
+            'ativo' =>  'ativo'
         ];
     }
 }

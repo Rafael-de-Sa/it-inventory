@@ -44,7 +44,7 @@ class Empresa extends Model
 
     public function setores()
     {
-        return $this->hasMany(Setor::class);
+        return $this->hasMany(Setor::class, 'empresa_id', 'id');
     }
 
     public function getCnpjMaskedAttribute(): string

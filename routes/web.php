@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\SetorController;
 use App\Http\Controllers\ViaCepController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('/logout');
 Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
 
 Route::resource('empresas', EmpresaController::class);
+Route::resource('setores', SetorController::class)
+    ->parameters(['setores' => 'setor']);;

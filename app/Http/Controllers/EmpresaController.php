@@ -50,7 +50,7 @@ class EmpresaController extends Controller
             ->paginate($paginacao)
             ->withQueryString();
 
-        return view('empresa.index', [
+        return view('empresas.index', [
             'listaDeEmpresas' => $listaDeEmpresas,
             'termoBusca' => $termoBusca,
             'colunaOrdenacao' => $colunaOrdenacao,
@@ -63,7 +63,7 @@ class EmpresaController extends Controller
      */
     public function create()
     {
-        return  view('empresa.create');
+        return  view('empresas.create');
     }
 
     /**
@@ -75,7 +75,7 @@ class EmpresaController extends Controller
         $data = $request->validated();
         $empresa = Empresa::create($data);
 
-        return to_route('empresa.index')
+        return to_route('empresas.index')
             ->with('success', 'Empresa criada com sucesso!');
     }
 
@@ -85,7 +85,7 @@ class EmpresaController extends Controller
     public function show(string $id)
     {
         $empresa = Empresa::findOrFail($id);
-        return view('empresa.show', compact('empresa'));
+        return view('empresas.show', compact('empresa'));
     }
 
     /**
@@ -94,7 +94,7 @@ class EmpresaController extends Controller
     public function edit(string $id)
     {
         $empresa = Empresa::findOrFail($id);
-        return view('empresa.edit', compact('empresa'));
+        return view('empresas.edit', compact('empresa'));
     }
 
     /**
@@ -107,7 +107,7 @@ class EmpresaController extends Controller
         $empresa = Empresa::findOrFail($id);
         $empresa->update($data);
 
-        return to_route('empresa.index')
+        return to_route('empresas.index')
             ->with('success', 'Empresa atualizada com sucesso!');
     }
 
@@ -121,18 +121,18 @@ class EmpresaController extends Controller
         if ($empresa->setores_count > 0) {
             return back()->with(
                 'error',
-                "Não é possível excluir: há {$empresa->setores_count} setor(es) vinculado(s) à empresa."
+                "Não é possível excluir: há {$empresa->setores_count} setor(es) vinculado(s) à empresas."
             );
         }
 
         try {
             $empresa->delete();
 
-            return to_route('empresa.index')
+            return to_route('empresas.index')
                 ->with('success', 'Empresa excluída com sucesso!');
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Erro ao excluir a empresa. Tente novamente.');
+            return back()->with('error', 'Erro ao excluir a empresas. Tente novamente.');
         }
     }
 }

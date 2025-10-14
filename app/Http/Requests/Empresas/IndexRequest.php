@@ -47,7 +47,6 @@ class IndexRequest extends FormRequest
             ]);
         }
 
-        // prepareForValidation()
         if ($this->filled('estado') && is_string($this->estado)) {
             $this->merge(['estado' => strtoupper($this->estado)]);
         }

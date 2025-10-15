@@ -34,7 +34,7 @@ class UpdateSetorRequest extends FormRequest
 
     public function rules(): array
     {
-        $parametro = $this->route('setor') ?? $this->route('setore') ?? $this->route('id');
+        $parametro = $this->route('setor');
         $setorId   = is_object($parametro) ? $parametro->id : (int) $parametro;
 
         return [

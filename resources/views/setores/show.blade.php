@@ -20,7 +20,7 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                 {{-- ID --}}
                 <div class="md:col-span-3">
-                    <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">ID</label>
+                    <label for="setor_id" class="mb-1 block text-sm text-green-100">ID</label>
                     <input id="setor_id" type="text" value="{{ $setor->id }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
                                cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"

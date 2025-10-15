@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\SetorController;
+use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\ViaCepController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empr
 
 Route::resource('empresas', EmpresaController::class);
 Route::resource('setores', SetorController::class)
-    ->parameters(['setores' => 'setor']);;
+    ->parameters(['setores' => 'setor']);
+Route::resource('tipo-equipamentos', TipoEquipamentoController::class);

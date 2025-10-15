@@ -33,8 +33,8 @@ class IndexRequest extends FormRequest
 
 
             'busca' => ['nullable', 'string', 'max:100'],
-            'campo' => ['nullable', 'in:id,nome_fantasia,razao_social,cnpj,email,cidade,estado'],
-            'ordenar_por' => ['nullable', 'in:id,nome_fantasia,razao_social,cnpj,email,cidade,estado,ativo'],
+            'campo' => ['nullable', 'in:id,nome_fantasia,razao_social,cnpj,cidade,estado'],
+            'ordenar_por' => ['nullable', 'in:id,nome_fantasia,razao_social,cnpj,cidade,estado,ativo'],
             'direcao' => ['nullable', 'in:asc,desc']
         ];
     }

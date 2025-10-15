@@ -17,7 +17,6 @@ class EmpresaController extends Controller
     {
         $dadosValidados = $request->validated();
 
-
         $termoBusca = $dadosValidados['busca'] ?? null;
         $colunaOrdenacao = $dadosValidados['ordenar_por'] ?? 'id';
         $direcaoOrdenacao = $dadosValidados['direcao'] ?? 'asc';

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Setores;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Symfony\Component\Console\Input\Input;
 
 class StoreSetorRequest extends FormRequest
 {
@@ -23,50 +24,55 @@ class StoreSetorRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $nome = $this->input('nome');
+        $empresaId = $this->input('empresa_id');
+
         $this->merge([
-            'nome' => is_string($this->input('nome')) ? trim($this->input('nome')) : $this->input('nome'),
-            'empresa_id' => $this->input('empresa_id') !== null ? (int) $this->input('empresa_id') : null,
+            'nome' => is_string($nome) ? (string) str($nome)->squish()->trim() : $nome,
+            'empresa_id' => filled($empresaId) ? (int) $empresaId : null,
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'nome' => ['required', 'string', 'min:3', 'max:50'],
+            'nome' => [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                Rule::unique('setores', 'nome')
+                    ->where(fn($q) => $q->where('empresa_id', $this->input('empresa_id'))),
+            ],
             'empresa_id' => [
+                'bail',
                 'required',
                 'integer',
                 Rule::exists('empresas', 'id')
-                    ->where(
-                        fn($q) => $q
-                            ->where('ativo', true)
-                            ->whereNull('apagado_em')
-                    ),
+                    ->where(fn($q) => $q->where('ativo', true)->whereNull('apagado_em')),
             ],
-            'ativo' => ['nullable', 'boolean'],
         ];
     }
+
 
     public function messages(): array
     {
         return [
-            'required' => 'O campo :attribute é obrigatório.',
-            'string'   => 'O campo :attribute deve ser um texto.',
-            'min'      => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            'max'      => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'integer'  => 'O campo :attribute deve ser um número inteiro.',
-            'exists'   => 'A :attribute informada não foi encontrada.',
-            'boolean'  => 'O campo :attribute deve ser verdadeiro ou falso.',
-            'empresa_id.exists'   => 'A :attribute informada não foi encontrada ou está inativa/arquivada.'
+            'required'           => 'O campo :attribute é obrigatório.',
+            'string'             => 'O campo :attribute deve ser um texto.',
+            'min'                => 'O campo :attribute deve possuir ao menos :min caracteres.',
+            'max'                => 'O campo :attribute deve possuir no máximo :max caracteres.',
+            'integer'            => 'O campo :attribute deve ser um número inteiro.',
+            'empresa_id.exists'  => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
+            'nome.unique'        => 'Já existe um setor com este nome nesta empresa.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'nome' => 'nome do setor',
+            'nome'       => 'nome do setor',
             'empresa_id' => 'empresa',
-            'ativo' => 'status',
         ];
     }
 }

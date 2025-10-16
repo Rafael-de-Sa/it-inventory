@@ -45,7 +45,6 @@ class StoreSetorRequest extends FormRequest
                     ->where(fn($q) => $q->where('empresa_id', $this->input('empresa_id'))),
             ],
             'empresa_id' => [
-                'bail',
                 'required',
                 'integer',
                 Rule::exists('empresas', 'id')

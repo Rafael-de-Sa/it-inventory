@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
@@ -25,3 +26,4 @@ Route::resource('empresas', EmpresaController::class);
 Route::resource('setores', SetorController::class)
     ->parameters(['setores' => 'setor']);
 Route::resource('tipo-equipamentos', TipoEquipamentoController::class);
+Route::resource('equipamentos', EquipamentoController::class);

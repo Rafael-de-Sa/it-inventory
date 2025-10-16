@@ -25,6 +25,11 @@ class Equipamento extends Model
         'numero_serie'
     ];
 
+    public function setNumeroSerieAttribute($valor): void
+    {
+        $this->attributes['numero_serie'] = $valor ? mb_strtoupper(trim($valor)) : null;
+    }
+
     protected $casts = [
         'ativo' => 'boolean',
         'data_compra' => 'date',

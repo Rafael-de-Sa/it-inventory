@@ -13,20 +13,6 @@
             </a>
         </div>
 
-        {{-- Flash --}}
-        @if (session('success'))
-            <div id="flash-success"
-                class="mx-auto w-full rounded-lg border border-green-700 bg-green-900/40 px-4 py-3 text-green-100 flex items-start gap-2">
-                <svg class="h-5 w-5 mt-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 106.293 10.707l2 2a1 1 0 001.414 0l4-4z"
-                        clip-rule="evenodd" />
-                </svg>
-                <div class="flex-1 text-sm">{{ session('success') }}</div>
-                <button type="button" onclick="document.getElementById('flash-success').remove()" class="ml-2">✕</button>
-            </div>
-        @endif
-
         {{-- Filtros (duas linhas, padronizado) --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
 

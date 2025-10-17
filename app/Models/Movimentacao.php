@@ -9,6 +9,8 @@ class Movimentacao extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'movimentacoes';
+
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';

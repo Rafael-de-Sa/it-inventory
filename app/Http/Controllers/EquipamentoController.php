@@ -145,9 +145,13 @@ class EquipamentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Equipamento $equipamento)
+    public function show(string $id)
     {
-        //
+        $equipamento = Equipamento::with([
+            'tipoEquipamento:id,nome',
+        ])->findOrFail($id);
+
+        return view('equipamentos.show', compact('equipamento'));
     }
 
     /**
@@ -155,7 +159,9 @@ class EquipamentoController extends Controller
      */
     public function edit(Equipamento $equipamento)
     {
-        //
+        $opcoesTiposEquipamento = TipoEquipamento::orderBy('nome')->pluck('nome', 'id');
+
+        return view('equipamentos.edit', compact('equipamento', 'opcoesTiposEquipamento'));
     }
 
     /**
@@ -163,7 +169,29 @@ class EquipamentoController extends Controller
      */
     public function update(UpdateEquipamentoRequest $request, Equipamento $equipamento)
     {
-        //
+        $dados = $request->validated();
+
+        foreach (['data_compra', 'valor_compra', 'descricao', 'patrimonio', 'numero_serie'] as $k) {
+            if (($dados[$k] ?? '') === '') $dados[$k] = null;
+        }
+
+        if (!empty($dados['numero_serie'])) {
+            $dados['numero_serie'] = mb_strtoupper(trim($dados['numero_serie']));
+        }
+
+        $equipamento->fill([
+            'tipo_equipamento_id' => $dados['tipo_equipamento_id'],
+            'data_compra'         => $dados['data_compra'] ?? null,
+            'valor_compra'        => $dados['valor_compra'] ?? null,
+            'status'              => $dados['status'],
+            'descricao'           => $dados['descricao'] ?? null,
+            'patrimonio'          => $dados['patrimonio'] ?? null,
+            'numero_serie'        => $dados['numero_serie'] ?? null,
+        ])->save();
+
+        return redirect()
+            ->route('equipamentos.index')
+            ->with('success', 'Equipamento atualizado com sucesso.');
     }
 
     /**
@@ -171,6 +199,22 @@ class EquipamentoController extends Controller
      */
     public function destroy(Equipamento $equipamento)
     {
-        //
+        $temMovimentacaoAberta = $equipamento->movimentacoes()
+            ->whereNull('devolvido_em')
+            ->whereNull('termo_devolucao')
+            ->exists();
+
+        if ($temMovimentacaoAberta) {
+            return back()->with(
+                'error',
+                'Não é possível excluir: este equipamento possui movimentação pendente (aguardando devolução com termo).'
+            );
+        }
+
+        $equipamento->delete();
+
+        return redirect()
+            ->route('equipamentos.index')
+            ->with('success', 'Equipamento excluído com sucesso.');
     }
 }

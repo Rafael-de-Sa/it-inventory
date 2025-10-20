@@ -22,7 +22,7 @@ class Funcionario extends Model
         'matricula',
         'desligado_em',
         'ativo',
-        'telefones',
+        'telefone',
         'terceirizado'
     ];
 

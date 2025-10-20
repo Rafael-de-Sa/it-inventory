@@ -11,6 +11,22 @@ class Mask
         return $max ? substr($d, 0, $max) : $d;
     }
 
+    /** CPF (parcial ou completo)
+     *  Formato: 000.000.000-00
+     */
+    public static function cpf(?string $v): string
+    {
+        $d = self::digits($v, 11);
+        $n = strlen($d);
+        if ($n === 0) return '';
+
+        if ($n <= 3)  return $d;
+        if ($n <= 6)  return substr($d, 0, 3) . '.' . substr($d, 3);
+        if ($n <= 9)  return substr($d, 0, 3) . '.' . substr($d, 3, 3) . '.' . substr($d, 6);
+        // 10–11 dígitos
+        return substr($d, 0, 3) . '.' . substr($d, 3, 3) . '.' . substr($d, 6, 3) . '-' . substr($d, 9);
+    }
+
     /** CNPJ (parcial ou completo)
      *  2 -> 12 -> 14 dígitos  =>  00 . 000 . 000 / 0000 - 00
      */

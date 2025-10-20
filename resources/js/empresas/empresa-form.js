@@ -1,6 +1,6 @@
 // resources/js/empresas/empresa-form.js
 import { initCepAutofill } from './cep-autofill';
-import { initMasks, normalize } from './masks';
+import { initMasks, normalize } from '../util/masks';
 
 document.addEventListener('DOMContentLoaded', () => {
     initMasks();

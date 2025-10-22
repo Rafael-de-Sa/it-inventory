@@ -22,9 +22,14 @@
             {{-- Empresa --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Empresa</label>
-                <select id="empresa_id" name="empresa_id"
-                    class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900"
-                    data-old="{{ old('empresa_id') }}" data-url-base="{{ url('empresas') }}" required>
+                <select id="empresa_id" name="empresa_id" @class([
+                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                        'empresa_id'),
+                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                        'empresa_id'),
+                ]) data-old="{{ old('empresa_id') }}"
+                    data-url-base="{{ url('empresas') }}" required>
                     <option value="">Selecione...</option>
                     @foreach ($opcoesEmpresas as $id => $rotulo)
                         <option value="{{ $id }}" @selected(old('empresa_id') == $id)>
@@ -37,12 +42,16 @@
                 @enderror
             </div>
 
-            {{-- Setor (carregado via AJAX) --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Setor</label>
-                <select id="setor_id" name="setor_id"
-                    class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900"
-                    data-old="{{ old('setor_id') }}" required>
+                <select id="setor_id" name="setor_id" @class([
+                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                        'setor_id'),
+                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                        'setor_id'),
+                ]) data-old="{{ old('setor_id') }}"
+                    required>
                     <option value="">Selecione uma empresa primeiro...</option>
                 </select>
                 @error('setor_id')
@@ -54,8 +63,13 @@
                 {{-- Nome --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Nome</label>
-                    <input type="text" name="nome" value="{{ old('nome') }}"
-                        class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900" required>
+                    <input type="text" name="nome" value="{{ old('nome') }}" @class([
+                        'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                        'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                            'nome'),
+                        'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                            'nome'),
+                    ]) required>
                     @error('nome')
                         <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                     @enderror
@@ -64,8 +78,14 @@
                 {{-- Sobrenome --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Sobrenome</label>
-                    <input type="text" name="sobrenome" value="{{ old('sobrenome') }}"
-                        class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900" required>
+                    <input type="text" name="sobrenome" value="{{ old('sobrenome') }}" @class([
+                        'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                        'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                            'sobrenome'),
+                        'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                            'sobrenome'),
+                    ])
+                        required>
                     @error('sobrenome')
                         <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                     @enderror
@@ -75,8 +95,13 @@
                 <div>
                     <label class="mb-1 block text-sm text-green-100">CPF</label>
                     <input type="text" name="cpf" id="cpf" value="{{ old('cpf') }}"
-                        class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900"
-                        placeholder="000.000.000-00" required>
+                        @class([
+                            'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                            'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                                'cpf'),
+                            'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                                'cpf'),
+                        ]) placeholder="000.000.000-00" required>
                     @error('cpf')
                         <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                     @enderror
@@ -86,9 +111,13 @@
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Matrícula</label>
                     <input type="text" id="matricula" name="matricula" value="{{ old('matricula') }}"
-                        inputmode="numeric" pattern="\d*" autocomplete="off"
-                        class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900
-             disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        inputmode="numeric" pattern="\d*" autocomplete="off" @class([
+                            'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed placeholder-gray-500 focus:outline-none',
+                            'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                                'matricula'),
+                            'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                                'matricula'),
+                        ])
                         placeholder="Somente números">
                     @error('matricula')
                         <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
@@ -100,22 +129,26 @@
             <div>
                 <label class="mb-1 block text-sm text-green-100">Telefone</label>
                 <input type="text" id="telefone" name="telefone" value="{{ old('telefone') }}"
-                    class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900"
-                    placeholder="(44) 99999-0000">
+                    @class([
+                        'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                        'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
+                            'telefone'),
+                        'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
+                            'telefone'),
+                    ]) placeholder="(44) 99999-0000">
                 @error('telefone')
                     <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                 @enderror
             </div>
 
+            {{-- Flags --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {{-- Terceirizado --}}
                 <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" name="terceirizado" value="1" @checked(old('terceirizado'))>
+                    <input type="checkbox" name="terceirizado" value="1" @checked(old('terceirizado', false))
+                        class="h-5 w-5 rounded border border-green-700">
                     <span class="text-sm">Terceirizado</span>
                 </label>
-
             </div>
-
 
             {{-- Ações --}}
             <div class="flex items-center justify-end gap-3 pt-2">
@@ -131,6 +164,5 @@
     </form>
     </div>
 
-    {{-- Importação de scripts --}}
     @vite(['resources/js/masks.js', 'resources/js/funcionarios/funcionario-form.js'])
 @endsection

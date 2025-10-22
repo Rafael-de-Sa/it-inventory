@@ -189,7 +189,12 @@ class FuncionarioController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $funcionario = Funcionario::with([
+            'setor:id,nome,empresa_id',
+            'setor.empresa:id,nome_fantasia,cnpj',
+        ])->findOrFail($id);
+
+        return view('funcionarios.show', compact('funcionario'));
     }
 
     /**

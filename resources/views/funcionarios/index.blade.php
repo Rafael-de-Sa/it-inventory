@@ -9,7 +9,7 @@
 
             <a href="{{ route('funcionarios.create') }}"
                 class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40">
-                <i class="fa-solid fa-plus"></i> Novo Funcionário
+                <i class="fa-solid fa-plus"></i> Cadastrar
             </a>
         </div>
 
@@ -167,7 +167,6 @@
                             <td class="px-4 py-2">{{ $funcionario->setor_nome ?? '—' }}</td>
                             <td class="px-4 py-2">{{ $funcionario->matricula ?? '—' }}</td>
 
-                            {{-- Sem badge: apenas texto --}}
                             <td class="px-4 py-2">{{ $funcionario->ativo ? 'Ativo' : 'Inativo' }}</td>
                             <td class="px-4 py-2">{{ $funcionario->terceirizado ? 'Sim' : 'Não' }}</td>
 

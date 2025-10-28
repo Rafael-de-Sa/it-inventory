@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Funcionarios\IndexRequest;
 use App\Http\Requests\Funcionarios\StoreFuncionarioRequest;
+use App\Http\Requests\Funcionarios\UpdateFuncionarioRequest;
 use App\Models\Empresa;
 use App\Models\Funcionario;
 use App\Models\Setor;
@@ -202,17 +203,64 @@ class FuncionarioController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $funcionario = Funcionario::with(['setor:id,nome,empresa_id', 'setor.empresa:id,nome_fantasia'])
+            ->findOrFail($id);
+
+        $opcoesEmpresas = Empresa::query()
+            ->orderBy('nome_fantasia')
+            ->pluck('nome_fantasia', 'id');
+
+        $empresaSelecionadaId = optional($funcionario->setor)->empresa_id;
+
+        $opcoesSetores = collect();
+        if ($empresaSelecionadaId) {
+            $opcoesSetores = Setor::query()
+                ->where('empresa_id', $empresaSelecionadaId)
+                ->orderBy('nome')
+                ->pluck('nome', 'id');
+        }
+
+        return view('funcionarios.edit', compact(
+            'funcionario',
+            'opcoesEmpresas',
+            'opcoesSetores',
+            'empresaSelecionadaId'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateFuncionarioRequest $request, string $id)
     {
-        //
-    }
+        $funcionario = Funcionario::findOrFail($id);
 
+        $dados = $request->validated();
+
+        // Bools (checkboxes)
+        $dados['terceirizado'] = $request->boolean('terceirizado');
+        $dados['ativo']        = $request->boolean('ativo');
+
+        // Regras para desligado_em
+        if (array_key_exists('ativo', $dados)) {
+            if ($dados['ativo'] === false && $funcionario->ativo === true) {
+                // inativando agora
+                $dados['desligado_em'] = now();
+            } elseif ($dados['ativo'] === true) {
+                // reativando: zera desligado_em (ajuste se preferir manter histórico)
+                $dados['desligado_em'] = null;
+            }
+        }
+
+        // Não persistimos empresa_id (ela é inferida pelo setor)
+        unset($dados['empresa_id']);
+
+        $funcionario->update($dados);
+
+        return redirect()
+            ->route('funcionarios.show', $funcionario->id)
+            ->with('success', 'Funcionário atualizado com sucesso.');
+    }
     /**
      * Remove the specified resource from storage.
      */

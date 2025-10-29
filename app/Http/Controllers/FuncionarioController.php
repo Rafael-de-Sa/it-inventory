@@ -266,6 +266,18 @@ class FuncionarioController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $funcionario = Funcionario::findOrFail($id);
+
+        if (! $funcionario->ativo && $funcionario->trashed()) {
+            return redirect()->route('funcionarios.index')
+                ->with('error', 'O funcionário já está inativo/excluído.');
+        }
+
+        $funcionario->ativo = false;
+        $funcionario->save();
+        $funcionario->delete();
+
+        return redirect()->route('funcionarios.index')
+            ->with('success', 'Funcionário inativado e removido com sucesso.');
     }
 }

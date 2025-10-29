@@ -5,6 +5,7 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\MovimentacaoController;
 use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\ViaCepController;
@@ -28,3 +29,6 @@ Route::resource('equipamentos', EquipamentoController::class);
 Route::resource('funcionarios', FuncionarioController::class);
 Route::get('empresas/{empresa}/setores', [FuncionarioController::class, 'setoresPorEmpresa'])
     ->name('funcionarios.setoresPorEmpresa');
+
+Route::resource('movimentacoes', MovimentacaoController::class)
+    ->parameters(['movimentacoes' => 'movimentacao']);

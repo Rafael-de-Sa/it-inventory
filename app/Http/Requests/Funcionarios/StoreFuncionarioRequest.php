@@ -40,8 +40,8 @@ class StoreFuncionarioRequest extends FormRequest
             'empresa_id'   => ['required', 'integer', 'exists:empresas,id'],
             'setor_id'     => ['required', 'integer', 'exists:setores,id'],
 
-            'nome'         => ['required', 'string', 'min:2', 'max:80'],
-            'sobrenome'    => ['required', 'string', 'min:2', 'max:80'],
+            'nome'         => ['required', 'string', 'min:2', 'max:30'],
+            'sobrenome'    => ['required', 'string', 'min:2', 'max:50'],
 
             'cpf'          => [
                 'required',

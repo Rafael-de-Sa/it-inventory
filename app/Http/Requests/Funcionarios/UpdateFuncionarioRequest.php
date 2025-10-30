@@ -19,99 +19,74 @@ class UpdateFuncionarioRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array< mixed>|string>
      */
 
     protected function prepareForValidation(): void
     {
-        $somenteDigitos = static fn($v) => $v !== null ? preg_replace('/\D+/', '', (string) $v) : null;
+        $somenteNumeros = fn($campo) =>
+        $this->filled($campo) ? preg_replace('/\D+/', '', (string) $this->input($campo)) : null;
 
         $this->merge([
-            'cpf'         => $somenteDigitos($this->input('cpf')) ?: null,
-            'telefone'    => $somenteDigitos($this->input('telefone')) ?: null,
-            // checkbox ausente => false (0); presente => true (1)
             'terceirizado' => $this->boolean('terceirizado') ? 1 : 0,
-            'ativo'       => $this->boolean('ativo') ? 1 : 0,
-            'matricula'   => $this->filled('matricula') ? trim((string) $this->input('matricula')) : null,
+            'ativo'        => $this->boolean('ativo') ? 1 : 0,
+            'cpf'          => $somenteNumeros('cpf'),
+            'matricula'    => $somenteNumeros('matricula'),
+            'telefone'     => $somenteNumeros('telefone'),
         ]);
     }
 
     public function rules(): array
     {
-        $id = $this->route('funcionario') ?? $this->route('id') ?? $this->route('funcionarios');
+        // pode vir o modelo na rota
+        $funcionario = $this->route('funcionario');
+        $funcionarioId = is_object($funcionario) ? $funcionario->id : $funcionario;
 
         return [
-            // empresa só dirige o filtro de setores no front; não será persistida
-            'empresa_id'   => ['nullable', 'integer', 'exists:empresas,id'],
-
-            'setor_id'     => ['required', 'integer', 'exists:setores,id'],
-
-            'nome'         => ['required', 'string', 'min:2', 'max:80'],
-            'sobrenome'    => ['required', 'string', 'min:2', 'max:80'],
+            'empresa_id'   => ['required', 'exists:empresas,id'],
+            'setor_id'     => ['required', 'exists:setores,id'],
+            'nome'         => ['required', 'string', 'max:255'],
+            'sobrenome'    => ['required', 'string', 'max:255'],
 
             'cpf'          => [
                 'required',
-                'digits:11',
-                new CpfValido(),
-                Rule::unique('funcionarios', 'cpf')
-                    ->ignore($id, 'id')
-                    ->whereNull('apagado_em'),
+                new CpfValido(), // ← agora usa tua regra
+                Rule::unique('funcionarios', 'cpf')->ignore($funcionarioId),
             ],
 
-            // obrigatório quando NÃO terceirizado (terceirizado != 1)
             'matricula'    => [
+                'nullable',
+                'numeric',
                 'required_unless:terceirizado,1',
-                'string',
-                'max:30',
-                Rule::unique('funcionarios', 'matricula')
-                    ->ignore($id, 'id')
-                    ->whereNull('apagado_em'),
+                Rule::unique('funcionarios', 'matricula')->ignore($funcionarioId),
             ],
 
-            // telefone com DDD: 10 ou 11 dígitos
-            'telefone'     => ['nullable', 'digits_between:10,11'],
-
-            'terceirizado' => ['required', 'boolean'],
-            'ativo'        => ['required', 'boolean'],
-        ];
-    }
-
-    public function attributes(): array
-    {
-        return [
-            'empresa_id'   => 'empresa',
-            'setor_id'     => 'setor',
-            'nome'         => 'nome',
-            'sobrenome'    => 'sobrenome',
-            'cpf'          => 'CPF',
-            'matricula'    => 'matrícula',
-            'telefone'     => 'telefone',
-            'terceirizado' => 'terceirizado',
-            'ativo'        => 'ativo',
+            'telefone'     => ['nullable', 'string', 'max:15'],
+            'terceirizado' => ['nullable', 'boolean'],
+            'ativo'        => ['boolean'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            // genéricas
-            '*.required'            => 'O campo :attribute é obrigatório.',
-            '*.string'              => 'O campo :attribute deve ser um texto.',
-            '*.min'                 => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            '*.max'                 => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            '*.integer'             => 'O campo :attribute deve ser um número inteiro.',
-            '*.boolean'             => 'O campo :attribute deve ser verdadeiro ou falso.',
-            '*.exists'              => 'O :attribute selecionado é inválido.',
-            '*.unique'              => 'Já existe :attribute com esse valor.',
-            'cpf.digits'            => 'O CPF deve conter exatamente 11 dígitos.',
-            'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).',
-
-            // específicas
-            'setor_id.required'     => 'Selecione um setor.',
+            'empresa_id.required'   => 'Selecione a empresa.',
+            'empresa_id.exists'     => 'A empresa selecionada não existe.',
+            'setor_id.required'     => 'Selecione o setor.',
+            'setor_id.exists'       => 'O setor selecionado não existe.',
             'nome.required'         => 'Informe o nome.',
+            'nome.max'              => 'O nome pode ter no máximo :max caracteres.',
             'sobrenome.required'    => 'Informe o sobrenome.',
+            'sobrenome.max'         => 'O sobrenome pode ter no máximo :max caracteres.',
             'cpf.required'          => 'Informe o CPF.',
+            // não precisa mais do 'cpf.cpf'
+            'cpf.unique'            => 'Já existe um funcionário com este CPF.',
             'matricula.required_unless' => 'Informe a matrícula para funcionários próprios (não terceirizados).',
+            'matricula.numeric'     => 'A matrícula deve conter apenas números.',
+            'matricula.unique'      => 'Já existe um funcionário com esta matrícula.',
+            'telefone.max'          => 'O telefone pode ter no máximo :max caracteres.',
+            'terceirizado.boolean'  => 'O campo terceirizado deve ser verdadeiro ou falso.',
+            'ativo.boolean'         => 'O campo ativo deve ser verdadeiro ou falso.',
         ];
     }
 }

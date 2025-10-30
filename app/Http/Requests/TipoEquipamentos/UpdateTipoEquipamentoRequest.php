@@ -39,7 +39,6 @@ class UpdateTipoEquipamentoRequest extends FormRequest
 
         return [
             'nome' => [
-                'bail',
                 'required',
                 'string',
                 'min:3',

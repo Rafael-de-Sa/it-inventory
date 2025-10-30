@@ -145,11 +145,9 @@ class EquipamentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Equipamento $equipamento)
     {
-        $equipamento = Equipamento::with([
-            'tipoEquipamento:id,nome',
-        ])->findOrFail($id);
+        $equipamento->load('tipoEquipamento:id,nome');
 
         return view('equipamentos.show', compact('equipamento'));
     }

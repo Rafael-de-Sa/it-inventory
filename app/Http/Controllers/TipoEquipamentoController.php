@@ -64,18 +64,16 @@ class TipoEquipamentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(TipoEquipamento $tipoEquipamento)
     {
-        $tipoEquipamento = TipoEquipamento::findOrFail($id);
         return view('tipo-equipamentos.show', compact('tipoEquipamento'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id)
+    public function edit(TipoEquipamento $tipoEquipamento)
     {
-        $tipoEquipamento = TipoEquipamento::findOrFail($id);
         return view('tipo-equipamentos.edit', compact('tipoEquipamento'));
     }
 
@@ -83,11 +81,10 @@ class TipoEquipamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTipoEquipamentoRequest $request, string $id)
+    public function update(UpdateTipoEquipamentoRequest $request, TipoEquipamento $tipoEquipamento)
     {
         $data = $request->validated();
 
-        $tipoEquipamento = TipoEquipamento::findOrFail($id);
         $tipoEquipamento->update($data);
 
         return to_route('tipo-equipamentos.index')
@@ -97,19 +94,20 @@ class TipoEquipamentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(TipoEquipamento $tipoEquipamento)
     {
-        $tipo = TipoEquipamento::withCount('equipamentos')->findOrFail($id);
 
-        if ($tipo->equipamentos_count > 0) {
+        $tipoEquipamento->loadCount('equipamentos');
+
+        if ($tipoEquipamento->equipamentos_count > 0) {
             return back()->with(
                 'error',
-                "Não é possível excluir: há {$tipo->equipamentos_count} equipamento(s) vinculado(s) a este tipo."
+                "Não é possível excluir: há {$tipoEquipamento->equipamentos_count} equipamento(s) vinculado(s) a este tipo."
             );
         }
 
         try {
-            $tipo->delete();
+            $tipoEquipamento->delete();
 
             return to_route('tipo-equipamentos.index')
                 ->with('success', 'Tipo de equipamento excluído com sucesso!');

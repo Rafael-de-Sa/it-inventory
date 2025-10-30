@@ -88,15 +88,6 @@
                     </div>
                 </div>
 
-                @if ($setor->empresa)
-                    <div>
-                        <a href="{{ route('empresas.show', $setor->empresa->id) }}"
-                            class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-3 py-1.5 text-sm hover:bg-green-800/40">
-                            <i class="fa-solid fa-building"></i>
-                            Ver empresa
-                        </a>
-                    </div>
-                @endif
             </fieldset>
 
             {{-- Ações --}}

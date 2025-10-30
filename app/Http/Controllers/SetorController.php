@@ -100,10 +100,9 @@ class SetorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Setor $setor)
     {
-        $setor = Setor::with(['empresa:id,razao_social,cnpj'])->findOrFail($id);
-
+        $setor->with(['empresa:id,razao_social,cnpj']);
         return view('setores.show', compact('setor'));
     }
 
@@ -119,12 +118,11 @@ class SetorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSetorRequest $request, string $id)
+    public function update(UpdateSetorRequest $request, Setor $setor)
     {
         $dadosValidados   = $request->validated();
-        $setorEncontrado  = Setor::findOrFail($id);
 
-        $setorEncontrado->update($dadosValidados);
+        $setor->update($dadosValidados);
 
         return to_route('setores.index')
             ->with('success', 'Setor atualizado com sucesso!');
@@ -133,14 +131,12 @@ class SetorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Setor $setor)
     {
-        $setor = Setor::query()
-            ->withCount([
-                'funcionarios', // total cadastrados
-                'funcionarios as funcionarios_ativos_count' => fn($q) => $q->where('ativo', 1),
-            ])
-            ->findOrFail($id);
+        $setor->loadCount([
+            'funcionarios', // total cadastrados
+            'funcionarios as funcionarios_ativos_count' => fn($q) => $q->where('ativo', 1)
+        ]);
 
         // Bloqueia se houver qualquer funcionário cadastrado no setor
         if ($setor->funcionarios_count > 0) {

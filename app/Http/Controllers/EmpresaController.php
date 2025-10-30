@@ -81,29 +81,26 @@ class EmpresaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Empresa $empresa)
     {
-        $empresa = Empresa::findOrFail($id);
         return view('empresas.show', compact('empresa'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Empresa $empresa)
     {
-        $empresa = Empresa::findOrFail($id);
         return view('empresas.edit', compact('empresa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEmpresaRequest $request, string $id)
+    public function update(UpdateEmpresaRequest $request, Empresa $empresa)
     {
         $data = $request->validated();
 
-        $empresa = Empresa::findOrFail($id);
         $empresa->update($data);
 
         return to_route('empresas.index')
@@ -113,9 +110,9 @@ class EmpresaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Empresa $empresa)
     {
-        $empresa = Empresa::withCount('setores')->findOrFail($id);
+        $empresa->withCount('setores');
 
         if ($empresa->setores_count > 0) {
             return back()->with(

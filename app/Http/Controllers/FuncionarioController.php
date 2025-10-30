@@ -188,12 +188,12 @@ class FuncionarioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Funcionario $funcionario)
     {
-        $funcionario = Funcionario::with([
+        $funcionario->with([
             'setor:id,nome,empresa_id',
             'setor.empresa:id,nome_fantasia,cnpj',
-        ])->findOrFail($id);
+        ]);
 
         return view('funcionarios.show', compact('funcionario'));
     }
@@ -201,10 +201,10 @@ class FuncionarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Funcionario $funcionario)
     {
-        $funcionario = Funcionario::with(['setor:id,nome,empresa_id', 'setor.empresa:id,nome_fantasia'])
-            ->findOrFail($id);
+
+        $funcionario->load(['setor:id,nome,empresa_id', 'setor.empresa:id,nome_fantasia']);
 
         $opcoesEmpresas = Empresa::query()
             ->orderBy('nome_fantasia')
@@ -231,9 +231,8 @@ class FuncionarioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFuncionarioRequest $request, string $id)
+    public function update(UpdateFuncionarioRequest $request, Funcionario $funcionario)
     {
-        $funcionario = Funcionario::findOrFail($id);
 
         $dados = $request->validated();
 
@@ -258,15 +257,14 @@ class FuncionarioController extends Controller
         $funcionario->update($dados);
 
         return redirect()
-            ->route('funcionarios.show', $funcionario->id)
+            ->route('funcionarios.index', $funcionario->id)
             ->with('success', 'Funcionário atualizado com sucesso.');
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Funcionario $funcionario)
     {
-        $funcionario = Funcionario::findOrFail($id);
 
         if (! $funcionario->ativo && $funcionario->trashed()) {
             return redirect()->route('funcionarios.index')

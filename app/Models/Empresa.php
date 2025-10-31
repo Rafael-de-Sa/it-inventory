@@ -59,4 +59,22 @@ class Empresa extends Model
     {
         return Mask::telefone($this->telefone);
     }
+
+    public function scopeAptasParaUsuario($query)
+    {
+        return $query
+            ->where('ativo', true)
+            ->whereNull('apagado_em')
+            ->whereHas('setores', function ($q) {
+                $q->where('ativo', true)
+                    ->whereNull('apagado_em')
+                    ->whereHas('funcionarios', function ($f) {
+                        $f->whereNull('desligado_em')
+                            ->where('ativo', true)
+                            ->where('terceirizado', false)
+                            ->whereDoesntHave('usuario')
+                            ->whereNull('apagado_em');
+                    });
+            });
+    }
 }

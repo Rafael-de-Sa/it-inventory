@@ -63,15 +63,13 @@
                             ])>
                                 <i class="fa-solid fa-user-tie"></i> Funcionários
                             </a>
-                            {{-- usuários (quando você criar o resource) --}}
-                            @if (Route::has('usuarios.index'))
-                                <a href="{{ route('usuarios.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('usuarios.*'),
-                                ])>
-                                    <i class="fa-solid fa-users-gear"></i> Usuários
-                                </a>
-                            @endif
+                            {{-- usuários --}}
+                            <a href="{{ route('usuarios.index') }}" @class([
+                                'block px-4 py-2 hover:bg-green-800/50',
+                                'text-green-300' => request()->routeIs('usuarios.*'),
+                            ])>
+                                <i class="fa-solid fa-users-gear"></i> Usuários
+                            </a>
                         </div>
                     </div>
                 </div>

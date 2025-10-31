@@ -11,7 +11,7 @@ class StoreUsuarioRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,36 @@ class StoreUsuarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'funcionario_id' => ['required', 'exists:funcionarios,id', 'unique:usuarios,funcionario_id'],
+            'email'          => ['required', 'email', 'max:100', 'unique:usuarios,email', 'confirmed'],
+            'senha'          => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            ],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'funcionario_id'       => 'funcionário',
+            'email'                => 'e-mail',
+            'senha'                => 'senha',
+            'senha_confirmation'   => 'confirmação da senha',
+            'email_confirmation'   => 'confirmação da e-mail',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'funcionario_id.unique' => 'Este funcionário já possui um usuário vinculado.',
+            'senha.confirmed'       => 'A confirmação da senha não confere.',
+            'email.confirmed'       => 'A confirmação da e-mail não confere.',
+            'senha.regex'           => 'A senha deve ter ao menos 8 caracteres, 1 letra maiúscula, 1 número e 1 caractere especial.',
         ];
     }
 }

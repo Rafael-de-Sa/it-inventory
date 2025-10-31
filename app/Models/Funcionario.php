@@ -55,4 +55,16 @@ class Funcionario extends Model
     {
         return $this->hasMany(Movimentacao::class);
     }
+
+    public function scopeAptosParaUsuario($query)
+    {
+        return $query
+            ->whereNull('desligado_em')
+            ->where('ativo', true)
+            ->where('terceirizado', false)
+            ->whereDoesntHave('usuario')
+            ->whereNull('apagado_em');
+    }
 }
+
+//TODO: Ajustar o cadastro de Funcionário para quando carregar o create, só carregar empresas com setor ativo

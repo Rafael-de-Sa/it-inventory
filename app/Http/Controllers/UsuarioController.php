@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Usuarios\IndexRequest;
 use App\Http\Requests\Usuarios\StoreUsuarioRequest;
 use App\Models\Empresa;
 use App\Models\Funcionario;
@@ -15,9 +16,127 @@ class UsuarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexRequest $request)
     {
-        //
+        $dadosFiltro = $request->validated();
+
+        $consultaUsuarios = Usuario::query()
+            ->with(['funcionario']);
+
+
+        if (!empty($dadosFiltro['id'])) {
+            $consultaUsuarios->where('usuarios.id', $dadosFiltro['id']);
+        }
+
+        if (!empty($dadosFiltro['email'])) {
+            $consultaUsuarios->where('usuarios.email', 'like', '%' . $dadosFiltro['email'] . '%');
+        }
+
+        if (array_key_exists('ativo', $dadosFiltro) && $dadosFiltro['ativo'] !== null) {
+            $consultaUsuarios->where('usuarios.ativo', $dadosFiltro['ativo']);
+        }
+
+        if (!empty($dadosFiltro['funcionario'])) {
+            $termoBuscaFuncionario = $dadosFiltro['funcionario'];
+
+            $consultaUsuarios->whereHas('funcionario', function ($consultaFuncionario) use ($termoBuscaFuncionario) {
+                $consultaFuncionario
+                    ->where('funcionarios.nome', 'like', '%' . $termoBuscaFuncionario . '%')
+                    ->orWhere('funcionarios.sobrenome', 'like', '%' . $termoBuscaFuncionario . '%')
+                    ->orWhereRaw(
+                        "CONCAT(funcionarios.nome, ' ', funcionarios.sobrenome) LIKE ?",
+                        ['%' . $termoBuscaFuncionario . '%']
+                    );
+            });
+        }
+
+        if (!empty($dadosFiltro['busca'])) {
+            $termoBusca = $dadosFiltro['busca'];
+            $campoBusca = $dadosFiltro['campo'] ?? null;
+
+            $consultaUsuarios->where(function ($consulta) use ($termoBusca, $campoBusca) {
+                $termoBuscaNumerico = ctype_digit($termoBusca) ? (int) $termoBusca : null;
+
+                if ($campoBusca === 'id') {
+                    if ($termoBuscaNumerico !== null) {
+                        $consulta->where('usuarios.id', $termoBuscaNumerico);
+                    } else {
+                        $consulta->whereRaw('1 = 0');
+                    }
+                    return;
+                }
+
+                if ($campoBusca === 'email') {
+                    $consulta->where('usuarios.email', 'like', '%' . $termoBusca . '%');
+                    return;
+                }
+
+                if ($campoBusca === 'funcionario') {
+                    $consulta->whereHas('funcionario', function ($consultaFuncionario) use ($termoBusca) {
+                        $consultaFuncionario
+                            ->where('funcionarios.nome', 'like', '%' . $termoBusca . '%')
+                            ->orWhere('funcionarios.sobrenome', 'like', '%' . $termoBusca . '%')
+                            ->orWhereRaw(
+                                "CONCAT(funcionarios.nome, ' ', funcionarios.sobrenome) LIKE ?",
+                                ['%' . $termoBusca . '%']
+                            );
+                    });
+
+                    return;
+                }
+
+                $consulta->where(function ($subconsulta) use ($termoBusca, $termoBuscaNumerico) {
+                    if ($termoBuscaNumerico !== null) {
+                        $subconsulta->orWhere('usuarios.id', $termoBuscaNumerico);
+                    }
+
+                    $subconsulta->orWhere('usuarios.email', 'like', '%' . $termoBusca . '%');
+
+                    $subconsulta->orWhereHas('funcionario', function ($consultaFuncionario) use ($termoBusca) {
+                        $consultaFuncionario
+                            ->where('funcionarios.nome', 'like', '%' . $termoBusca . '%')
+                            ->orWhere('funcionarios.sobrenome', 'like', '%' . $termoBusca . '%')
+                            ->orWhereRaw(
+                                "CONCAT(funcionarios.nome, ' ', funcionarios.sobrenome) LIKE ?",
+                                ['%' . $termoBusca . '%']
+                            );
+                    });
+                });
+            });
+        }
+
+        $colunaOrdenacao = $dadosFiltro['ordenar_por'] ?? 'id';
+        $direcaoOrdenacao = $dadosFiltro['direcao'] ?? 'asc';
+
+        if ($colunaOrdenacao === 'funcionario') {
+            $consultaUsuarios
+                ->leftJoin('funcionarios', 'funcionarios.id', '=', 'usuarios.funcionario_id')
+                ->select('usuarios.*')
+                ->orderByRaw(
+                    "funcionarios.nome {$direcaoOrdenacao}, funcionarios.sobrenome {$direcaoOrdenacao}"
+                );
+        } else {
+            $colunasPermitidas = ['id', 'email', 'ultimo_login', 'ativo'];
+
+            if (!in_array($colunaOrdenacao, $colunasPermitidas, true)) {
+                $colunaOrdenacao = 'id';
+            }
+
+            $direcaoOrdenacao = $direcaoOrdenacao === 'desc' ? 'desc' : 'asc';
+
+            $consultaUsuarios->orderBy('usuarios.' . $colunaOrdenacao, $direcaoOrdenacao);
+        }
+
+        $listaDeUsuarios = $consultaUsuarios
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('usuarios.index', [
+            'listaDeUsuarios'   => $listaDeUsuarios,
+            'termoBusca'        => $dadosFiltro['busca'] ?? null,
+            'colunaOrdenacao'   => $colunaOrdenacao,
+            'direcaoOrdenacao'  => $direcaoOrdenacao,
+        ]);
     }
 
     /**

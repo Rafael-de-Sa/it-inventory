@@ -170,7 +170,7 @@
                             <td class="px-4 py-2">{{ $funcionario->ativo ? 'Ativo' : 'Inativo' }}</td>
                             <td class="px-4 py-2">{{ $funcionario->terceirizado ? 'Sim' : 'Não' }}</td>
 
-                            <td class="px-4 py-2 text-right">
+                            <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
                                     <a href="{{ route('funcionarios.show', $funcionario->id) }}"

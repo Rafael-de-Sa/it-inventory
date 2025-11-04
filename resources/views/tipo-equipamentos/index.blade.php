@@ -111,7 +111,7 @@
                 <thead class="bg-green-900/60 text-green-100 text-center">
                     <tr>
                         <th class="px-4 py-2">ID</th>
-                        <th class="px-4 py-2 text-left">Nome</th>
+                        <th class="px-4 py-2 ">Nome</th>
                         <th class="px-4 py-2">Ativo</th>
                         <th class="px-4 py-2">Ações</th>
                     </tr>
@@ -127,7 +127,7 @@
                     @forelse($listaDeTipos as $tipo)
                         <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
                             <td class="px-4 py-2 text-center">{{ $tipo->id }}</td>
-                            <td class="px-4 py-2">{{ $tipo->nome }}</td>
+                            <td class="px-4 py-2 text-center">{{ $tipo->nome }}</td>
                             <td class="px-4 py-2 text-center">{{ $tipo->ativo ? 'Ativo' : 'Inativo' }}</td>
 
                             {{-- Ações padronizadas --}}

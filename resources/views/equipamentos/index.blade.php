@@ -139,7 +139,7 @@
                             </td>
 
                             {{-- Descrição resumida com tooltip --}}
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-2 text-center">
                                 @php $descricaoCompleta = $equipamento->descricao ?? ''; @endphp
                                 <span class="block max-w-[28rem] truncate" title="{{ $descricaoCompleta }}">
                                     {{ \Illuminate\Support\Str::limit($descricaoCompleta, 80) }}
@@ -163,7 +163,7 @@
                             <td class="px-4 py-2 text-center">{{ $equipamento->numero_serie ?? '-' }}</td>
 
                             {{-- Ações com hover padronizado (ícones, borda, fundo e transição) --}}
-                            <td class="px-4 py-2 text-right">
+                            <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
                                     <a href="{{ route('equipamentos.show', $equipamento->id) }}"

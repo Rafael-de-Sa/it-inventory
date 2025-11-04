@@ -95,9 +95,9 @@
                 <thead class="bg-green-900/60 text-green-100 text-center">
                     <tr>
                         <th class="px-4 py-2">ID</th>
-                        <th class="px-4 py-2 text-left">Nome</th>
-                        <th class="px-4 py-2 text-left">Nome Empresa</th>
-                        <th class="px-4 py-2 text-left">CNPJ Empresa</th>
+                        <th class="px-4 py-2 ">Nome</th>
+                        <th class="px-4 py-2 ">Nome Empresa</th>
+                        <th class="px-4 py-2 ">CNPJ Empresa</th>
                         <th class="px-4 py-2">Ativo</th>
                         <th class="px-4 py-2">Ações</th>
                     </tr>
@@ -106,11 +106,11 @@
                     @forelse($setores as $setor)
                         <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
                             <td class="px-4 py-2 text-center">{{ $setor->id }}</td>
-                            <td class="px-4 py-2">{{ $setor->nome }}</td>
-                            <td class="px-4 py-2">{{ $setor->empresa?->razao_social }}</td>
-                            <td class="px-4 py-2">{{ \App\Support\Mask::cnpj($setor->empresa?->cnpj) }}</td>
+                            <td class="px-4 py-2 text-center">{{ $setor->nome }}</td>
+                            <td class="px-4 py-2 text-center">{{ $setor->empresa?->razao_social }}</td>
+                            <td class="px-4 py-2 text-center">{{ \App\Support\Mask::cnpj($setor->empresa?->cnpj) }}</td>
                             <td class="px-4 py-2 text-center">{{ $setor->ativo ? 'Ativo' : 'Inativo' }}</td>
-                            <td class="px-4 py-2 text-right">
+                            <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     <a href="{{ route('setores.show', $setor->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-green-800/20"

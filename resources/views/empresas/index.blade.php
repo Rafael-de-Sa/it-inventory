@@ -146,10 +146,10 @@
                 <tbody class="bg-green-950/10">
                     @forelse($listaDeEmpresas as $empresa)
                         <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
-                            <td class="px-4 py-2">{{ $empresa->id }}</td>
-                            <td class="px-4 py-2">{{ $empresa->nome_fantasia }}</td>
-                            <td class="px-4 py-2">{{ $empresa->razao_social }}</td>
-                            <td class="px-4 py-2">{{ \App\Support\Mask::cnpj($empresa->cnpj) }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->id }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->nome_fantasia }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->razao_social }}</td>
+                            <td class="px-4 py-2 text-center">{{ \App\Support\Mask::cnpj($empresa->cnpj) }}</td>
                             {{-- <td class="px-4 py-2">{{ $empresa->email }}</td>
                             <td class="px-4 py-2">{{ \App\Support\Mask::telefone($empresa->telefone) }}</td>
                             <td class="px-4 py-2">{{ $empresa->rua }}</td>
@@ -157,14 +157,14 @@
                             <td class="px-4 py-2">{{ $empresa->complemento }}</td>
                             <td class="px-4 py-2">{{ $empresa->bairro }}</td>
                             <td class="px-4 py-2">{{ \App\Support\Mask::cep($empresa->cep) }}</td> --}}
-                            <td class="px-4 py-2">{{ $empresa->cidade }}</td>
-                            <td class="px-4 py-2">{{ $empresa->estado }}</td>
-                            <td class="px-4 py-2">{{ $empresa->ativo ? 'Ativo' : 'Inativo' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->cidade }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->estado }}</td>
+                            <td class="px-4 py-2 text-center">{{ $empresa->ativo ? 'Ativo' : 'Inativo' }}</td>
                             {{-- <td class="px-4 py-2">{{ optional($empresa->criado_em)->format('d/m/Y H:i') }}</td>
                             <td class="px-4 py-2">{{ optional($empresa->atualizado_em)->format('d/m/Y H:i') }}</td> --}}
 
                             {{-- Ações: Editar / Excluir --}}
-                            <td class="px-4 py-2 text-right">
+                            <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
                                     <a href="{{ route('empresas.show', $empresa->id) }}"

@@ -178,9 +178,14 @@ class UsuarioController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+
+    public function show(Usuario $usuario)
     {
-        //
+        $usuario->load('funcionario');
+
+        return view('usuarios.show', [
+            'usuario' => $usuario,
+        ]);
     }
 
     /**

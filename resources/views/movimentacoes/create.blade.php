@@ -163,10 +163,11 @@
 
                     <div class="md:col-span-4">
                         <label for="filtro_tipo" class="mb-1 block text-sm text-green-100">Filtrar por tipo</label>
-                        <select id="filtro_tipo"
-                            class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900">
+                        <select id="filtro_tipo" @class([
+                            'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
+                            'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
+                        ])>
                             <option value="">Todos os tipos</option>
-                            {{-- opções preenchidas via JS com base na tabela --}}
                         </select>
                     </div>
 

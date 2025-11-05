@@ -35,9 +35,13 @@ Route::resource('funcionarios', FuncionarioController::class);
 Route::get('empresas/{empresa}/setores', [FuncionarioController::class, 'setoresPorEmpresa'])
     ->name('funcionarios.setoresPorEmpresa');
 
-Route::resource('movimentacoes', MovimentacaoController::class)
-    ->parameters(['movimentacoes' => 'movimentacao']);
-
 Route::resource('usuarios', UsuarioController::class);
 Route::get('/empresas/{empresa}/setores-ativos', [UsuarioController::class, 'setoresAtivos']);
 Route::get('/setores/{setor}/funcionarios-disponiveis', [UsuarioController::class, 'funcionariosPorSetor']);
+
+Route::resource('movimentacoes', MovimentacaoController::class)
+    ->parameters(['movimentacoes' => 'movimentacao']);
+Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::class, 'setoresParaMovimentacao'])
+    ->name('movimentacoes.setores-para-movimentacao');
+Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
+    ->name('movimentacoes.funcionarios-para-movimentacao');

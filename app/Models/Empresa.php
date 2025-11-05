@@ -77,4 +77,28 @@ class Empresa extends Model
                     });
             });
     }
+
+    public function scopeAptasParaMovimentacao($query)
+    {
+        return $query
+            ->where('ativo', true)
+            ->whereNull('apagado_em')
+            ->whereHas('setores', function ($querySetor) {
+                $querySetor
+                    ->where('ativo', true)
+                    ->whereNull('apagado_em')
+                    ->whereHas('funcionarios', function ($queryFuncionario) {
+                        $queryFuncionario
+                            ->where('ativo', true)
+                            ->whereNull('desligado_em')
+                            ->whereNull('apagado_em');
+                    });
+            });
+    }
+
+    public function getRotuloEmpresaAttribute(): string
+    {
+        $razaoSocial = $this->razao_social ?: $this->nome_fantasia;
+        return trim($razaoSocial . ' - ' . $this->cnpj_masked);
+    }
 }

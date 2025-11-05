@@ -265,12 +265,6 @@ class FuncionarioController extends Controller
      */
     public function destroy(Funcionario $funcionario)
     {
-
-        if ($funcionario->trashed()) {
-            return redirect()->route('funcionarios.index')
-                ->with('error', 'O funcionário já está excluído.');
-        }
-
         $funcionario->delete();
 
         return redirect()->route('funcionarios.index')

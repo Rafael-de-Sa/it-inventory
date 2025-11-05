@@ -226,9 +226,17 @@ class UsuarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Usuario $usuario)
     {
-        //
+        if ($usuario->trashed()) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'O funcionário já está excluído.');
+        }
+
+        $usuario->delete();
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuário  removido com sucesso.');
     }
 
     public function setoresAtivos(Empresa $empresa)

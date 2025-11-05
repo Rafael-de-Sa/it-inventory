@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Usuarios\IndexRequest;
 use App\Http\Requests\Usuarios\StoreUsuarioRequest;
+use App\Http\Requests\Usuarios\UpdateUsuarioRequest;
 use App\Models\Empresa;
 use App\Models\Funcionario;
 use App\Models\Setor;
 use App\Models\Usuario;
 use App\Support\Mask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -191,19 +193,36 @@ class UsuarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Usuario $usuario)
     {
-        //
+        $usuario->load(['funcionario.setor.empresa']);
+
+        return view('usuarios.edit', [
+            'usuario' => $usuario,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUsuarioRequest $request, Usuario $usuario)
     {
-        //
-    }
+        $dados = $request->validated();
 
+        $usuario->email = $dados['email'];
+
+        $usuario->ativo = $dados['ativo'] ?? false;
+
+        if (!empty($dados['senha'])) {
+            $usuario->senha = Hash::make($dados['senha']);
+        }
+
+        $usuario->save();
+
+        return redirect()
+            ->route('usuarios.index', $usuario->id)
+            ->with('success', 'Usuário atualizado com sucesso.');
+    }
     /**
      * Remove the specified resource from storage.
      */

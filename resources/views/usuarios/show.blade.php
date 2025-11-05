@@ -41,9 +41,23 @@
                             class="h-5 w-5 rounded border-green-700 bg-gray-300 text-green-600 cursor-default
                                    focus:outline-none focus:ring-0 focus:border-green-700">
 
-                        <span class="text-sm text-green-100">
-                            {{ $usuario->ativo ? 'Ativo' : 'Inativo' }}
-                        </span>
+                        @if ($usuario->ativo)
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium
+                                              border border-green-600/60 bg-green-600/15 text-green-100
+                                              ring-1 ring-inset ring-green-400/10 shadow-sm">
+                                <i class="fa-solid fa-check-circle text-[10px]"></i>
+                                Ativo
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium
+                                              border border-gray-500/60 bg-gray-500/15 text-gray-200/80
+                                              ring-1 ring-inset ring-gray-400/10 shadow-sm">
+                                <i class="fa-solid fa-circle-xmark text-[10px]"></i>
+                                Inativo
+                            </span>
+                        @endif
                     </div>
                 </div>
             </div>

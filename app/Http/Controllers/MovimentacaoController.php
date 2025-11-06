@@ -165,7 +165,7 @@ class MovimentacaoController extends Controller
             ->orderBy('id')
             ->get();
 
-        return view('movimentacoes.index', compact('listaDeEmpresas', 'listaDeEquipamentos'));
+        return view('movimentacoes.create', compact('listaDeEmpresas', 'listaDeEquipamentos'));
     }
 
     /**

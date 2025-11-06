@@ -234,13 +234,13 @@
                             <td class="px-4 py-2 text-center">
                                 {{ optional($movimentacao->criado_em)->format('d/m/Y H:i') }}
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-2 text-center">
                                 {{ $empresa?->rotulo_empresa ?? ($empresa?->razao_social ?? '-') }}
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-2 text-center">
                                 {{ $setor?->nome ?? '-' }}
                             </td>
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-2 text-center">
                                 @if ($funcionario)
                                     {{ trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? '')) }}
                                     @if ($funcionario->matricula)

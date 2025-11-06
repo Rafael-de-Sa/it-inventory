@@ -7,7 +7,7 @@
             data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
             data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
             data-old-empresa-id="{{ old('empresa_id') }}" data-old-setor-id="{{ old('setor_id') }}"
-            data-old-funcionario-id="{{ old('funcionario_id') }}">
+            data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos='@json(old('equipamentos', []))'>
             @csrf
 
             {{-- Cabeçalho --}}
@@ -157,7 +157,7 @@
                     <div class="md:col-span-6">
                         <label for="busca_equipamento" class="mb-1 block text-sm text-green-100">Busca equipamento</label>
                         <input type="text" id="busca_equipamento" name="busca_equipamento"
-                            placeholder="Patrimônio ou descrição..."
+                            placeholder="Patrimônio, número de série ou descrição..."
                             class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
                     </div>
 
@@ -208,6 +208,7 @@
                                     <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15"
                                         data-equipamento-id="{{ $equipamento->id }}"
                                         data-equipamento-patrimonio="{{ $equipamento->patrimonio }}"
+                                        data-equipamento-serie="{{ $equipamento->numero_serie }}"
                                         data-equipamento-descricao="{{ $equipamento->descricao }}"
                                         data-equipamento-tipo="{{ $equipamento->tipoEquipamento->nome ?? '' }}">
                                         <td class="px-4 py-2 text-center">

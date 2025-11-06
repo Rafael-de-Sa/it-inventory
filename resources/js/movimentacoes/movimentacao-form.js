@@ -168,13 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
         tabelaEquipamentosDisponiveis.querySelectorAll('tr[data-equipamento-id]').forEach((linha) => {
             const patrimonio = (linha.getAttribute('data-equipamento-patrimonio') || '').toLowerCase();
             const descricao = (linha.getAttribute('data-equipamento-descricao') || '').toLowerCase();
+            const serie = (linha.getAttribute('data-equipamento-serie') || '').toLowerCase();
             const tipo = (linha.getAttribute('data-equipamento-tipo') || '').toLowerCase();
 
             let deveExibir = true;
 
             if (termoBusca) {
                 const correspondeAoTermo =
-                    patrimonio.includes(termoBusca) || descricao.includes(termoBusca);
+                    patrimonio.includes(termoBusca) || descricao.includes(termoBusca) || serie.includes(termoBusca);
 
                 if (!correspondeAoTermo) deveExibir = false;
             }
@@ -237,5 +238,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (oldEmpresaId) {
         carregarSetores(oldEmpresaId, oldSetorId || null);
+    }
+
+    const oldEquipamentos = JSON.parse(formulario.dataset.oldEquipamentos || '[]');
+
+    if (Array.isArray(oldEquipamentos) && oldEquipamentos.length > 0) {
+        oldEquipamentos.forEach((idEquipamento) => {
+            const linha = tabelaEquipamentosDisponiveis.querySelector(`tr[data-equipamento-id="${idEquipamento}"]`);
+            if (linha) {
+                tabelaEquipamentosSelecionados.appendChild(linha);
+            }
+        });
+
+        atualizarInputsEquipamentos();
     }
 });

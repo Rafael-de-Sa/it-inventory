@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Movimentacoes\IndexRequest;
 use App\Http\Requests\Movimentacoes\StoreMovimentacaoRequest;
 use App\Models\Empresa;
 use App\Models\Equipamento;
@@ -16,9 +17,133 @@ class MovimentacaoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexRequest $request)
     {
-        //
+        $dados = $request->validated();
+
+        $query = Movimentacao::query()
+            ->with([
+                'setor.empresa',
+                'funcionario',
+                'equipamentos',
+            ])
+            ->whereNull('apagado_em');
+
+        // -----------------------------
+        // Busca por ID da movimentação
+        // -----------------------------
+        if (!empty($dados['busca'])) {
+            $busca = trim($dados['busca']);
+
+            if (ctype_digit($busca)) {
+                $query->where('id', (int) $busca);
+            } else {
+                // Se o usuário digitar algo não numérico, não aplica filtro por ID
+                // (poderia forçar "sem resultados", mas preferi ignorar)
+            }
+        }
+
+        // -----------------------------
+        // Filtros em cascata
+        // -----------------------------
+
+        // Empresa
+        if (!empty($dados['empresa_id'])) {
+            $empresaId = (int) $dados['empresa_id'];
+
+            $query->whereHas('setor', function ($subQuery) use ($empresaId) {
+                $subQuery->where('empresa_id', $empresaId)
+                    ->whereNull('apagado_em');
+            });
+        }
+
+        // Setor (só se empresa foi informada, conforme sua regra)
+        if (!empty($dados['setor_id']) && !empty($dados['empresa_id'])) {
+            $query->where('setor_id', (int) $dados['setor_id']);
+        }
+
+        // Funcionário (só se empresa e setor foram informados)
+        if (!empty($dados['funcionario_id']) && !empty($dados['empresa_id']) && !empty($dados['setor_id'])) {
+            $query->where('funcionario_id', (int) $dados['funcionario_id']);
+        }
+
+        // Status
+        if (!empty($dados['status'])) {
+            $query->where('status', $dados['status']);
+        }
+
+        // -----------------------------
+        // Ordenação
+        // -----------------------------
+        $colunaOrdenacao  = $dados['ordenar_por'] ?? 'data';
+        $direcaoOrdenacao = $dados['direcao'] ?? 'desc';
+
+        switch ($colunaOrdenacao) {
+            case 'id':
+                $colunaBanco = 'id';
+                break;
+
+            case 'status':
+                $colunaBanco = 'status';
+                break;
+
+            case 'data':
+            default:
+                $colunaBanco  = 'criado_em'; // data da movimentação
+                $colunaOrdenacao = 'data';
+                break;
+        }
+
+        $query->orderBy($colunaBanco, $direcaoOrdenacao);
+
+        $listaDeMovimentacoes = $query
+            ->paginate(25)
+            ->withQueryString();
+
+        // -----------------------------
+        // Dados para os filtros (combos)
+        // -----------------------------
+
+        // Empresas (pode ser aptasParaMovimentacao ou outro scope que você quiser usar)
+        $listaDeEmpresas = Empresa::query()
+            ->aptasParaMovimentacao()
+            ->orderBy('razao_social')
+            ->orderBy('nome_fantasia')
+            ->get();
+
+        // Setores: apenas se empresa foi selecionada
+        $listaDeSetores = collect();
+        if (!empty($dados['empresa_id'])) {
+            $listaDeSetores = Setor::query()
+                ->where('empresa_id', (int) $dados['empresa_id'])
+                ->whereNull('apagado_em')
+                ->orderBy('nome')
+                ->get();
+        }
+
+        // Funcionários: apenas se setor foi selecionado
+        // aqui NÃO filtramos por ativo/desligado/terceirizado
+        $listaDeFuncionarios = collect();
+        if (!empty($dados['setor_id'])) {
+            $listaDeFuncionarios = Funcionario::query()
+                ->where('setor_id', (int) $dados['setor_id'])
+                ->whereNull('apagado_em')
+                ->orderBy('nome')
+                ->orderBy('sobrenome')
+                ->get();
+        }
+
+        $termoBusca = $dados['busca'] ?? null;
+
+        return view('movimentacoes.index', [
+            'listaDeMovimentacoes' => $listaDeMovimentacoes,
+            'listaDeEmpresas'      => $listaDeEmpresas,
+            'listaDeSetores'       => $listaDeSetores,
+            'listaDeFuncionarios'  => $listaDeFuncionarios,
+            'termoBusca'           => $termoBusca,
+            'colunaOrdenacao'      => $colunaOrdenacao,
+            'direcaoOrdenacao'     => $direcaoOrdenacao,
+        ]);
     }
 
     /**
@@ -40,7 +165,7 @@ class MovimentacaoController extends Controller
             ->orderBy('id')
             ->get();
 
-        return view('movimentacoes.create', compact('listaDeEmpresas', 'listaDeEquipamentos'));
+        return view('movimentacoes.index', compact('listaDeEmpresas', 'listaDeEquipamentos'));
     }
 
     /**

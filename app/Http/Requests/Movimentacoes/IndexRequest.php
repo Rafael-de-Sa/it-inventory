@@ -31,7 +31,9 @@ class IndexRequest extends FormRequest
             'funcionario_id' => ['nullable', 'integer', 'exists:funcionarios,id'],
 
             // Status (ajuste os valores conforme seu enum)
-            'status' => ['nullable', 'string', 'max:50'],
+            // app/Http/Requests/Movimentacoes/IndexRequest.php
+            'status' => ['nullable', 'string', 'in:pendente,cancelada,concluida,encerrada'],
+
 
             // Ordenação
             'ordenar_por'    => ['nullable', 'in:id,data,status'],

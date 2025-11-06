@@ -44,6 +44,7 @@
                         '' => 'Todos',
                         'pendente' => 'Pendente',
                         'concluida' => 'Concluída',
+                        'encerrada' => 'Encerrada',
                         'cancelada' => 'Cancelada',
                     ];
                 @endphp
@@ -210,12 +211,19 @@
                                 case 'pendente':
                                     $badgeClasses .= ' bg-yellow-500/20 text-yellow-200 border border-yellow-500/60';
                                     break;
+
                                 case 'concluida':
+                                    $badgeClasses .= ' bg-blue-500/20 text-blue-200 border border-blue-500/60';
+                                    break;
+
+                                case 'encerrada':
                                     $badgeClasses .= ' bg-green-500/20 text-green-200 border border-green-500/60';
                                     break;
+
                                 case 'cancelada':
                                     $badgeClasses .= ' bg-red-500/20 text-red-200 border border-red-500/60';
                                     break;
+
                                 default:
                                     $badgeClasses .= ' bg-gray-500/20 text-gray-200 border border-gray-500/60';
                                     break;

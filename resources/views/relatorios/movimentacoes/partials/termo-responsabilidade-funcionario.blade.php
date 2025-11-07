@@ -1,5 +1,6 @@
 @php
     use App\Support\Mask;
+    use Illuminate\Support\Str;
 
     $razaoSocialEmpresa = $empresaFuncionario->razao_social ?? null;
     $nomeFantasiaEmpresa = $empresaFuncionario->nome_fantasia ?? null;
@@ -7,46 +8,53 @@
     $cnpjFormatado = !empty($empresaFuncionario?->cnpj) ? Mask::cnpj($empresaFuncionario->cnpj) : null;
 
     $cpfFormatado = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
+
+    // Nome completo em maiúsculo (UTF-8)
+    $nomeCompleto = trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? ''));
+    $nomeCompletoMaiusculo = Str::upper($nomeCompleto);
 @endphp
 
-{{-- Cabeçalho do sistema --}}
-<div class="cabecalho-sistema">
-    {{-- DOMPDF lê melhor usando public_path, certifica que o arquivo está em /public/assets/logo-teste.png --}}
-    <img src="{{ public_path('assets/logo-teste.png') }}" alt="Logo IT Inventory" class="cabecalho-sistema-logo">
+{{-- Cabeçalho geral: sistema à esquerda, empresa à direita --}}
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+    {{-- Cabeçalho do sistema --}}
+    <div class="cabecalho-sistema">
+        {{-- IMPORTANTE: arquivo deve existir em /public/assets/logo-teste.png --}}
+        <img src="{{ asset('assets/logo-teste.png') }}" alt="Logo IT Inventory" class="cabecalho-sistema-logo">
 
-    <div>
-        <div class="cabecalho-sistema-nome">
-            IT Inventory
-        </div>
-        <div style="font-size:10px; color:#4b5563;">
-            Sistema de Gestão de Ativos de TI
+        <div>
+            <div class="cabecalho-sistema-nome">
+                IT Inventory
+            </div>
+            <div style="font-size: 10px; color: #4b5563;">
+                Sistema de Gestão de Ativos de TI
+            </div>
         </div>
     </div>
-</div>
 
-{{-- Cabeçalho da empresa --}}
-<div class="cabecalho-empresa">
-    @if ($razaoSocialEmpresa)
-        <strong>{{ strtoupper($razaoSocialEmpresa) }}</strong><br>
-    @endif
+    {{-- Cabeçalho da empresa --}}
+    <div class="cabecalho-empresa" style="text-align: right; margin-bottom: 0;">
+        @if ($razaoSocialEmpresa)
+            <strong>{{ Str::upper($razaoSocialEmpresa) }}</strong><br>
+        @endif
 
-    @if ($nomeFantasiaEmpresa)
-        <span class="cabecalho-empresa-linha-secundaria">
-            Nome fantasia: {{ $nomeFantasiaEmpresa }}
-        </span><br>
-    @endif
+        @if ($nomeFantasiaEmpresa)
+            <span class="cabecalho-empresa-linha-secundaria">
+                Nome fantasia: {{ $nomeFantasiaEmpresa }}
+            </span><br>
+        @endif
 
-    @if ($cnpjFormatado)
-        <span class="cabecalho-empresa-linha-secundaria">
-            CNPJ: {{ $cnpjFormatado }}
-        </span><br>
-    @endif
+        @if ($cnpjFormatado)
+            <span class="cabecalho-empresa-linha-secundaria">
+                CNPJ: {{ $cnpjFormatado }}
+            </span><br>
+        @endif
 
-    @if (!empty($setorFuncionario?->nome))
-        <span class="cabecalho-empresa-linha-secundaria">
-            Setor: {{ $setorFuncionario->nome }}
-        </span><br>
-    @endif
+        @if (!empty($setorFuncionario?->nome))
+            <span class="cabecalho-empresa-linha-secundaria">
+                Setor: {{ $setorFuncionario->nome }}
+            </span><br>
+        @endif
+    </div>
 </div>
 
 <div class="titulo-principal">
@@ -55,7 +63,7 @@
 
 <div class="secao-texto">
     O abaixo-assinado, Sr(a)
-    <strong>{{ mb_strtoupper($funcionario->nome . ' ' . $funcionario->sobrenome, 'UTF-8') }}</strong>,
+    <strong>{{ $nomeCompletoMaiusculo }}</strong>,
     portador(a) da matrícula
     <strong>{{ $funcionario->matricula }}</strong>,
     @if ($cpfFormatado)
@@ -134,34 +142,25 @@
     dos prejuízos causados à empresa.
 </div>
 
-{{-- Linha de data em branco para preenchimento manual --}}
-<div class="rodape-local-data">
-    <div>
-        ____________________, ____ de _______________ de _____
-    </div>
-    <div style="font-size:10px; color:#4b5563;">
-        (Cidade), (dia) de (mês) de (ano)
+<!-- Espaço antes da assinatura -->
+<div class="espaco-antes-assinatura"></div>
+
+<!-- Assinatura centralizada -->
+<div class="assinatura-container">
+    <div class="assinatura-linha">
+        <strong>{{ $nomeCompletoMaiusculo }}</strong><br>
+        Matrícula: {{ $funcionario->matricula }}
+        @if ($cpfFormatado)
+            &nbsp;|&nbsp; CPF: {{ $cpfFormatado }}
+        @endif
     </div>
 </div>
 
-{{-- Área de assinaturas com nome completo, matrícula e CPF mascarado --}}
-<div class="area-assinaturas">
-    <table>
-        <tr>
-            <td class="linha-assinatura">
-                <strong>{{ mb_strtoupper($funcionario->nome . ' ' . $funcionario->sobrenome, 'UTF-8') }}</strong><br>
-                Matrícula: {{ $funcionario->matricula }}
-                @if ($cpfFormatado)
-                    &nbsp;|&nbsp; CPF: {{ $cpfFormatado }}
-                @endif
-            </td>
-            <td></td>
-        </tr>
-    </table>
+<div class="cidade-data">
+    ____________________, ____ de _______________ de _____ <br>
+    <span>(Cidade), (dia) de (mês) de (ano)</span>
 </div>
 
-{{-- Rodapé com data/hora real de emissão --}}
-<div class="rodape-local-data" style="text-align:right; font-size:10px; margin-top:12px;">
-    Termo emitido em:
-    {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}
+<div class="rodape-emissao">
+    Termo emitido em: {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}
 </div>

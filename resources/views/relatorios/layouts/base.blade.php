@@ -25,8 +25,8 @@
         }
 
         .cabecalho-sistema-logo {
-            width: 40px;
-            height: 40px;
+            width: 70px;
+            height: 70px;
             border-radius: 9999px;
             border: 1px solid #16a34a;
             /* verde */
@@ -67,6 +67,8 @@
             /* verde mais escuro */
             border-bottom: 1px solid #16a34a;
             padding-bottom: 4px;
+            border-top: 1px solid #16a34a;
+            padding-top: 4px;
         }
 
         /* ================== TEXTOS ================== */
@@ -94,22 +96,23 @@
         }
 
         .tabela-equipamentos thead {
-            background-color: #065f46;
-            /* verde escuro */
-            color: #f9fafb;
-            /* quase branco */
+            display: table-header-group;
+            background-color: #065f46 !important;
+            color: #f9fafb !important;
         }
 
         .tabela-equipamentos th,
         .tabela-equipamentos td {
             border: 1px solid #9ca3af;
-            /* cinza borda */
             padding: 4px 6px;
         }
 
         .tabela-equipamentos th {
             text-align: center;
             font-weight: bold;
+            -webkit-print-color-adjust: exact !important;
+            background-color: #065f46 !important;
+            color: #f9fafb !important;
         }
 
         .tabela-equipamentos td {
@@ -149,6 +152,62 @@
             text-align: center;
             font-size: 11px;
             padding-top: 4px;
+        }
+
+        @page {
+            margin: 25px 35px;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        table {
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        /* ================== ASSINATURAS / RODAPÉ ================== */
+        .espaco-antes-assinatura {
+            height: 80px;
+        }
+
+        .assinatura-container {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .assinatura-linha {
+            border-top: 1px solid #111827;
+            width: 60%;
+            margin: 0 auto;
+            padding-top: 4px;
+        }
+
+        .cidade-data {
+            margin-top: 40px;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .cidade-data span {
+            color: #4b5563;
+        }
+
+        .rodape-emissao {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #4b5563;
+            text-align: right;
         }
     </style>
 </head>

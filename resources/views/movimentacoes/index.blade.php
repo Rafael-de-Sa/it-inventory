@@ -11,7 +11,7 @@
 
             <a href="{{ route('movimentacoes.create') }}"
                 class="inline-flex items-center rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40 gap-2">
-                <i class="fa-solid fa-plus"></i> Nova Movimentação
+                <i class="fa-solid fa-plus"></i> Cadastrar
             </a>
         </div>
 
@@ -260,7 +260,7 @@
                             </td>
 
                             {{-- Ações --}}
-                            <td class="px-4 py-2 text-right">
+                            <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
                                     <a href="{{ route('movimentacoes.show', $movimentacao->id) }}"
@@ -277,7 +277,7 @@
                                             aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Excluir (se for permitido excluir movimentação) --}}
+                                    {{-- Excluir 
                                     <form method="POST" action="{{ route('movimentacoes.destroy', $movimentacao->id) }}"
                                         onsubmit="return confirm('Tem certeza que deseja excluir esta movimentação?');"
                                         class="inline">
@@ -290,6 +290,7 @@
                                                 aria-hidden="true"></i>
                                         </button>
                                     </form>
+                                    --}}
                                 </div>
                             </td>
                         </tr>

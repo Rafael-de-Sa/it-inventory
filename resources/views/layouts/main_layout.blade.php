@@ -11,7 +11,7 @@
 
 <body class="bg-green-950 text-white font-inter min-h-screen flex flex-col">
 
-    @include('top_bar')
+    @include('layouts.top_bar')
 
     <main class="flex-1 p-6 w-full">
         @if (session('success'))

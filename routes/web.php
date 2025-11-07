@@ -46,3 +46,8 @@ Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::
     ->name('movimentacoes.setores-para-movimentacao');
 Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
     ->name('movimentacoes.funcionarios-para-movimentacao');
+
+
+Route::get('/teste-termo-resp/{movimentacao}', function (\App\Models\Movimentacao $movimentacao) {
+    return view('relatorios.movimentacoes.termo-responsabilidade', compact('movimentacao'));
+});

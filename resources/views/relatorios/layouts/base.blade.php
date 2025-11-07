@@ -178,12 +178,12 @@
 
         /* ================== ASSINATURAS / RODAPÉ ================== */
         .espaco-antes-assinatura {
-            height: 80px;
+            height: 60px;
         }
 
         .assinatura-container {
             text-align: center;
-            margin-top: 60px;
+            margin-top: 40px;
         }
 
         .assinatura-linha {
@@ -194,7 +194,7 @@
         }
 
         .cidade-data {
-            margin-top: 40px;
+            margin-top: 60px;
             font-size: 11px;
             text-align: right;
         }

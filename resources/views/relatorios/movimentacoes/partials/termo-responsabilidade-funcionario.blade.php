@@ -9,6 +9,35 @@
 
     $cpfFormatado = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
 
+    $rua = $empresaFuncionario->rua ?? null;
+    $numero = $empresaFuncionario->numero ?? null;
+    $bairro = $empresaFuncionario->bairro ?? null;
+    $cidade = $empresaFuncionario->cidade ?? null;
+    $estado = $empresaFuncionario->estado ?? null;
+
+    // Montagem condicional
+    $enderecoPartes = [];
+
+    if (!empty($rua)) {
+        $enderecoPartes[] = $rua;
+    }
+
+    if (!empty($numero)) {
+        $enderecoPartes[] = "nº {$numero}";
+    }
+
+    if (!empty($bairro)) {
+        $enderecoPartes[] = $bairro;
+    }
+
+    if (!empty($cidade) && !empty($estado)) {
+        $enderecoPartes[] = "{$cidade}/{$estado}";
+    } elseif (!empty($cidade)) {
+        $enderecoPartes[] = $cidade;
+    }
+
+    $enderecoFormatado = implode(' – ', $enderecoPartes);
+
     // Nome completo em maiúsculo (UTF-8)
     $nomeCompleto = trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? ''));
     $nomeCompletoMaiusculo = Str::upper($nomeCompleto);
@@ -46,6 +75,12 @@
         @if ($cnpjFormatado)
             <span class="cabecalho-empresa-linha-secundaria">
                 CNPJ: {{ $cnpjFormatado }}
+            </span><br>
+        @endif
+
+        @if (!empty($enderecoFormatado))
+            <span class="cabecalho-empresa-linha-secundaria">
+                Endereço: {{ $enderecoFormatado }}
             </span><br>
         @endif
 
@@ -136,10 +171,9 @@
 </div>
 
 <div class="secao-texto">
-    Em caso de perda, extravio, furto, roubo, dano decorrente de mau uso ou não devolução dos equipamentos
-    sob minha responsabilidade, <strong>autorizo expressamente o desconto em folha de pagamento e/ou
-        verbas rescisórias</strong>, até o limite permitido pela legislação vigente, para ressarcimento
-    dos prejuízos causados à empresa.
+    Em caso de perda, extravio, furto, roubo, dano por mau uso ou não devolução, <strong>autorizo expressamente, com
+        base no art. 462, §1º da CLT, o desconto dos valores correspondentes em minha folha de pagamento e/ou verbas
+        rescisórias</strong>, limitado ao prejuízo efetivamente apurado.
 </div>
 
 <!-- Espaço antes da assinatura -->
@@ -157,10 +191,14 @@
 </div>
 
 <div class="cidade-data">
-    ____________________, ____ de _______________ de _____ <br>
+    ___________________________, ____ de _______________ de _____ <br>
     <span>(Cidade), (dia) de (mês) de (ano)</span>
 </div>
 
 <div class="rodape-emissao">
-    Termo emitido em: {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}
+    Termo emitido em:
+    {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}<br>
+
+    Impresso em:
+    {{ $dataImpressao ?? now()->format('d/m/Y H:i') }}
 </div>

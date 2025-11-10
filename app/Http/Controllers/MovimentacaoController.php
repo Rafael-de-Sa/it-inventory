@@ -121,8 +121,6 @@ class MovimentacaoController extends Controller
                 ->get();
         }
 
-        // Funcionários: apenas se setor foi selecionado
-        // aqui NÃO filtramos por ativo/desligado/terceirizado
         $listaDeFuncionarios = collect();
         if (!empty($dados['setor_id'])) {
             $listaDeFuncionarios = Funcionario::query()
@@ -177,17 +175,14 @@ class MovimentacaoController extends Controller
         $dadosValidados = $request->validated();
 
         DB::transaction(function () use ($dadosValidados) {
-            /** @var Movimentacao $movimentacao */
             $movimentacao = Movimentacao::create([
                 'setor_id'       => $dadosValidados['setor_id'],
                 'funcionario_id' => $dadosValidados['funcionario_id'],
                 'observacao'     => $dadosValidados['observacao'] ?? null,
-                // demais campos padrão do model (data_movimentacao, status, etc.)
             ]);
 
             $idsEquipamentos = $dadosValidados['equipamentos'];
 
-            // trava os equipamentos durante a operação
             $equipamentos = Equipamento::query()
                 ->whereIn('id', $idsEquipamentos)
                 ->lockForUpdate()

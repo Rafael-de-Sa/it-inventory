@@ -52,6 +52,7 @@ class StoreFuncionarioRequest extends FormRequest
 
             // obrigatório quando NÃO terceirizado
             'matricula'    => [
+                'nullable',
                 'required_unless:terceirizado,1',
                 'string',
                 'max:30',
@@ -67,7 +68,6 @@ class StoreFuncionarioRequest extends FormRequest
     public function messages(): array
     {
         return [
-            // genéricas
             '*.required'            => 'O campo :attribute é obrigatório.',
             '*.string'              => 'O campo :attribute deve ser um texto.',
             '*.min'                 => 'O campo :attribute deve possuir ao menos :min caracteres.',
@@ -78,7 +78,6 @@ class StoreFuncionarioRequest extends FormRequest
             'cpf.digits'            => 'O CPF deve conter exatamente 11 dígitos.',
             'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).',
 
-            // específicas
             'empresa_id.required'   => 'Selecione a empresa.',
             'setor_id.required'     => 'Selecione um setor.',
             'nome.required'         => 'Informe o nome.',

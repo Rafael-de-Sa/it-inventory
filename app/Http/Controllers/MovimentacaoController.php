@@ -29,9 +29,6 @@ class MovimentacaoController extends Controller
             ])
             ->whereNull('apagado_em');
 
-        // -----------------------------
-        // Busca por ID da movimentação
-        // -----------------------------
         if (!empty($dados['busca'])) {
             $busca = trim($dados['busca']);
 
@@ -43,11 +40,6 @@ class MovimentacaoController extends Controller
             }
         }
 
-        // -----------------------------
-        // Filtros em cascata
-        // -----------------------------
-
-        // Empresa
         if (!empty($dados['empresa_id'])) {
             $empresaId = (int) $dados['empresa_id'];
 
@@ -75,8 +67,8 @@ class MovimentacaoController extends Controller
         // -----------------------------
         // Ordenação
         // -----------------------------
-        $colunaOrdenacao  = $dados['ordenar_por'] ?? 'data';
-        $direcaoOrdenacao = $dados['direcao'] ?? 'desc';
+        $colunaOrdenacao  = $dados['ordenar_por'] ?? 'id';
+        $direcaoOrdenacao = $dados['direcao'] ?? 'asc';
 
         switch ($colunaOrdenacao) {
             case 'id':
@@ -89,7 +81,7 @@ class MovimentacaoController extends Controller
 
             case 'data':
             default:
-                $colunaBanco  = 'criado_em'; // data da movimentação
+                $colunaBanco  = 'criado_em';
                 $colunaOrdenacao = 'data';
                 break;
         }
@@ -111,7 +103,6 @@ class MovimentacaoController extends Controller
             ->orderBy('nome_fantasia')
             ->get();
 
-        // Setores: apenas se empresa foi selecionada
         $listaDeSetores = collect();
         if (!empty($dados['empresa_id'])) {
             $listaDeSetores = Setor::query()
@@ -166,10 +157,6 @@ class MovimentacaoController extends Controller
         return view('movimentacoes.create', compact('listaDeEmpresas', 'listaDeEquipamentos'));
     }
 
-    /**
-     * Armazena a nova movimentação e vincula os equipamentos.
-     * Store a newly created resource in storage.
-     */
     public function store(StoreMovimentacaoRequest $request)
     {
         $dadosValidados = $request->validated();

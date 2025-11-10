@@ -125,7 +125,7 @@
                         'id' => 'ID',
                         'status' => 'Status',
                     ];
-                    $colunaAtual = $colunaOrdenacao ?? request('ordenar_por', 'data');
+                    $colunaAtual = $colunaOrdenacao ?? request('ordenar_por', 'id');
                 @endphp
                 <select id="ordenar_por" name="ordenar_por" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -142,7 +142,7 @@
             {{-- Direção --}}
             <div class="md:col-span-2">
                 <label for="direcao" class="mb-1 block text-sm text-green-100">Direção</label>
-                @php $dirAtual = $direcaoOrdenacao ?? request('direcao', 'desc'); @endphp
+                @php $dirAtual = $direcaoOrdenacao ?? request('direcao', 'asc'); @endphp
                 <select id="direcao" name="direcao" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',

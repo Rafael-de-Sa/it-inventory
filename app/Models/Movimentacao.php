@@ -41,6 +41,14 @@ class Movimentacao extends Model
 
     public function equipamentos()
     {
-        return $this->belongsToMany(Equipamento::class, 'movimentacao_equipamentos');
+        return $this->belongsToMany(Equipamento::class, 'movimentacao_equipamentos')
+            ->using(MovimentacaoEquipamento::class)
+            ->withPivot([
+                'termo_devolucao',
+                'observacao',
+                'motivo_devolucao',
+                'devolvido_em',
+            ])
+            ->withTimestamps();
     }
 }

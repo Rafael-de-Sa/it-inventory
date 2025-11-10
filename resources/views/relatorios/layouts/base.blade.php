@@ -11,9 +11,9 @@
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
             line-height: 1.4;
-            margin: 25px 35px;
+            margin: 0;
+            padding: 0;
             color: #111827;
-            /* cinza bem escuro */
         }
 
         /* ================== CABEÇALHO SISTEMA ================== */
@@ -155,7 +155,8 @@
         }
 
         @page {
-            margin: 25px 35px;
+            size: A4 portrait;
+            margin: 20mm 15mm 20mm 15mm;
         }
 
         body {

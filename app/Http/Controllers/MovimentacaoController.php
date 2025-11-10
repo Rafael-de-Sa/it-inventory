@@ -9,6 +9,7 @@ use App\Models\Equipamento;
 use App\Models\Funcionario;
 use App\Models\Movimentacao;
 use App\Models\Setor;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -196,9 +197,24 @@ class MovimentacaoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Movimentacao $movimentacao)
     {
-        //
+        // Carrega relações necessárias para a tela de show
+        $movimentacao->load([
+            'setor.empresa',
+            'funcionario',
+            'equipamentos.tipoEquipamento',
+        ]);
+
+        // Deixa os equipamentos ordenados por ID para a listagem
+        $movimentacao->setRelation(
+            'equipamentos',
+            $movimentacao->equipamentos->sortBy('id')->values()
+        );
+
+        return view('movimentacoes.show', [
+            'movimentacao' => $movimentacao,
+        ]);
     }
 
     /**
@@ -269,5 +285,22 @@ class MovimentacaoController extends Controller
         });
 
         return response()->json($payload);
+    }
+
+    public function gerarTermoResponsabilidade(Movimentacao $movimentacao)
+    {
+        $movimentacao->load([
+            'setor.empresa',
+            'funcionario',
+            'equipamentos',
+        ]);
+
+        $nomeArquivo = 'termo_responsabilidade_movimentacao_' . $movimentacao->id . '.pdf';
+
+        $pdf = Pdf::loadView('relatorios.movimentacoes.termo-responsabilidade', [
+            'movimentacao' => $movimentacao,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->stream($nomeArquivo);
     }
 }

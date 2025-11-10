@@ -10,6 +10,7 @@ use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ViaCepController;
+use App\Models\Movimentacao;
 use Illuminate\Support\Facades\Route;
 
 
@@ -47,7 +48,18 @@ Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::
 Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
     ->name('movimentacoes.funcionarios-para-movimentacao');
 
-
-Route::get('/teste-termo-resp/{movimentacao}', function (\App\Models\Movimentacao $movimentacao) {
+//Rota para ver o termo (remover posteriormente)
+Route::get('/teste-termo-resp/{movimentacao}', function (Movimentacao $movimentacao) {
     return view('relatorios.movimentacoes.termo-responsabilidade', compact('movimentacao'));
 });
+
+Route::post(
+    '/movimentacoes/{movimentacao}/upload-termo-responsabilidade',
+    [MovimentacaoController::class, 'uploadTermoResponsabilidade']
+)->name('movimentacoes.upload-termo-responsabilidade');
+
+
+Route::get(
+    '/movimentacoes/{movimentacao}/termo-responsabilidade',
+    [MovimentacaoController::class, 'gerarTermoResponsabilidade']
+)->name('movimentacoes.termo-responsabilidade');

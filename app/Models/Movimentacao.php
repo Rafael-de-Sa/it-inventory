@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Requests\Movimentacoes\UploadTermoResponsabilidadeRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Movimentacao extends Model
 {
@@ -50,5 +52,38 @@ class Movimentacao extends Model
                 'devolvido_em',
             ])
             ->withTimestamps();
+    }
+
+    public function uploadTermoResponsabilidade(
+        UploadTermoResponsabilidadeRequest $request,
+        Movimentacao $movimentacao
+    ) {
+        $arquivoTermo = $request->file('arquivo_termo');
+
+        $pastaDestino = 'movimentacoes/termo_responsabilidade';
+        Storage::disk('public')->makeDirectory($pastaDestino);
+
+        $idMovimentacao  = (string) $movimentacao->id;
+        $timestampArquivo = now()->format('Ymd_His');
+        $extensaoArquivo  = $arquivoTermo->getClientOriginalExtension();
+
+        $nomeArquivo = $idMovimentacao . '_' . $timestampArquivo . '.' . $extensaoArquivo;
+
+        $caminhoArquivo = $arquivoTermo->storeAs(
+            $pastaDestino,
+            $nomeArquivo,
+            'public'
+        );
+
+        $movimentacao->termo_responsabilidade = $caminhoArquivo;
+
+        // Regra de negócio: ao subir termo, marca como concluída
+        $movimentacao->status = 'concluida';
+
+        $movimentacao->save();
+
+        return redirect()
+            ->route('movimentacoes.show', $movimentacao->id)
+            ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
     }
 }

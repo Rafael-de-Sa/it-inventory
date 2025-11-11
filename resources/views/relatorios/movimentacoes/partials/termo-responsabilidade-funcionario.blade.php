@@ -184,25 +184,27 @@
 </div>
 
 <!-- Assinatura centralizada -->
-<div class="assinatura-container">
-    <div class="assinatura-linha">
-        <strong>{{ $nomeCompletoMaiusculo }}</strong><br>
-        Matrícula: {{ $funcionario->matricula }}
-        @if ($cpfFormatado)
-            &nbsp;|&nbsp; CPF: {{ $cpfFormatado }}
-        @endif
+<div style="page-break-inside: avoid">
+    <div class="assinatura-container">
+        <div class="assinatura-linha">
+            <strong>{{ $nomeCompletoMaiusculo }}</strong><br>
+            Matrícula: {{ $funcionario->matricula }}
+            @if ($cpfFormatado)
+                &nbsp;|&nbsp; CPF: {{ $cpfFormatado }}
+            @endif
+        </div>
     </div>
-</div>
 
-<div class="cidade-data">
-    ___________________________, ____ de _______________ de _____ <br>
-    <span>(Cidade), (dia) de (mês) de (ano)</span>
-</div>
+    <div class="cidade-data">
+        ______________________________, _______ de __________________ de _________ <br>
+        <span>(Cidade), (dia) de (mês) de (ano)</span>
+    </div>
 
-<div class="rodape-emissao">
-    Termo emitido em:
-    {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}<br>
+    <div class="rodape-emissao">
+        Termo emitido em:
+        {{ $dataHoraEmissao ?? ($dataEmissao ?? '') }}<br>
 
-    Impresso em:
-    {{ $dataImpressao ?? now()->format('d/m/Y H:i') }}
+        Impresso em:
+        {{ $dataImpressao ?? now()->format('d/m/Y H:i') }}
+    </div>
 </div>

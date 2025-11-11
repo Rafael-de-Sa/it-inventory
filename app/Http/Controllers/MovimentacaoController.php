@@ -301,6 +301,22 @@ class MovimentacaoController extends Controller
             'movimentacao' => $movimentacao,
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->stream($nomeArquivo);
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+
+
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_text(
+            520,
+            810,
+            "Página {PAGE_NUM} de {PAGE_COUNT}",
+            null,
+            9,
+            [0.4, 0.4, 0.4]
+        );
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename={$nomeArquivo}");
     }
 }

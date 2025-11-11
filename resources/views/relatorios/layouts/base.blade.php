@@ -209,7 +209,7 @@
 
         .assinatura-container {
             text-align: center;
-            margin-top: 80px;
+            margin-top: 60px;
         }
 
         .assinatura-linha {
@@ -220,7 +220,7 @@
         }
 
         .cidade-data {
-            margin-top: 60px;
+            margin-top: 30px;
             font-size: 11px;
             text-align: right;
         }
@@ -230,7 +230,7 @@
         }
 
         .rodape-emissao {
-            margin-top: 20px;
+            margin-top: 10px;
             font-size: 10px;
             color: #4b5563;
             text-align: right;

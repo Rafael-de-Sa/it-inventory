@@ -44,53 +44,60 @@
 @endphp
 
 {{-- Cabeçalho geral: sistema à esquerda, empresa à direita --}}
-<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-    {{-- Cabeçalho do sistema --}}
-    <div class="cabecalho-sistema">
-        {{-- IMPORTANTE: arquivo deve existir em /public/assets/logo-teste.png --}}
-        <img src="{{ asset('assets/logo-teste.png') }}" alt="Logo IT Inventory" class="cabecalho-sistema-logo">
+<table class="cabecalho-geral">
+    <tr>
+        <td class="cabecalho-col-sistema">
+            {{-- Cabeçalho do sistema --}}
+            <div class="cabecalho-sistema">
+                {{-- IMPORTANTE: arquivo deve existir em /public/assets/logo-teste.png --}}
+                <img src="{{ public_path('assets/logo-teste.png') }}" alt="Logo IT Inventory"
+                    class="cabecalho-sistema-logo">
 
-        <div>
-            <div class="cabecalho-sistema-nome">
-                IT Inventory
+                <div>
+                    <div class="cabecalho-sistema-nome">
+                        IT INVENTORY
+                    </div>
+                    <div style="font-size: 10px; color: #4b5563;">
+                        Sistema de Gestão de Ativos de TI
+                    </div>
+                </div>
             </div>
-            <div style="font-size: 10px; color: #4b5563;">
-                Sistema de Gestão de Ativos de TI
+        </td>
+
+        <td class="cabecalho-col-empresa">
+            {{-- Cabeçalho da empresa --}}
+            <div class="cabecalho-empresa">
+                @if ($razaoSocialEmpresa)
+                    <strong>{{ Str::upper($razaoSocialEmpresa) }}</strong><br>
+                @endif
+
+                @if ($nomeFantasiaEmpresa)
+                    <span class="cabecalho-empresa-linha-secundaria">
+                        Nome fantasia: {{ $nomeFantasiaEmpresa }}
+                    </span><br>
+                @endif
+
+                @if (!empty($cnpjFormatado))
+                    <span class="cabecalho-empresa-linha-secundaria">
+                        CNPJ: {{ $cnpjFormatado }}
+                    </span><br>
+                @endif
+
+                @if (!empty($enderecoFormatado))
+                    <span class="cabecalho-empresa-linha-secundaria">
+                        Endereço: {{ $enderecoFormatado }}
+                    </span><br>
+                @endif
+
+                @if (!empty($setorFuncionario?->nome))
+                    <span class="cabecalho-empresa-linha-secundaria">
+                        Setor: {{ $setorFuncionario->nome }}
+                    </span><br>
+                @endif
             </div>
-        </div>
-    </div>
-
-    {{-- Cabeçalho da empresa --}}
-    <div class="cabecalho-empresa" style="text-align: right; margin-bottom: 0;">
-        @if ($razaoSocialEmpresa)
-            <strong>{{ Str::upper($razaoSocialEmpresa) }}</strong><br>
-        @endif
-
-        @if ($nomeFantasiaEmpresa)
-            <span class="cabecalho-empresa-linha-secundaria">
-                Nome fantasia: {{ $nomeFantasiaEmpresa }}
-            </span><br>
-        @endif
-
-        @if ($cnpjFormatado)
-            <span class="cabecalho-empresa-linha-secundaria">
-                CNPJ: {{ $cnpjFormatado }}
-            </span><br>
-        @endif
-
-        @if (!empty($enderecoFormatado))
-            <span class="cabecalho-empresa-linha-secundaria">
-                Endereço: {{ $enderecoFormatado }}
-            </span><br>
-        @endif
-
-        @if (!empty($setorFuncionario?->nome))
-            <span class="cabecalho-empresa-linha-secundaria">
-                Setor: {{ $setorFuncionario->nome }}
-            </span><br>
-        @endif
-    </div>
-</div>
+        </td>
+    </tr>
+</table>
 
 <div class="titulo-principal">
     TERMO DE RESPONSABILIDADE E AUTORIZAÇÃO PARA DESCONTO EM FOLHA DE PAGAMENTO
@@ -175,9 +182,6 @@
         base no art. 462, §1º da CLT, o desconto dos valores correspondentes em minha folha de pagamento e/ou verbas
         rescisórias</strong>, limitado ao prejuízo efetivamente apurado.
 </div>
-
-<!-- Espaço antes da assinatura -->
-<div class="espaco-antes-assinatura"></div>
 
 <!-- Assinatura centralizada -->
 <div class="assinatura-container">

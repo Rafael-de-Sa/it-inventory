@@ -17,6 +17,26 @@
         }
 
         /* ================== CABEÇALHO SISTEMA ================== */
+        /* Cabeçalho geral (sistema à esquerda, empresa à direita) */
+        .cabecalho-geral {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .cabecalho-geral td {
+            vertical-align: middle;
+        }
+
+        .cabecalho-col-sistema {
+            width: 30%;
+            text-align: center;
+        }
+
+        .cabecalho-col-empresa {
+            width: 70%;
+            text-align: right;
+        }
+
         .cabecalho-sistema {
             display: flex;
             align-items: center;
@@ -25,11 +45,10 @@
         }
 
         .cabecalho-sistema-logo {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 9999px;
             border: 1px solid #16a34a;
-            /* verde */
             object-fit: cover;
         }
 
@@ -42,7 +61,7 @@
 
         /* ================== CABEÇALHO EMPRESA ================== */
         .cabecalho-empresa {
-            text-align: left;
+            text-align: right;
             margin-bottom: 10px;
             font-size: 11px;
         }
@@ -138,7 +157,7 @@
         }
 
         .area-assinaturas {
-            margin-top: 40px;
+            margin-top: 30px;
             width: 100%;
         }
 
@@ -157,6 +176,12 @@
         @page {
             size: A4 portrait;
             margin: 20mm 15mm 20mm 15mm;
+        }
+
+        @bottom-right {
+            content: "Página " counter(page) " de " counter(pages);
+            font-size: 10px;
+            color: #6b7280;
         }
 
         body {
@@ -184,7 +209,7 @@
 
         .assinatura-container {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 80px;
         }
 
         .assinatura-linha {

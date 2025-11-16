@@ -23,7 +23,7 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                 {{-- Tipo de equipamento --}}
                 <div class="md:col-span-7">
-                    <label for="tipo_equipamento_id" class="mb-1 block text-sm text-green-100">Tipo de Equipamento</label>
+                    <label for="tipo_equipamento_id" class="mb-1 block text-sm text-green-100">Tipo de Equipamento*</label>
                     <select id="tipo_equipamento_id" name="tipo_equipamento_id" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                         'border-green-700' => !$errors->has('tipo_equipamento_id'),
@@ -41,7 +41,7 @@
 
                 {{-- Status --}}
                 <div class="md:col-span-5">
-                    <label for="status" class="mb-1 block text-sm text-green-100">Status</label>
+                    <label for="status" class="mb-1 block text-sm text-green-100">Status*</label>
                     <select id="status" name="status" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                         'border-green-700' => !$errors->has('status'),
@@ -125,13 +125,13 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                 {{-- Descrição --}}
                 <div class="md:col-span-12">
-                    <label for="descricao" class="mb-1 block text-sm text-green-100">Descrição</label>
+                    <label for="descricao" class="mb-1 block text-sm text-green-100">Descrição*</label>
                     <textarea id="descricao" name="descricao" rows="4" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                         'border-green-700' => !$errors->has('descricao'),
                         'border-red-500' => $errors->has('descricao'),
                     ])
-                        placeholder="Observações do equipamento (opcional)">{{ old('descricao') }}</textarea>
+                        placeholder="Descrição do equipamento">{{ old('descricao') }}</textarea>
                     @error('descricao')
                         <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                     @enderror

@@ -22,9 +22,9 @@
 
             {{-- Nome Fantasia --}}
             <div>
-                <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia</label>
+                <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia*</label>
                 <input id="nome_fantasia" name="nome_fantasia" type="text" maxlength="100" autocomplete="organization"
-                    placeholder="EMPRESA" value="{{ old('nome_fantasia') }}" @class([
+                    placeholder="Empresa Exemplo" value="{{ old('nome_fantasia') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'nome_fantasia'),
@@ -41,15 +41,15 @@
                         {{ $errors->first('nome_fantasia') }}
                     </p>
                 @else
-                    <p id="nome_fantasia_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA</p>
+                    <p id="nome_fantasia_help" class="mt-1 text-xs text-green-200">Ex.: Empresa Exemplo</p>
                 @endif
             </div>
 
             {{-- Razão Social --}}
             <div>
-                <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social</label>
-                <input id="razao_social" name="razao_social" type="text" maxlength="100" placeholder="EMPRESA LTDA"
-                    value="{{ old('razao_social') }}" @class([
+                <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social*</label>
+                <input id="razao_social" name="razao_social" type="text" maxlength="100"
+                    placeholder="Empresa Exemplo LTDA" value="{{ old('razao_social') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'razao_social'),
@@ -66,13 +66,13 @@
                         {{ $errors->first('razao_social') }}
                     </p>
                 @else
-                    <p id="razao_social_help" class="mt-1 text-xs text-green-200">Ex.: EMPRESA LTDA</p>
+                    <p id="razao_social_help" class="mt-1 text-xs text-green-200">Ex.: Empresa Exemplo LTDA</p>
                 @endif
             </div>
 
             {{-- CNPJ --}}
             <div>
-                <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ</label>
+                <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ*</label>
                 <input id="cnpj" name="cnpj" type="text" inputmode="numeric" maxlength="18"
                     placeholder="00.000.000/0000-00"
                     value="{{ old('cnpj') ? \App\Support\Mask::cnpj(old('cnpj')) : $empresa->cnpj_masked ?? '' }}"
@@ -98,12 +98,12 @@
 
             {{-- Endereço --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
-                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200 uppercase">Endereço</legend>
+                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Endereço</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                     {{-- CEP --}}
                     <div class="md:col-span-3">
-                        <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP</label>
+                        <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP*</label>
                         <input id="cep" name="cep" type="text" inputmode="numeric" maxlength="9"
                             placeholder="87500-000" autocomplete="postal-code"
                             value="{{ old('cep') ? \App\Support\Mask::cep(old('cep')) : $empresa->cep_masked ?? '' }}"
@@ -130,7 +130,7 @@
 
                     {{-- Rua --}}
                     <div class="md:col-span-9">
-                        <label for="rua" class="block mb-1 text-sm font-medium text-green-100">Rua</label>
+                        <label for="rua" class="block mb-1 text-sm font-medium text-green-100">Logradouro*</label>
                         <input id="rua" name="rua" type="text" maxlength="100" autocomplete="address-line1"
                             placeholder="Av. Paraná" value="{{ old('rua') }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -155,7 +155,7 @@
 
                     {{-- Número --}}
                     <div class="md:col-span-3">
-                        <label for="numero" class="block mb-1 text-sm font-medium text-green-100">Número</label>
+                        <label for="numero" class="block mb-1 text-sm font-medium text-green-100">Número*</label>
                         <input id="numero" name="numero" type="text" inputmode="numeric" maxlength="8"
                             placeholder="1234" autocomplete="address-line2" value="{{ old('numero') }}"
                             @class([
@@ -181,7 +181,7 @@
 
                     {{-- Bairro --}}
                     <div class="md:col-span-4">
-                        <label for="bairro" class="block mb-1 text-sm font-medium text-green-100">Bairro</label>
+                        <label for="bairro" class="block mb-1 text-sm font-medium text-green-100">Bairro*</label>
                         <input id="bairro" name="bairro" type="text" maxlength="50" placeholder="Centro"
                             value="{{ old('bairro') }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -234,7 +234,7 @@
 
                     {{-- Cidade --}}
                     <div class="md:col-span-8">
-                        <label for="cidade" class="block mb-1 text-sm font-medium text-green-100">Cidade</label>
+                        <label for="cidade" class="block mb-1 text-sm font-medium text-green-100">Cidade*</label>
                         <input id="cidade" name="cidade" type="text" maxlength="30"
                             autocomplete="address-level2" placeholder="Umuarama" value="{{ old('cidade') }}"
                             @class([
@@ -260,7 +260,7 @@
 
                     {{-- Estado (UF) --}}
                     <div class="md:col-span-4">
-                        <label for="estado" class="block mb-1 text-sm font-medium text-green-100">Estado</label>
+                        <label for="estado" class="block mb-1 text-sm font-medium text-green-100">Estado*</label>
                         <input id="estado" name="estado" type="text" maxlength="2" placeholder="PR"
                             value="{{ old('estado') }}" oninput="this.value = this.value.toUpperCase()"
                             @class([
@@ -288,7 +288,7 @@
 
             {{-- E-mail --}}
             <div>
-                <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail</label>
+                <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail*</label>
                 <input id="email" name="email" type="email" maxlength="60" autocomplete="email"
                     placeholder="contato@exemplo.com.br" value="{{ old('email') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -337,7 +337,7 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-end gap-3 pt-2">
-                <a href="{{ url()->previous() }}"
+                <a href="{{ route('empresas.index') }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 transition">
                     <i class="fa-solid fa-arrow-left"></i>Cancelar
                 </a>

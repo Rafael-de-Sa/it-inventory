@@ -21,7 +21,7 @@
 
             {{-- Empresa (select) --}}
             <div>
-                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
+                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" required
                     class="w-full rounded-lg border px-3 py-2 bg-white text-gray-900">
                     <option value="" disabled {{ old('empresa_id') ? '' : 'selected' }}>Selecione...</option>
@@ -46,16 +46,17 @@
 
             {{-- Nome do Setor --}}
             <div>
-                <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor</label>
-                <input id="nome" name="nome" type="text" maxlength="50" placeholder="Ex.: TI, DP, Comercial"
-                    value="{{ old('nome') }}" @class([
+                <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor*</label>
+                <input id="nome" name="nome" type="text" maxlength="50"
+                    placeholder="Ex.: Financeiro ou Departamento Pessoal" value="{{ old('nome') }}"
+                    @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
                             'nome'),
                         'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
                             'nome'),
-                    ])
-                    aria-invalid="{{ $errors->has('nome') ? 'true' : 'false' }}" aria-describedby="nome_help">
+                    ]) aria-invalid="{{ $errors->has('nome') ? 'true' : 'false' }}"
+                    aria-describedby="nome_help">
                 @if ($errors->has('nome'))
                     <p id="nome_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

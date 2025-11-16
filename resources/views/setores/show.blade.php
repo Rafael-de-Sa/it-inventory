@@ -66,7 +66,7 @@
 
             {{-- Empresa (nome + CNPJ) --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
-                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200 uppercase">Empresa</legend>
+                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Empresa</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                     {{-- Nome da Empresa --}}

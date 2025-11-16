@@ -71,7 +71,7 @@
 
             {{-- Nome --}}
             <div class="space-y-1">
-                <label for="nome" class="block text-sm text-green-100">Nome</label>
+                <label for="nome" class="block text-sm text-green-100">Nome*</label>
                 <input
                     type="text"
                     id="nome"

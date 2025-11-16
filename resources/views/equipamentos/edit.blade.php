@@ -38,7 +38,7 @@
 
                 {{-- Status --}}
                 <div class="md:col-span-4">
-                    <label for="status" class="mb-1 block text-sm text-green-100">Status</label>
+                    <label for="status" class="mb-1 block text-sm text-green-100">Status*</label>
                     @php $statusAtual = old('status', $equipamento->status); @endphp
                     <select id="status" name="status" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
@@ -62,7 +62,7 @@
                 {{-- Tipo do Equipamento --}}
                 <div class="md:col-span-6">
                     <label for="tipo_equipamento_id" class="block mb-1 text-sm font-medium text-green-100">Tipo do
-                        Equipamento</label>
+                        Equipamento*</label>
                     <select id="tipo_equipamento_id" name="tipo_equipamento_id" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                         'border-green-700' => !$errors->has('tipo_equipamento_id'),
@@ -148,7 +148,7 @@
 
             {{-- Descrição --}}
             <div>
-                <label for="descricao" class="block mb-1 text-sm font-medium text-green-100">Descrição</label>
+                <label for="descricao" class="block mb-1 text-sm font-medium text-green-100">Descrição*</label>
                 <textarea id="descricao" name="descricao" rows="4" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                     'border-green-700' => !$errors->has('descricao'),

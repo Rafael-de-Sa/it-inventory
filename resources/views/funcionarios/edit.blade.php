@@ -22,7 +22,7 @@
 
             {{-- Empresa (apenas para filtrar setor) --}}
             <div>
-                <label for="empresa_id" class="mb-1 block text-sm text-green-100">Empresa</label>
+                <label for="empresa_id" class="mb-1 block text-sm text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400' => $errors->has(
@@ -45,7 +45,7 @@
 
             {{-- Setor (carregado conforme empresa) --}}
             <div>
-                <label for="setor_id" class="mb-1 block text-sm text-green-100">Setor</label>
+                <label for="setor_id" class="mb-1 block text-sm text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400' => $errors->has(
@@ -72,7 +72,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- Nome --}}
                 <div>
-                    <label for="nome" class="mb-1 block text-sm text-green-100">Nome</label>
+                    <label for="nome" class="mb-1 block text-sm text-green-100">Nome*</label>
                     <input id="nome" name="nome" type="text" maxlength="100"
                         value="{{ old('nome', $funcionario->nome) }}" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -88,7 +88,7 @@
 
                 {{-- Sobrenome --}}
                 <div>
-                    <label for="sobrenome" class="mb-1 block text-sm text-green-100">Sobrenome</label>
+                    <label for="sobrenome" class="mb-1 block text-sm text-green-100">Sobrenome*</label>
                     <input id="sobrenome" name="sobrenome" type="text" maxlength="100"
                         value="{{ old('sobrenome', $funcionario->sobrenome) }}" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -104,7 +104,7 @@
 
                 {{-- CPF (texto simples; máscara fica no show e/ou JS do form, se desejar) --}}
                 <div>
-                    <label for="cpf" class="mb-1 block text-sm text-green-100">CPF</label>
+                    <label for="cpf" class="mb-1 block text-sm text-green-100">CPF*</label>
                     <input id="cpf" name="cpf" type="text" maxlength="20"
                         value="{{ old('cpf', $funcionario->cpf) }}" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -120,7 +120,7 @@
 
                 {{-- Matrícula --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Matrícula</label>
+                    <label class="mb-1 block text-sm text-green-100">Matrícula**</label>
                     <input type="text" id="matricula" name="matricula"
                         value="{{ old('matricula', $funcionario->matricula) }}" inputmode="numeric" pattern="\d*"
                         autocomplete="off" @class([
@@ -130,9 +130,11 @@
                             'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
                                 'matricula'),
                         ]) placeholder="Somente números">
-                    @error('matricula')
-                        <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
-                    @enderror
+                    @if ($errors->has('matricula'))
+                        <p class="mt-1 text-xs text-red-300">{{ $errors->first('matricula') }}</p>
+                    @else
+                        <p id="email_help" class="mt-1 text-xs text-green-200">**Obrigatório quando não é terceirizado</p>
+                    @endif
                 </div>
             </div>
 

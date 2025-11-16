@@ -20,7 +20,7 @@
                 <label class="mb-1 block text-sm text-green-100">Nome do setor</label>
                 <input type="text" name="nome" value="{{ request('nome') }}"
                     class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400"
-                    placeholder="Ex.: TI, RH, Financeiro...">
+                    placeholder="Ex.: Recursos Humanos, Financeiro...">
             </div>
 
             {{-- Empresa (combobox) --}}

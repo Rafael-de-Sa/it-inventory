@@ -83,7 +83,7 @@
             </div>
 
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
-                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200 uppercase">
+                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">
                     Aquisição
                 </legend>
 

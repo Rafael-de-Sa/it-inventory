@@ -23,7 +23,7 @@
 
             {{-- Empresa --}}
             <div>
-                <label class="mb-1 block text-sm text-green-100">Empresa</label>
+                <label class="mb-1 block text-sm text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -46,7 +46,7 @@
 
             {{-- Setor --}}
             <div>
-                <label class="mb-1 block text-sm text-green-100">Setor</label>
+                <label class="mb-1 block text-sm text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -64,7 +64,7 @@
 
             {{-- Funcionário --}}
             <div>
-                <label class="mb-1 block text-sm text-green-100">Funcionário</label>
+                <label class="mb-1 block text-sm text-green-100">Funcionário*</label>
                 <select id="funcionario_id" name="funcionario_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -85,7 +85,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- E-mail --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">E-mail</label>
+                    <label class="mb-1 block text-sm text-green-100">E-mail*</label>
                     <input type="email" name="email" value="{{ old('email') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -100,7 +100,7 @@
                 </div>
 
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Confirmar E-mail</label>
+                    <label class="mb-1 block text-sm text-green-100">Confirmar E-mail*</label>
                     <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
                         @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -116,7 +116,7 @@
 
                 {{-- Senha --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Senha</label>
+                    <label class="mb-1 block text-sm text-green-100">Senha*</label>
                     <input type="password" name="senha" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -132,7 +132,7 @@
 
                 {{-- Confirmar senha --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Confirmar senha</label>
+                    <label class="mb-1 block text-sm text-green-100">Confirmar senha*</label>
                     <input type="password" name="senha_confirmation" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(

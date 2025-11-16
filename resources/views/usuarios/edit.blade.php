@@ -94,7 +94,7 @@
             {{-- E-mail + confirmação --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail</label>
+                    <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail*</label>
                     <input id="email" name="email" type="email" maxlength="100"
                         value="{{ old('email', $usuario->email) }}" autocomplete="email" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -110,7 +110,7 @@
 
                 <div>
                     <label for="email_confirmation" class="block mb-1 text-sm font-medium text-green-100">
-                        Confirme o e-mail
+                        Confirme o e-mail*
                     </label>
                     <input id="email_confirmation" name="email_confirmation" type="email" maxlength="100"
                         value="{{ old('email_confirmation', $usuario->email) }}" autocomplete="email"

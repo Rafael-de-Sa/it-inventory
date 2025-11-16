@@ -74,7 +74,7 @@
 
             {{-- Nome do Setor --}}
             <div>
-                <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor</label>
+                <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor*</label>
                 <input id="nome" name="nome" type="text" maxlength="100" value="{{ old('nome', $setor->nome) }}"
                     @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -85,13 +85,14 @@
                 @error('nome')
                     <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                 @else
-                    <p class="mt-1 text-xs text-green-200">Ex.: TI, RH, Financeiro</p>
+                    <p class="mt-1 text-xs text-green-200">Informe um nome claro, ex.: “Tecnologia da
+                        Informação”.</p>
                 @enderror
             </div>
 
             {{-- Empresa (combobox) --}}
             <div>
-                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
+                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900',
                     'border-green-700',
@@ -106,16 +107,17 @@
                 @error('empresa_id')
                     <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
                 @else
-                    <p class="mt-1 text-xs text-green-200">Vincule o setor à empresa correta.</p>
+                    <p class="mt-1 text-xs text-green-200">Vincule o setor à empresa.</p>
                 @enderror
             </div>
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ url()->previous() }}" @class([
+                <a href="{{ route('setores.index') }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',
                     'border-green-700 hover:bg-green-800/40',
-                ]) title="Cancelar" aria-label="Cancelar">
+                ]) title="Cancelar"
+                    aria-label="Cancelar">
                     <i class="fa-solid fa-arrow-left"></i><span>Cancelar</span>
                 </a>
 

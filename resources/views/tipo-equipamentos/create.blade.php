@@ -21,7 +21,7 @@
 
             {{-- Campo: Nome --}}
             <div class="space-y-1">
-                <label for="nome" class="block text-sm text-green-100">Nome</label>
+                <label for="nome" class="block text-sm text-green-100">Nome*</label>
                 <input type="text" id="nome" name="nome" value="{{ old('nome') }}"
                     placeholder="Ex.: Notebook, Desktop, Impressora..." @class([
                         'w-full rounded-lg bg-white px-3 py-2 text-gray-900 border focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400',

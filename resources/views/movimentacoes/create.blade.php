@@ -27,7 +27,7 @@
 
             {{-- Empresa --}}
             <div>
-                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
+                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -61,7 +61,7 @@
 
             {{-- Setor --}}
             <div>
-                <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">Setor</label>
+                <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -92,7 +92,7 @@
 
             {{-- Funcionário --}}
             <div>
-                <label for="funcionario_id" class="block mb-1 text-sm font-medium text-green-100">Funcionário</label>
+                <label for="funcionario_id" class="block mb-1 text-sm font-medium text-green-100">Funcionário*</label>
                 <select id="funcionario_id" name="funcionario_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -150,7 +150,7 @@
 
             {{-- Bloco de equipamentos --}}
             <section class="space-y-4">
-                <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos</h3>
+                <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos*</h3>
 
                 {{-- Busca e filtro --}}
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">

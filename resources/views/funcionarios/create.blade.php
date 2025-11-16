@@ -21,7 +21,7 @@
 
             {{-- Empresa --}}
             <div>
-                <label class="mb-1 block text-sm text-green-100">Empresa</label>
+                <label class="mb-1 block text-sm text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -43,7 +43,7 @@
             </div>
 
             <div>
-                <label class="mb-1 block text-sm text-green-100">Setor</label>
+                <label class="mb-1 block text-sm text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                     'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -62,7 +62,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- Nome --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Nome</label>
+                    <label class="mb-1 block text-sm text-green-100">Nome*</label>
                     <input type="text" name="nome" value="{{ old('nome') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -77,7 +77,7 @@
 
                 {{-- Sobrenome --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Sobrenome</label>
+                    <label class="mb-1 block text-sm text-green-100">Sobrenome*</label>
                     <input type="text" name="sobrenome" value="{{ old('sobrenome') }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -93,7 +93,7 @@
 
                 {{-- CPF --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">CPF</label>
+                    <label class="mb-1 block text-sm text-green-100">CPF*</label>
                     <input type="text" name="cpf" id="cpf" value="{{ old('cpf') }}"
                         @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -109,7 +109,7 @@
 
                 {{-- Matrícula --}}
                 <div>
-                    <label class="mb-1 block text-sm text-green-100">Matrícula</label>
+                    <label class="mb-1 block text-sm text-green-100">Matrícula**</label>
                     <input type="text" id="matricula" name="matricula" value="{{ old('matricula') }}"
                         inputmode="numeric" pattern="\d*" autocomplete="off" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed placeholder-gray-500 focus:outline-none',
@@ -119,9 +119,11 @@
                                 'matricula'),
                         ])
                         placeholder="Somente números">
-                    @error('matricula')
-                        <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
-                    @enderror
+                    @if ($errors->has('matricula'))
+                        <p class="mt-1 text-xs text-red-300">{{ $errors->first('matricula') }}</p>
+                    @else
+                        <p id="email_help" class="mt-1 text-xs text-green-200">**Obrigatório quando não é terceirizado</p>
+                    @endif
                 </div>
             </div>
 

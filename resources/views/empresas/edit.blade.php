@@ -11,7 +11,7 @@
 
             {{-- Cabeçalho --}}
             <header class="space-y-1">
-                <h2 class="text-2xl font-semibold tracking-wide">Editar Empresa — {{ $empresa->razao_social }}</h2>
+                <h2 class="text-2xl font-semibold tracking-wide">Empresa — {{ $empresa->razao_social }}</h2>
                 <p class="text-xs text-green-200">
                     Criada em: {{ $empresa->criado_em?->format('d/m/Y H:i') }} ·
                     Atualizada em: {{ $empresa->atualizado_em?->format('d/m/Y H:i') }}
@@ -68,7 +68,7 @@
 
             {{-- Nome Fantasia --}}
             <div>
-                <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia</label>
+                <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia*</label>
                 <input id="nome_fantasia" name="nome_fantasia" type="text" maxlength="100"
                     value="{{ old('nome_fantasia', $empresa->nome_fantasia) }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
@@ -79,13 +79,13 @@
                 @if ($errors->has('nome_fantasia'))
                     <p class="mt-1 text-xs text-red-300">{{ $errors->first('nome_fantasia') }}</p>
                 @else
-                    <p class="mt-1 text-xs text-green-200">Ex.: EMPRESA</p>
+                    <p class="mt-1 text-xs text-green-200">Ex.: Empresa Exemplo</p>
                 @endif
             </div>
 
             {{-- Razão Social --}}
             <div>
-                <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social</label>
+                <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social*</label>
                 <input id="razao_social" name="razao_social" type="text" maxlength="100"
                     value="{{ old('razao_social', $empresa->razao_social) }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -96,13 +96,13 @@
                 @if ($errors->has('razao_social'))
                     <p class="mt-1 text-xs text-red-300">{{ $errors->first('razao_social') }}</p>
                 @else
-                    <p class="mt-1 text-xs text-green-200">Ex.: EMPRESA LTDA</p>
+                    <p class="mt-1 text-xs text-green-200">Ex.: Empresa Exemplo LTDA</p>
                 @endif
             </div>
 
             {{-- CNPJ --}}
             <div>
-                <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ</label>
+                <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ*</label>
                 <input id="cnpj" name="cnpj" type="text" inputmode="numeric" maxlength="18"
                     value="{{ old('cnpj', $empresa->cnpj_masked ?? $empresa->cnpj) }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -124,7 +124,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                     {{-- CEP --}}
                     <div class="md:col-span-3">
-                        <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP</label>
+                        <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP*</label>
                         <input id="cep" name="cep" type="text" inputmode="numeric" maxlength="9"
                             value="{{ old('cep', $empresa->cep_masked ?? $empresa->cep) }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -141,7 +141,7 @@
 
                     {{-- Rua --}}
                     <div class="md:col-span-9">
-                        <label for="rua" class="block mb-1 text-sm font-medium text-green-100">Rua</label>
+                        <label for="rua" class="block mb-1 text-sm font-medium text-green-100">Logradouro*</label>
                         <input id="rua" name="rua" type="text" maxlength="100"
                             value="{{ old('rua', $empresa->rua) }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -158,7 +158,7 @@
 
                     {{-- Número --}}
                     <div class="md:col-span-3">
-                        <label for="numero" class="block mb-1 text-sm font-medium text-green-100">Número</label>
+                        <label for="numero" class="block mb-1 text-sm font-medium text-green-100">Número*</label>
                         <input id="numero" name="numero" type="text" inputmode="numeric" maxlength="8"
                             value="{{ old('numero', $empresa->numero) }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -175,7 +175,7 @@
 
                     {{-- Bairro --}}
                     <div class="md:col-span-4">
-                        <label for="bairro" class="block mb-1 text-sm font-medium text-green-100">Bairro</label>
+                        <label for="bairro" class="block mb-1 text-sm font-medium text-green-100">Bairro*</label>
                         <input id="bairro" name="bairro" type="text" maxlength="50"
                             value="{{ old('bairro', $empresa->bairro) }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -209,7 +209,7 @@
 
                     {{-- Cidade --}}
                     <div class="md:col-span-8">
-                        <label for="cidade" class="block mb-1 text-sm font-medium text-green-100">Cidade</label>
+                        <label for="cidade" class="block mb-1 text-sm font-medium text-green-100">Cidade*</label>
                         <input id="cidade" name="cidade" type="text" maxlength="30"
                             value="{{ old('cidade', $empresa->cidade) }}" @class([
                                 'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -226,7 +226,7 @@
 
                     {{-- Estado (UF) --}}
                     <div class="md:col-span-4">
-                        <label for="estado" class="block mb-1 text-sm font-medium text-green-100">Estado</label>
+                        <label for="estado" class="block mb-1 text-sm font-medium text-green-100">Estado*</label>
                         <input id="estado" name="estado" type="text" maxlength="2"
                             value="{{ old('estado', $empresa->estado) }}" oninput="this.value = this.value.toUpperCase()"
                             @class([
@@ -246,7 +246,7 @@
 
             {{-- E-mail --}}
             <div>
-                <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail</label>
+                <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail*</label>
                 <input id="email" name="email" type="email" maxlength="60"
                     value="{{ old('email', $empresa->email) }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 focus:outline-none',
@@ -281,10 +281,11 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ url()->previous() }}" @class([
+                <a href="{{ route('empresas.index') }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',
                     'border-green-700 hover:bg-green-800/40',
-                ]) title="Cancelar" aria-label="Cancelar">
+                ]) title="Cancelar"
+                    aria-label="Cancelar">
                     <i class="fa-solid fa-arrow-left"></i><span>Cancelar</span>
                 </a>
 

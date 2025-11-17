@@ -54,7 +54,7 @@ class StoreEmpresaRequest extends FormRequest
             'bairro' => ['required', 'string', 'min:3', 'max:50'],
             'cidade' => ['required', 'string', 'min:3', 'max:30'],
             'estado' => ['required', 'string', 'size:2', 'alpha', Rule::in(Uf::values())],
-            'email' => ['required', 'string', 'email', 'max:60'],
+            'email' => ['required', 'string', 'email:rfc', 'max:60', 'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',],
             'telefone' => ['nullable', 'digits_between:10,11']
         ];
     }
@@ -62,13 +62,8 @@ class StoreEmpresaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required' => 'O campo :attribute é obrigatório.',
-            'string' => 'O campo :attribute deve ser um texto.',
-            'min' => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            'max' => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'size' => 'O campo :attribute deve conter exatamente :size caracteres.',
-            'alpha' => 'O campo :attribute deve conter apenas letras.',
-            'email' => 'Informe um :attribute válido.',
+            'email.email' => 'Informe um e-mail válido.',
+            'email.regex' => 'Informe um e-mail em um formato válido (ex.: usuario@dominio.com).',
 
             'cnpj.digits' => 'O CNPJ deve conter exatamente 14 dígitos.',
             'cep.digits' => 'O CEP deve conter exatamente 8 dígitos.',

@@ -23,8 +23,15 @@ class StoreUsuarioRequest extends FormRequest
     {
         return [
             'funcionario_id' => ['required', 'exists:funcionarios,id', 'unique:usuarios,funcionario_id'],
-            'email'          => ['required', 'email', 'max:100', 'unique:usuarios,email', 'confirmed'],
-            'senha'          => [
+            'email' => [
+                'required',
+                'email:rfc',
+                'max:100',
+                'unique:usuarios,email',
+                'confirmed',
+                'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+            ],
+            'senha' => [
                 'required',
                 'string',
                 'min:8',
@@ -37,11 +44,11 @@ class StoreUsuarioRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'funcionario_id'       => 'funcionário',
-            'email'                => 'e-mail',
-            'senha'                => 'senha',
-            'senha_confirmation'   => 'confirmação da senha',
-            'email_confirmation'   => 'confirmação da e-mail',
+            'funcionario_id' => 'funcionário',
+            'email' => 'e-mail',
+            'senha' => 'senha',
+            'senha_confirmation' => 'confirmação da senha',
+            'email_confirmation' => 'confirmação da e-mail',
         ];
     }
 
@@ -49,9 +56,12 @@ class StoreUsuarioRequest extends FormRequest
     {
         return [
             'funcionario_id.unique' => 'Este funcionário já possui um usuário vinculado.',
-            'senha.confirmed'       => 'A confirmação da senha não confere.',
-            'email.confirmed'       => 'A confirmação da e-mail não confere.',
-            'senha.regex'           => 'A senha deve ter ao menos 8 caracteres, 1 letra maiúscula, 1 número e 1 caractere especial.',
+            'senha.confirmed' => 'A confirmação da senha não confere.',
+            'email.email' => 'Informe um e-mail válido.',
+            'email.regex' => 'Informe um e-mail em um formato válido (ex.: usuario@dominio.com).',
+            'email.unique' => 'Já existe um usuário cadastrado com este e-mail.',
+            'email.confirmed' => 'A confirmação de e-mail não confere.',
+            'senha.regex' => 'A senha deve ter ao menos 8 caracteres, 1 letra maiúscula, 1 número e 1 caractere especial.',
         ];
     }
 }

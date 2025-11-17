@@ -26,9 +26,9 @@ class UpdateSetorRequest extends FormRequest
         $textoOuNulo = fn($valor) => is_string($valor) ? trim($valor) : $valor;
 
         $this->merge([
-            'nome'       => $textoOuNulo($this->input('nome')),
+            'nome' => $textoOuNulo($this->input('nome')),
             'empresa_id' => $this->filled('empresa_id') ? (int) $this->input('empresa_id') : null,
-            'ativo'      => $this->boolean('ativo'),
+            'ativo' => $this->boolean('ativo'),
         ]);
     }
 
@@ -65,24 +65,17 @@ class UpdateSetorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'           => 'O campo :attribute é obrigatório.',
-            'string'             => 'O campo :attribute deve ser um texto.',
-            'min'                => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            'max'                => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'integer'            => 'O campo :attribute deve ser um número inteiro.',
-            'exists'             => 'A :attribute informada não foi encontrada.',
-            'boolean'            => 'O campo :attribute deve ser verdadeiro ou falso.',
-            'empresa_id.exists'  => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
-            'nome.unique'        => 'Já existe um setor com este nome nesta empresa.',
+            'empresa_id.exists' => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
+            'nome.unique' => 'Já existe um setor com este nome nesta empresa.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'nome'       => 'nome do setor',
+            'nome' => 'nome do setor',
             'empresa_id' => 'empresa',
-            'ativo'      => 'status',
+            'ativo' => 'status',
         ];
     }
 }

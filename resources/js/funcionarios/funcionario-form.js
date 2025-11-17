@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cpfInput) cpfInput.value = normalize.digits(cpfInput.value, 11);
         if (telInput) telInput.value = normalize.digits(telInput.value, 11);
         if (matriculaInput && !matriculaInput.disabled) {
-            matriculaInput.value = normalize.digits(matriculaInput.value, 30);
+            matriculaInput.value = normalize.digits(matriculaInput.value, 8);
         }
     });
 
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Matrícula apenas números (e respeita a validação do back)
     matriculaInput?.addEventListener('input', () => {
-        matriculaInput.value = normalize.digits(matriculaInput.value, 30);
+        matriculaInput.value = normalize.digits(matriculaInput.value, 8);
     });
 
     // Terceirizado: limpa e bloqueia matrícula

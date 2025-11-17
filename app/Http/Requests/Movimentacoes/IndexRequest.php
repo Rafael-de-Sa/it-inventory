@@ -22,20 +22,14 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Busca por ID da movimentação
             'busca' => ['nullable', 'string', 'max:50'],
 
-            // Combos de filtro
             'empresa_id'     => ['nullable', 'integer', 'exists:empresas,id'],
             'setor_id'       => ['nullable', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['nullable', 'integer', 'exists:funcionarios,id'],
 
-            // Status (ajuste os valores conforme seu enum)
-            // app/Http/Requests/Movimentacoes/IndexRequest.php
             'status' => ['nullable', 'string', 'in:pendente,cancelada,concluida,encerrada'],
 
-
-            // Ordenação
             'ordenar_por'    => ['nullable', 'in:id,data,status'],
             'direcao'        => ['nullable', 'in:asc,desc'],
         ];
@@ -43,13 +37,7 @@ class IndexRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'integer' => 'O campo :attribute deve ser um número inteiro.',
-            'string'  => 'O campo :attribute deve ser um texto.',
-            'max'     => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'in'      => 'O valor selecionado para :attribute é inválido.',
-            'exists'  => 'O :attribute selecionado é inválido.',
-        ];
+        return [];
     }
 
     public function attributes(): array

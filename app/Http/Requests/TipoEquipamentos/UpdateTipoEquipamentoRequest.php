@@ -52,19 +52,14 @@ class UpdateTipoEquipamentoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'     => 'O campo :attribute é obrigatório.',
-            'string'       => 'O campo :attribute deve ser um texto.',
-            'min'          => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            'max'          => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'boolean'      => 'O campo :attribute deve ser verdadeiro ou falso.',
-            'nome.unique'  => 'Já existe um tipo de equipamento com este nome.',
+            'nome.unique' => 'Já existe um tipo de equipamento com este nome.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'nome'  => 'tipo de equipamento',
+            'nome' => 'tipo de equipamento',
             'ativo' => 'status ativo',
         ];
     }

@@ -23,12 +23,12 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome'        => ['nullable', 'string', 'max:100'],
-            'empresa_id'  => ['nullable', 'integer', 'min:1', Rule::exists('empresas', 'id')],
-            'ativo'       => ['nullable', 'in:0,1'],
+            'nome' => ['nullable', 'string', 'max:100'],
+            'empresa_id' => ['nullable', 'integer', 'min:1', Rule::exists('empresas', 'id')],
+            'ativo' => ['nullable', 'in:0,1'],
 
             'ordenar_por' => ['nullable', 'in:id,nome,empresa_id,nome_empresa,cnpj_empresa,ativo'],
-            'direcao'     => ['nullable', 'in:asc,desc'],
+            'direcao' => ['nullable', 'in:asc,desc'],
         ];
     }
 

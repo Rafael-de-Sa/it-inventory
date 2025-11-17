@@ -23,11 +23,11 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'campo'       => ['nullable', Rule::in(['id', 'nome'])],
-            'busca'       => ['nullable', 'string', 'max:100'],
+            'campo' => ['nullable', Rule::in(['id', 'nome'])],
+            'busca' => ['nullable', 'string', 'max:100'],
             'ordenar_por' => ['nullable', Rule::in(['id', 'nome'])],
-            'direcao'     => ['nullable', Rule::in(['asc', 'desc'])],
-            'ativo'       => ['nullable', Rule::in(['todos', '1', '0'])],
+            'direcao' => ['nullable', Rule::in(['asc', 'desc'])],
+            'ativo' => ['nullable', Rule::in(['todos', '1', '0'])],
         ];
     }
 }

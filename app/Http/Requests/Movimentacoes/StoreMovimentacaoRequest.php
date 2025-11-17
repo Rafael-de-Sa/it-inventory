@@ -59,15 +59,6 @@ class StoreMovimentacaoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'  => 'O campo :attribute é obrigatório.',
-            'integer'   => 'O campo :attribute deve ser um número inteiro.',
-            'exists'    => 'O :attribute selecionado é inválido.',
-            'string'    => 'O campo :attribute deve ser um texto.',
-            'max'       => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'array'     => 'O campo :attribute deve ser uma lista.',
-            'min'       => 'O campo :attribute deve conter ao menos :min item(ns).',
-            'distinct'  => 'Há itens repetidos em :attribute.',
-
             'equipamentos.required' => 'Selecione ao menos um equipamento.',
             'equipamentos.min'      => 'Selecione ao menos um equipamento.',
         ];

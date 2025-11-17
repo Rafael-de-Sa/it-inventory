@@ -121,7 +121,7 @@
                 {{-- Matrícula --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Matrícula**</label>
-                    <input type="text" id="matricula" name="matricula"
+                    <input type="text" id="matricula" name="matricula" maxlength="8"
                         value="{{ old('matricula', $funcionario->matricula) }}" inputmode="numeric" pattern="\d*"
                         autocomplete="off" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed placeholder-gray-500 focus:outline-none',

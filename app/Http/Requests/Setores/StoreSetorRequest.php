@@ -57,11 +57,6 @@ class StoreSetorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required'           => 'O campo :attribute é obrigatório.',
-            'string'             => 'O campo :attribute deve ser um texto.',
-            'min'                => 'O campo :attribute deve possuir ao menos :min caracteres.',
-            'max'                => 'O campo :attribute deve possuir no máximo :max caracteres.',
-            'integer'            => 'O campo :attribute deve ser um número inteiro.',
             'empresa_id.exists'  => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
             'nome.unique'        => 'Já existe um setor com este nome nesta empresa.',
         ];
@@ -70,7 +65,7 @@ class StoreSetorRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'nome'       => 'nome do setor',
+            'nome' => 'nome do setor',
             'empresa_id' => 'empresa',
         ];
     }

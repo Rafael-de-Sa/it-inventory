@@ -47,9 +47,6 @@ class IndexRequest extends FormRequest
     public function messages(): array
     {
         return [
-            '*.in'           => 'O campo :attribute deve ser um dos seguintes valores: :values.',
-            '*.string'       => 'O campo :attribute deve ser um texto.',
-            '*.max.string'   => 'O campo :attribute deve ter no máximo :max caracteres.',
             'campo.in'        => 'Selecione um campo válido para filtrar.',
             'ordenar_por.in'  => 'Selecione um campo válido para ordenação.',
             'direcao.in'      => 'A direção deve ser asc (ascendente) ou desc (descendente).',

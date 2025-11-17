@@ -110,7 +110,7 @@
                 {{-- Matrícula --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Matrícula**</label>
-                    <input type="text" id="matricula" name="matricula" value="{{ old('matricula') }}"
+                    <input type="text" id="matricula" name="matricula" maxlength="8" value="{{ old('matricula') }}"
                         inputmode="numeric" pattern="\d*" autocomplete="off" @class([
                             'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed placeholder-gray-500 focus:outline-none',
                             'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(

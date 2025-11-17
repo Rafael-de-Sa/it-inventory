@@ -172,8 +172,8 @@ class UsuarioController extends Controller
         $usuario = Usuario::create($dados);
 
         return redirect()
-            ->route('usuarios.show', $usuario)
-            ->with('sucesso', 'Usuário cadastrado com sucesso.');
+            ->route('usuarios.index', $usuario)
+            ->with('success', 'Usuário cadastrado com sucesso.');
     }
 
 

@@ -113,7 +113,7 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ route('setores.index') }}" @class([
+                <a href="{{ route('setores.show', $setor->id) }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',
                     'border-green-700 hover:bg-green-800/40',
                 ]) title="Cancelar"

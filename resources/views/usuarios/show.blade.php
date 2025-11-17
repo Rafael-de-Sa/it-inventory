@@ -98,7 +98,7 @@
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
                 {{-- Voltar --}}
-                <a href="{{ url()->previous() }}"
+                <a href="{{ route('funcionarios.index') }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"
                     title="Voltar" aria-label="Voltar">
                     <i class="fa-solid fa-arrow-left"></i>

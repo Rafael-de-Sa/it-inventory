@@ -110,7 +110,7 @@
 
             {{-- Aquisição --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
-                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200 uppercase">Aquisição</legend>
+                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Aquisição</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                     {{-- Data da compra --}}
@@ -162,10 +162,11 @@
 
             {{-- Barra de ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ url()->previous() }}" @class([
+                <a href="{{ route('equipamentos.show', $equipamento->id) }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',
                     'border-green-700 hover:bg-green-800/40',
-                ]) title="Cancelar" aria-label="Cancelar">
+                ]) title="Cancelar"
+                    aria-label="Cancelar">
                     <i class="fa-solid fa-arrow-left"></i><span>Cancelar</span>
                 </a>
 

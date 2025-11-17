@@ -141,7 +141,7 @@
             {{-- Telefone --}}
             <div>
                 <label for="telefone" class="mb-1 block text-sm text-green-100">Telefone</label>
-                <input id="telefone" name="telefone" type="text" maxlength="20"
+                <input id="telefone" name="telefone" type="text" placeholder="(44) 99999-0000"
                     value="{{ old('telefone', $funcionario->telefone) }}" @class([
                         'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
                         'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
@@ -171,7 +171,7 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ url()->previous() }}"
+                <a href="{{ route('funcionarios.show', $funcionario->id) }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-green-800/60 bg-transparent px-4 py-2 text-sm hover:bg-green-900/40">
                     <i class="fa-solid fa-arrow-left"></i> Cancelar
                 </a>

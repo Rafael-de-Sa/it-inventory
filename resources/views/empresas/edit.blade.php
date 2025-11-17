@@ -119,7 +119,7 @@
 
             {{-- Endereço --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
-                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200 uppercase">Endereço</legend>
+                <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Endereço</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                     {{-- CEP --}}
@@ -281,7 +281,7 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ route('empresas.index') }}" @class([
+                <a href="{{ route('empresas.show', $empresa->id) }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',
                     'border-green-700 hover:bg-green-800/40',
                 ]) title="Cancelar"

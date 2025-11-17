@@ -169,7 +169,7 @@
 
             {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                <a href="{{ route('usuarios.index') }}"
+                <a href="{{ route('usuarios.show', $usuario->id) }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"
                     title="Cancelar" aria-label="Cancelar">
                     <i class="fa-solid fa-arrow-left"></i>

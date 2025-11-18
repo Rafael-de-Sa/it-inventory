@@ -17,7 +17,7 @@
     @endphp
     <div class="w-full flex justify-center bg-green-950 py-7">
 
-        <form action="{{ route('loginSubmit') }}" method="post"
+        <form action="{{ route('login') }}" method="post"
             class="w-3/5 bg-green-900 p-8 rounded-xl shadow-md text-white font-inter">
 
             @csrf

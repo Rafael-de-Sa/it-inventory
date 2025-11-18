@@ -13,10 +13,17 @@ use App\Http\Controllers\ViaCepController;
 use App\Models\Movimentacao;
 use Illuminate\Support\Facades\Route;
 
+//sem login
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login');
+});
 
-Route::get('/', [MainController::class, 'index'])->name('/');
+//autenticados
+Route::middleware('auth')->group(function () {
+    Route::get('/', [MainController::class, 'index'])->name('/');
+});
 
-//auth routes
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('loginSubmit', [AuthController::class, 'loginSubmit'])->name('loginSubmit');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -10,7 +10,7 @@
                 </a>
             </div>
 
-            @if (!Route::is('/login'))
+            @if (!Route::is('login'))
                 {{-- Desktop nav --}}
                 <nav class="hidden md:flex items-center gap-1">
                     {{-- Dashboard --}}
@@ -104,7 +104,7 @@
                     </div>
 
                     {{-- Sair --}}
-                    <a href="{{ route('/logout') }}"
+                    <a href="{{ route('logout') }}"
                         class="px-3 py-2 rounded-md text-sm font-medium transition hover:text-green-300"
                         title="Encerrar sessão">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
@@ -191,7 +191,7 @@
             </details>
 
 
-            <a href="{{ route('/logout') }}"
+            <a href="{{ route('logout') }}"
                 class="mt-1 block rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
                 <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Sair
             </a>

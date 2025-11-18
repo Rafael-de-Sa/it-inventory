@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     use SoftDeletes;
 
+    protected $table = 'usuarios';
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
@@ -36,6 +37,11 @@ class Usuario extends Model
     ];
 
     protected $hidden = ['senha'];
+
+    public function getAuthPassword()
+    {
+        return $this->senha;
+    }
 
     public function funcionario()
     {

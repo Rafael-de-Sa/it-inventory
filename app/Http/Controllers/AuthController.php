@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -11,19 +13,22 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function loginSubmit(Request $request)
+    public function loginSubmit(LoginRequest $request)
     {
-        $request->validate(
-            [
-                'email' => ['required', 'email'],
-                'password' => ['required']
-            ],
-            [
-                'email.required' => 'O e-mail é obrigatório',
-                'email.email' => 'O e-mail deve ser válido',
-                'password.required' => 'A senha é obrigatória'
-            ]
-        );
+        dd('entrou no controller');
+
+        $credentials = $request->validated();
+
+        dd([
+            'credenciais_recebidas' => $credentials,
+            'auth_tentou' => Auth::attempt($credentials),
+            'usuario' => Auth::user(),
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return route('/');
+        }
 
         $email = $request->input('email');
         $password = $request->input('password');

@@ -50,7 +50,7 @@
                                     'block px-4 py-2 hover:bg-green-800/50',
                                     'text-green-300' => request()->routeIs('tipo-equipamentos.*'),
                                 ])>
-                                    <i class="fa-solid fa-sitemap"></i> Tipo de Equipamentos
+                                    <i class="fa-solid fa-sitemap"></i> Tipos de Equipamento
                                 </a>
                                 <a href="{{ route('equipamentos.index') }}" @class([
                                     'block px-4 py-2 hover:bg-green-800/50',
@@ -151,7 +151,7 @@
                     </a>
                     <a href="{{ route('tipo-equipamentos.index') }}"
                         class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('tipo-equipamentos.*')) text-green-300 @endif">
-                        <i class="fa-solid fa-sitemap mr-2"></i> Tipo de Equipamentos
+                        <i class="fa-solid fa-sitemap mr-2"></i> Tipos de Equipamento
                     </a>
                     <a href="{{ route('equipamentos.index') }}"
                         class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('equipamentos.*')) text-green-300 @endif">

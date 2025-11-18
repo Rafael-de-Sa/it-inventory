@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [MainController::class, 'index'])->name('/');
 
 //auth routes
-Route::get('/login', [AuthController::class, 'login'])->name('/login');
+Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('loginSubmit', [AuthController::class, 'loginSubmit'])->name('loginSubmit');
-Route::get('/logout', [AuthController::class, 'logout'])->name('/logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
 
@@ -33,18 +33,23 @@ Route::resource('tipo-equipamentos', TipoEquipamentoController::class);
 Route::resource('equipamentos', EquipamentoController::class);
 
 Route::resource('funcionarios', FuncionarioController::class);
+
 Route::get('empresas/{empresa}/setores', [FuncionarioController::class, 'setoresPorEmpresa'])
     ->name('funcionarios.setoresPorEmpresa');
 
 Route::resource('usuarios', UsuarioController::class);
+
 Route::get('/empresas/{empresa}/setores-ativos', [UsuarioController::class, 'setoresAtivos']);
+
 Route::get('/setores/{setor}/funcionarios-disponiveis', [UsuarioController::class, 'funcionariosPorSetor']);
 
 Route::resource('movimentacoes', MovimentacaoController::class)
     ->parameters(['movimentacoes' => 'movimentacao'])
     ->except(['destroy', 'update', 'edit']);
+
 Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::class, 'setoresParaMovimentacao'])
     ->name('movimentacoes.setores-para-movimentacao');
+
 Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
     ->name('movimentacoes.funcionarios-para-movimentacao');
 

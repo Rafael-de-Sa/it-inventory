@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('funcionario_id')->unique()->constrained('funcionarios')->restrictOnDelete();
 
-            //validar a questão do e-mail (se um colaborador for deligado e posteriormente recontratado pode haver o mesmo e-mail mas com status inativo no cadastro anterior)
             $table->string('email', 100);
             $table->string('senha');
             $table->boolean('ativo')->default(true);

@@ -36,7 +36,6 @@ class UpdateUsuarioRequest extends FormRequest
             ],
             'email_confirmation' => ['required_with:email', 'string', 'email', 'max:100'],
 
-            // Senha OPCIONAL (só valida se preencher)
             'senha' => [
                 'nullable',
                 'string',
@@ -50,9 +49,6 @@ class UpdateUsuarioRequest extends FormRequest
         ];
     }
 
-    /**
-     * Mensagens de erro personalizadas.
-     */
     public function messages(): array
     {
         return [
@@ -65,9 +61,6 @@ class UpdateUsuarioRequest extends FormRequest
         ];
     }
 
-    /**
-     * Nomes amigáveis dos atributos.
-     */
     public function attributes(): array
     {
         return [

@@ -269,13 +269,14 @@
                                         <i class="fa-solid fa-eye text-base align-middle" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Editar (se fizer sentido no seu fluxo) --}}
+                                    {{-- Editar (se fizer sentido no seu fluxo) 
                                     <a href="{{ route('movimentacoes.edit', $movimentacao->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current hover:bg-green-800/20 focus:outline-none cursor-pointer"
                                         title="Editar" aria-label="Editar">
                                         <i class="fa-solid fa-pen-to-square text-base align-middle"
                                             aria-hidden="true"></i>
                                     </a>
+                                    --}}
 
                                     {{-- Excluir 
                                     <form method="POST" action="{{ route('movimentacoes.destroy', $movimentacao->id) }}"

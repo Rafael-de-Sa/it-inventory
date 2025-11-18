@@ -42,16 +42,11 @@ Route::get('/setores/{setor}/funcionarios-disponiveis', [UsuarioController::clas
 
 Route::resource('movimentacoes', MovimentacaoController::class)
     ->parameters(['movimentacoes' => 'movimentacao'])
-    ->except('destroy');
+    ->except(['destroy', 'update', 'edit']);
 Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::class, 'setoresParaMovimentacao'])
     ->name('movimentacoes.setores-para-movimentacao');
 Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
     ->name('movimentacoes.funcionarios-para-movimentacao');
-
-//Rota para ver o termo (remover posteriormente)
-Route::get('/teste-termo-resp/{movimentacao}', function (Movimentacao $movimentacao) {
-    return view('relatorios.movimentacoes.termo-responsabilidade', compact('movimentacao'));
-});
 
 Route::post(
     '/movimentacoes/{movimentacao}/upload-termo-responsabilidade',

@@ -29,7 +29,7 @@ class UpdateEquipamentoRequest extends FormRequest
             'data_compra'         => ['nullable', 'date'],
             'valor_compra'        => ['nullable', 'numeric', 'between:0,9999999999.99'],
             'status'              => ['required', Rule::in(['em_uso', 'defeituoso', 'descartado', 'disponivel', 'em_manutencao'])],
-            'descricao'           => ['nullable', 'string', 'max:65535'],
+            'descricao'           => ['required', 'string', 'max:65535'],
             'patrimonio'          => [
                 'nullable',
                 'string',

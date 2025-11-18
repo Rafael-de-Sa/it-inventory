@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('valor_compra', 12, 2)->nullable();
             $table->enum('status', ['em_uso', 'defeituoso', 'descartado', 'disponivel', 'em_manutencao'])->default('disponivel');
             $table->boolean('ativo')->default(true);
-            $table->text('descricao')->nullable();
+            $table->text('descricao');
             $table->string('patrimonio')->unique()->nullable();
             $table->string('numero_serie')->unique()->nullable();
 

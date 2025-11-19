@@ -22,15 +22,14 @@ Route::middleware('guest')->group(function () {
 //autenticados
 Route::middleware('auth')->group(function () {
     Route::get('/', [MainController::class, 'index'])->name('/');
+
+    Route::resource('empresas', EmpresaController::class);
 });
 
-Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('loginSubmit', [AuthController::class, 'loginSubmit'])->name('loginSubmit');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
 
-Route::resource('empresas', EmpresaController::class);
 
 Route::resource('setores', SetorController::class)
     ->parameters(['setores' => 'setor']);

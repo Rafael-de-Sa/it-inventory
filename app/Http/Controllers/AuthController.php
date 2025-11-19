@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,32 +16,32 @@ class AuthController extends Controller
 
     public function loginSubmit(LoginRequest $request)
     {
-        dd('entrou no controller');
-
         $credentials = $request->validated();
 
-        dd([
-            'credenciais_recebidas' => $credentials,
-            'auth_tentou' => Auth::attempt($credentials),
-            'usuario' => Auth::user(),
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return route('/');
+        $usuario = Usuario::where('email', $credentials['email'])
+            ->where('ativo', true)
+            ->whereNull('apagado_em')
+            ->first();
+        if (!$usuario) {
+            return back()->withInput()->with(['error' => 'Login Inválido']);
         }
 
-        $email = $request->input('email');
-        $password = $request->input('password');
+        if (!password_verify($credentials['password'], $usuario->senha)) {
+            return back()->withInput()->with(['error' => 'Login Inválido']);
+        }
 
+        $usuario->ultimo_login = now();
+        $usuario->save();
 
-        echo $email;
-        echo '<br>';
-        echo $password;
+        $request->session()->regenerate();
+        Auth::login($usuario);
+
+        return redirect()->intended(route('/'));
     }
 
     public function logout()
     {
-        echo "Logout";
+        session()->flush();
+        return redirect('login');
     }
 }

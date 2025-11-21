@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Usuario;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function loginSubmit(LoginRequest $request)
+    public function loginSubmit(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->validated();
 
@@ -41,7 +42,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        session()->flush();
-        return redirect('login');
+        Auth::logout();
+        return redirect()->route('login');
     }
 }

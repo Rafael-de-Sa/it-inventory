@@ -25,7 +25,7 @@ class Usuario extends Authenticatable
 
     protected $casts = [
         'senha' => 'hashed',
-        'ultimo_login' => 'timestamp',
+        'ultimo_login' => 'datetime',
         'ativo' => 'boolean',
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',

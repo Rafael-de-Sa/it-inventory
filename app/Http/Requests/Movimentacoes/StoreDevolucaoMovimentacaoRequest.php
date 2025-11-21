@@ -46,14 +46,19 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'empresa_id'     => ['required', 'integer', 'exists:empresas,id'],
-            'setor_id'       => ['required', 'integer', 'exists:setores,id'],
+            'empresa_id' => ['required', 'integer', 'exists:empresas,id'],
+            'setor_id' => ['required', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['required', 'integer', 'exists:funcionarios,id'],
 
-            'observacao'     => ['nullable', 'string', 'max:2000'],
+            'observacao' => ['nullable', 'string', 'max:2000'],
 
-            'equipamentos'   => ['required', 'array', 'min:1'],
+            'equipamentos' => ['required', 'array', 'min:1'],
             'equipamentos.*' => ['integer', 'distinct', 'exists:equipamentos,id'],
+
+            'observacoes_equipamentos' => ['nullable', 'array'],
+            'observacoes_equipamentos.*' => ['nullable', 'string', 'max:2000'],
+
+            'motivo_devolucao' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao,cancelada'],
         ];
     }
     public function attributes(): array
@@ -76,8 +81,7 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
             $funcionarioId   = $this->input('funcionario_id');
             $idsEquipamentos = $this->input('equipamentos', []);
 
-            // responsabilidade em aberto
-            if (! empty($idsEquipamentos) && $funcionarioId) {
+            if ($funcionarioId && ! empty($idsEquipamentos)) {
                 $quantidadeEsperada = count($idsEquipamentos);
 
                 $quantidadeEmUsoPeloFuncionario = MovimentacaoEquipamento::query()
@@ -94,7 +98,7 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
                 if ($quantidadeEmUsoPeloFuncionario !== $quantidadeEsperada) {
                     $validator->errors()->add(
                         'equipamentos',
-                        'Um ou mais equipamentos selecionados não estão em uso pelo funcionário ou não possuem responsabilidade em aberto.'
+                        'Um ou mais equipamentos selecionados não estão mais em responsabilidade em aberto para este funcionário.'
                     );
                 }
             }

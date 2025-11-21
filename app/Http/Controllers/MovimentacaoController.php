@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Movimentacoes\IndexRequest;
+use App\Http\Requests\Movimentacoes\StoreDevolucaoMovimentacaoRequest;
 use App\Http\Requests\Movimentacoes\StoreMovimentacaoRequest;
 use App\Models\Empresa;
 use App\Models\Equipamento;
 use App\Models\Funcionario;
 use App\Models\Movimentacao;
+use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -157,6 +159,17 @@ class MovimentacaoController extends Controller
         return view('movimentacoes.create', compact('listaDeEmpresas', 'listaDeEquipamentos'));
     }
 
+    public function createDevolucao()
+    {
+        $listaDeEmpresas = Empresa::query()
+            ->aptasParaMovimentacao()
+            ->orderBy('razao_social')
+            ->orderBy('nome_fantasia')
+            ->get();
+
+        return view('movimentacoes.devolucao.create', compact('listaDeEmpresas'));
+    }
+
     public function store(StoreMovimentacaoRequest $request)
     {
         $dadosValidados = $request->validated();
@@ -191,6 +204,118 @@ class MovimentacaoController extends Controller
             ->with('success', 'Movimentação gerada com sucesso.');
     }
 
+    public function storeDevolucao(StoreDevolucaoMovimentacaoRequest $request)
+    {
+        $dadosValidados      = $request->validated();
+        $setorId             = $dadosValidados['setor_id'];
+        $funcionarioId       = $dadosValidados['funcionario_id'];
+        $idsEquipamentos     = $dadosValidados['equipamentos'];
+        $observacaoGeral     = $dadosValidados['observacao'] ?? null;
+        $motivoDevolucaoGeral = $dadosValidados['motivo_devolucao'] ?? 'devolucao';
+
+        DB::transaction(function () use (
+            $setorId,
+            $funcionarioId,
+            $idsEquipamentos,
+            $observacaoGeral,
+            $motivoDevolucaoGeral
+        ) {
+            // 1) Cria a movimentação de devolução (capa/evento)
+            $movimentacaoDevolucao = Movimentacao::create([
+                'setor_id'          => $setorId,
+                'funcionario_id'    => $funcionarioId,
+                'observacao'        => $observacaoGeral,
+                'status'            => 'pendente', // depois, ao subir o termo de devolução, você pode marcar como 'concluida'
+                'tipo_movimentacao' => Movimentacao::TIPO_DEVOLUCAO,
+            ]);
+
+            // 2) Busca as responsabilidades em aberto para esses equipamentos e funcionário
+            $responsabilidadesEmAberto = MovimentacaoEquipamento::query()
+                ->whereIn('equipamento_id', $idsEquipamentos)
+                ->whereNull('devolvido_em')
+                ->whereHas('movimentacao', function ($query) use ($funcionarioId) {
+                    $query
+                        ->where('funcionario_id', $funcionarioId)
+                        ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                        ->where('status', '!=', 'cancelada');
+                })
+                ->lockForUpdate()
+                ->get();
+
+            // Vamos guardar quais movimentações de responsabilidade foram afetadas
+            $idsMovimentacoesResponsabilidade = [];
+
+            // 3) Para cada vínculo de responsabilidade em aberto, marcar como devolvido
+            foreach ($responsabilidadesEmAberto as $responsabilidadePivot) {
+                /** @var MovimentacaoEquipamento $responsabilidadePivot */
+                $equipamentoId = $responsabilidadePivot->equipamento_id;
+                $idsMovimentacoesResponsabilidade[] = $responsabilidadePivot->movimentacao_id;
+
+                // Observação específica por equipamento (se a view mandar algo como observacoes_equipamentos[equipamento_id])
+                $observacoesEquipamentos = $dadosValidados['observacoes_equipamentos'] ?? [];
+                $observacaoEquipamento   = $observacoesEquipamentos[$equipamentoId] ?? $observacaoGeral;
+
+                // Motivo pode ser geral por devolução ou você expande depois para por item
+                $motivoDevolucao = $motivoDevolucaoGeral;
+
+                $responsabilidadePivot->update([
+                    'devolvido_em'     => now()->toDateString(),
+                    'motivo_devolucao' => $motivoDevolucao,
+                    'observacao'       => $observacaoEquipamento,
+                ]);
+
+                // 4) Vincula o equipamento à movimentação de devolução (para termo/relatórios)
+                $movimentacaoDevolucao->equipamentos()->attach($equipamentoId);
+
+                // 5) Atualiza o status atual do equipamento conforme o motivo
+                $equipamento = Equipamento::query()
+                    ->where('id', $equipamentoId)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $equipamento) {
+                    continue;
+                }
+
+                $novoStatusEquipamento = match ($motivoDevolucao) {
+                    'manutencao' => 'em_manutencao',
+                    'defeito', 'quebra' => 'defeituoso',
+                    default => 'disponivel',
+                };
+
+                $equipamento->update([
+                    'status' => $novoStatusEquipamento,
+                ]);
+            }
+
+            // 6) Para cada movimentação de responsabilidade afetada,
+            //    se todos os itens estiverem devolvidos, marca como 'encerrada'
+            $idsMovimentacoesResponsabilidade = array_unique($idsMovimentacoesResponsabilidade);
+
+            foreach ($idsMovimentacoesResponsabilidade as $idMovimentacaoResponsabilidade) {
+                $existemItensEmAberto = MovimentacaoEquipamento::query()
+                    ->where('movimentacao_id', $idMovimentacaoResponsabilidade)
+                    ->whereNull('devolvido_em')
+                    ->exists();
+
+                if (! $existemItensEmAberto) {
+                    Movimentacao::query()
+                        ->where('id', $idMovimentacaoResponsabilidade)
+                        ->where('status', '!=', 'cancelada')
+                        ->update([
+                            'status' => 'encerrada',
+                        ]);
+                }
+            }
+
+            // Opcional: você pode retornar algo aqui dentro da transaction se quiser.
+            // Mas como vamos redirecionar fora, não precisa.
+        });
+
+        return redirect()
+            ->route('movimentacoes.index')
+            ->with('success', 'Devolução registrada com sucesso.');
+    }
 
 
     /**
@@ -302,5 +427,32 @@ class MovimentacaoController extends Controller
         return response($dompdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', "inline; filename={$nomeArquivo}");
+    }
+
+    public function equipamentosEmUsoParaDevolucao(Funcionario $funcionario)
+    {
+        $equipamentosEmUso = MovimentacaoEquipamento::query()
+            ->whereNull('devolvido_em')
+            ->whereHas('movimentacao', function ($query) use ($funcionario) {
+                $query
+                    ->where('funcionario_id', $funcionario->id)
+                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                    ->where('status', '!=', 'cancelada');
+            })
+            ->with('equipamento.tipoEquipamento')
+            ->get()
+            ->map(function (MovimentacaoEquipamento $pivot) {
+                $equipamento = $pivot->equipamento;
+
+                return [
+                    'id'           => $equipamento->id,
+                    'descricao'    => $equipamento->descricao,
+                    'numero_serie' => $equipamento->numero_serie,
+                    'patrimonio'   => $equipamento->patrimonio,
+                    'tipo'         => $equipamento->tipoEquipamento->nome ?? null,
+                ];
+            });
+
+        return response()->json($equipamentosEmUso);
     }
 }

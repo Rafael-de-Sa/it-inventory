@@ -72,4 +72,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/movimentacoes/devolucao', [MovimentacaoController::class, 'storeDevolucao'])
         ->name('movimentacoes.devolucao.store');
+
+    Route::get(
+        '/movimentacoes/devolucao/funcionarios/{funcionario}/equipamentos-em-uso',
+        [MovimentacaoController::class, 'equipamentosEmUsoParaDevolucao']
+    )->name('movimentacoes.equipamentos-em-uso');
 });

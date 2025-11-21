@@ -116,7 +116,7 @@
                     </p>
                 @else
                     <p id="funcionario_id_help" class="mt-1 text-xs text-green-200">
-                        Selecione o funcionário destinatário da movimentação (inclui terceirizados).
+                        Selecione o destinatário da movimentação.
                     </p>
                 @endif
             </div>
@@ -183,7 +183,7 @@
                 {{-- Tabela de equipamentos disponíveis --}}
                 <div class="rounded-2xl bg-green-900/30 border border-green-800 shadow-sm">
                     <div class="px-4 py-2 border-b border-green-800/60 flex items-center justify-between">
-                        <span class="text-sm font-medium text-green-100">Tabela de Equipamentos (disponíveis)</span>
+                        <span class="text-sm font-medium text-green-100">Tabela de equipamentos disponíveis</span>
                         <span class="text-[11px] text-green-200/80">
                             Selecione os equipamentos e clique em <strong>Adicionar</strong>.
                         </span>

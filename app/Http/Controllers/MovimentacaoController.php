@@ -151,7 +151,6 @@ class MovimentacaoController extends Controller
             ->where('ativo', true)
             ->whereNull('apagado_em')
             ->where('status', 'disponivel')
-            ->orderBy('patrimonio')
             ->orderBy('id')
             ->get();
 
@@ -206,15 +205,20 @@ class MovimentacaoController extends Controller
             'equipamentos.tipoEquipamento',
         ]);
 
-        // Deixa os equipamentos ordenados por ID para a listagem
         $movimentacao->setRelation(
             'equipamentos',
             $movimentacao->equipamentos->sortBy('id')->values()
         );
 
-        return view('movimentacoes.show', [
-            'movimentacao' => $movimentacao,
-        ]);
+        if ($movimentacao->tipo_movimentacao === Movimentacao::TIPO_RESPONSABILIDADE) {
+            return view('movimentacoes.show-responsabilidade', [
+                'movimentacao' => $movimentacao,
+            ]);
+        } else {
+            return view('movimentacoes.show-devolucao', [
+                'movimentacao' => $movimentacao,
+            ]);
+        }
     }
 
     public function setoresParaMovimentacao(Empresa $empresa)
@@ -265,6 +269,10 @@ class MovimentacaoController extends Controller
 
     public function gerarTermoResponsabilidade(Movimentacao $movimentacao)
     {
+        if ($movimentacao->tipo_movimentacao !== Movimentacao::TIPO_RESPONSABILIDADE) {
+            abort(404);
+        }
+
         $movimentacao->load([
             'setor.empresa',
             'funcionario',

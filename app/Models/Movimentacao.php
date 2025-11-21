@@ -18,6 +18,9 @@ class Movimentacao extends Model
     const UPDATED_AT = 'atualizado_em';
     const DELETED_AT = 'apagado_em';
 
+    public const TIPO_RESPONSABILIDADE = 'responsabilidade';
+    public const TIPO_DEVOLUCAO = 'devolucao';
+
     protected $fillable =
     [
         'setor_id',
@@ -28,7 +31,13 @@ class Movimentacao extends Model
     ];
 
     protected $attributes = [
-        'status' => 'pendente'
+        'status' => 'pendente',
+        'tipo_movimentacao' => self::TIPO_RESPONSABILIDADE
+    ];
+
+    protected $casts = [
+        'criado_em' => 'datetime',
+        'atualizado_em' => 'datetime',
     ];
 
     public function setor()
@@ -63,9 +72,9 @@ class Movimentacao extends Model
         $pastaDestino = 'movimentacoes/termo_responsabilidade';
         Storage::disk('public')->makeDirectory($pastaDestino);
 
-        $idMovimentacao  = (string) $movimentacao->id;
+        $idMovimentacao = (string) $movimentacao->id;
         $timestampArquivo = now()->format('Ymd_His');
-        $extensaoArquivo  = $arquivoTermo->getClientOriginalExtension();
+        $extensaoArquivo = $arquivoTermo->getClientOriginalExtension();
 
         $nomeArquivo = $idMovimentacao . '_' . $timestampArquivo . '.' . $extensaoArquivo;
 
@@ -85,5 +94,15 @@ class Movimentacao extends Model
         return redirect()
             ->route('movimentacoes.show', $movimentacao->id)
             ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
+    }
+
+    public function scopeResponsabilidades($query)
+    {
+        return $query->where('tipo_movimentacao', self::TIPO_RESPONSABILIDADE);
+    }
+
+    public function scopeDevolucoes($query)
+    {
+        return $query->where('tipo_movimentacao', self::TIPO_DEVOLUCAO);
     }
 }

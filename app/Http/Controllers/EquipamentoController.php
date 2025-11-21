@@ -111,7 +111,6 @@ class EquipamentoController extends Controller
         // Lista de status conforme enum da migration
         $listaStatus = [
             'disponivel'     => 'Disponível',
-            'em_uso'         => 'Em uso',
             'em_manutencao'  => 'Em manutenção',
             'defeituoso'     => 'Defeituoso',
             'descartado'     => 'Descartado',

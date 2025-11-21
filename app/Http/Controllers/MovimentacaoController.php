@@ -166,6 +166,7 @@ class MovimentacaoController extends Controller
                 'setor_id'       => $dadosValidados['setor_id'],
                 'funcionario_id' => $dadosValidados['funcionario_id'],
                 'observacao'     => $dadosValidados['observacao'] ?? null,
+                'tipo_movimentacao' => Movimentacao::TIPO_RESPONSABILIDADE,
             ]);
 
             $idsEquipamentos = $dadosValidados['equipamentos'];
@@ -179,7 +180,6 @@ class MovimentacaoController extends Controller
                 // vincula na tabela pivot movimentacao_equipamentos
                 $movimentacao->equipamentos()->attach($equipamento->id);
 
-                // marca equipamento como "em_uso"
                 $equipamento->update([
                     'status' => 'em_uso',
                 ]);

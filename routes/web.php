@@ -65,4 +65,11 @@ Route::middleware('auth')->group(function () {
         '/movimentacoes/{movimentacao}/termo-responsabilidade',
         [MovimentacaoController::class, 'gerarTermoResponsabilidade']
     )->name('movimentacoes.termo-responsabilidade');
+
+    //devolução
+    Route::get('/movimentacoes/devolucao/create', [MovimentacaoController::class, 'createDevolucao'])
+        ->name('movimentacoes.devolucao.create');
+
+    Route::post('/movimentacoes/devolucao', [MovimentacaoController::class, 'storeDevolucao'])
+        ->name('movimentacoes.devolucao.store');
 });

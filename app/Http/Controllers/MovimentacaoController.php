@@ -428,6 +428,41 @@ class MovimentacaoController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', "inline; filename={$nomeArquivo}");
     }
+    public function gerarTermoDevolucao(Movimentacao $movimentacao)
+    {
+        if ($movimentacao->tipo_movimentacao !== Movimentacao::TIPO_DEVOLUCAO) {
+            abort(404);
+        }
+
+        $movimentacao->load([
+            'setor.empresa',
+            'funcionario',
+            'equipamentos', // com pivot->observacao
+        ]);
+
+        $nomeArquivo = 'termo_devolucao_movimentacao_' . $movimentacao->id . '.pdf';
+
+        $pdf = Pdf::loadView('relatorios.movimentacoes.termo-devolucao', [
+            'movimentacao' => $movimentacao,
+        ])->setPaper('a4', 'portrait');
+
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_text(
+            520,
+            810,
+            "Página {PAGE_NUM} de {PAGE_COUNT}",
+            null,
+            9,
+            [0.4, 0.4, 0.4]
+        );
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename={$nomeArquivo}");
+    }
 
     public function equipamentosEmUsoParaDevolucao(Funcionario $funcionario)
     {

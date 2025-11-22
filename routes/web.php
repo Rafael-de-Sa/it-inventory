@@ -77,4 +77,7 @@ Route::middleware('auth')->group(function () {
         '/movimentacoes/devolucao/funcionarios/{funcionario}/equipamentos-em-uso',
         [MovimentacaoController::class, 'equipamentosEmUsoParaDevolucao']
     )->name('movimentacoes.equipamentos-em-uso');
+
+    Route::get('/movimentacoes/{movimentacao}/termo-devolucao', [MovimentacaoController::class, 'gerarTermoDevolucao'])
+        ->name('movimentacoes.termo-devolucao');
 });

@@ -129,6 +129,15 @@
             @php
                 $numeroItem = $indiceEquipamento + 1;
                 $pivot = $equipamento->pivot;
+
+                $motivosDevolucaoLabels = [
+                    'manutencao' => 'Manutenção',
+                    'defeito' => 'Defeito',
+                    'quebra' => 'Quebra',
+                    'devolucao' => 'Devolução',
+                ];
+
+                $motivoDevolucaoFormatado = $motivosDevolucaoLabels[$pivot->motivo_devolucao] ?? 'Não informado';
             @endphp
             <tr>
                 <td>{{ $numeroItem }}</td>
@@ -139,7 +148,7 @@
                 <td>{{ $equipamento->numero_serie ?? ($equipamento->serial ?? '') }}</td>
                 <td>{{ $equipamento->patrimonio ?? ($equipamento->numero_patrimonio ?? '') }}</td>
                 <td class="texto-esquerda">{{ $pivot->observacao }}</td>
-                <td class="texto-esquerda">{{ $pivot->motivo_devolucao }}</td>
+                <td class="texto-esquerda">{{ $motivoDevolucaoFormatado }}</td>
             </tr>
         @empty
             <tr>

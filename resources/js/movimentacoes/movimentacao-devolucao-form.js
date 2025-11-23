@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const colunaDescricao = linha.querySelector('.coluna-descricao');
                 const colunaTipo = linha.querySelector('.coluna-tipo');
                 const campoObservacao = linha.querySelector('.campo-observacao');
+                const campoMotivoDevolucao = linha.querySelector('.campo-motivo-devolucao');
                 const checkbox = linha.querySelector('.checkbox-equipamento');
 
                 if (colunaId) colunaId.textContent = equipamento.id;
@@ -169,6 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (campoObservacao) {
                     campoObservacao.name = `observacoes_equipamentos[${equipamento.id}]`;
+                }
+
+                if (campoMotivoDevolucao) {
+                    campoMotivoDevolucao.name = `motivos_devolucao_equipamentos[${equipamento.id}]`;
                 }
 
                 if (checkbox) {

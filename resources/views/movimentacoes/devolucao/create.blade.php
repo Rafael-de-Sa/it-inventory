@@ -7,8 +7,10 @@
             data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
             data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
             data-carregar-equipamentos-em-uso-endpoint="{{ route('movimentacoes.equipamentos-em-uso', ['funcionario' => 'FUNCIONARIO_ID']) }}"
-            data-old-empresa-id="{{ old('empresa_id') }}" data-old-setor-id="{{ old('setor_id') }}"
-            data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos='@json(old('equipamentos', []))'>
+            data-old-empresa-id="{{ old('empresa_id', request('empresa_id')) }}"
+            data-old-setor-id="{{ old('setor_id', request('setor_id')) }}"
+            data-old-funcionario-id="{{ old('funcionario_id', request('funcionario_id')) }}"
+            data-old-equipamentos='@json(old('equipamentos', []))'>
             @csrf
 
             {{-- Cabeçalho --}}
@@ -40,7 +42,7 @@
                     aria-invalid="{{ $errors->has('empresa_id') ? 'true' : 'false' }}" aria-describedby="empresa_id_help">
                     <option value="">Selecione…</option>
                     @foreach ($listaDeEmpresas as $empresa)
-                        <option value="{{ $empresa->id }}" @selected(old('empresa_id') == $empresa->id)>
+                        <option value="{{ $empresa->id }}" @selected(old('empresa_id', request('empresa_id')) == $empresa->id)>
                             {{ $empresa->rotulo_empresa }}
                         </option>
                     @endforeach
@@ -71,9 +73,9 @@
                         'setor_id'),
                 ])
                     aria-invalid="{{ $errors->has('setor_id') ? 'true' : 'false' }}" aria-describedby="setor_id_help"
-                    {{ old('empresa_id') ? '' : 'disabled' }}>
+                    {{ old('empresa_id', request('empresa_id')) ? '' : 'disabled' }}>
                     <option value="">
-                        {{ old('empresa_id') ? 'Selecione…' : 'Selecione uma empresa primeiro…' }}
+                        {{ old('empresa_id', request('empresa_id')) ? 'Selecione…' : 'Selecione uma empresa primeiro…' }}
                     </option>
                 </select>
 
@@ -102,9 +104,9 @@
                         'funcionario_id'),
                 ])
                     aria-invalid="{{ $errors->has('funcionario_id') ? 'true' : 'false' }}"
-                    aria-describedby="funcionario_id_help" {{ old('setor_id') ? '' : 'disabled' }}>
+                    aria-describedby="funcionario_id_help" {{ old('setor_id', request('setor_id')) ? '' : 'disabled' }}>
                     <option value="">
-                        {{ old('setor_id') ? 'Selecione…' : 'Selecione um setor primeiro…' }}
+                        {{ old('setor_id', request('setor_id')) ? 'Selecione…' : 'Selecione um setor primeiro…' }}
                     </option>
                 </select>
 
@@ -181,6 +183,7 @@
                                     <th class="px-4 py-2">Número de Série</th>
                                     <th class="px-4 py-2">Descrição</th>
                                     <th class="px-4 py-2">Tipo</th>
+                                    <th class="px-4 py-2">Motivo da devolução</th>
                                     <th class="px-4 py-2">Observação da devolução</th>
                                 </tr>
                             </thead>
@@ -201,13 +204,29 @@
                                 <td class="px-4 py-2 text-center coluna-numero-serie"></td>
                                 <td class="px-4 py-2 text-center coluna-descricao"></td>
                                 <td class="px-4 py-2 text-center coluna-tipo"></td>
+
+                                {{-- Motivo da devolução --}}
+                                <td class="px-4 py-2">
+                                    <select
+                                        class="campo-motivo-devolucao w-full rounded-lg border border-green-700 bg-white px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
+                                        <option value="">Selecione…</option>
+                                        <option value="manutencao">Manutenção</option>
+                                        <option value="defeito">Defeito</option>
+                                        <option value="quebra">Quebra</option>
+                                        <option value="devolucao">Devolução normal</option>
+                                    </select>
+                                </td>
+
+                                {{-- Observação da devolução --}}
                                 <td class="px-4 py-2">
                                     <textarea
-                                        class="campo-observacao w-full rounded-lg border border-green-700 bg-white px-2 py-1.5 text-xs text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400"
+                                        class="campo-observacao w-full rounded-lg border border-green-700 bg-white px-2 py-1.5 text-xs text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400 resize-none"
                                         rows="2" placeholder="Descreva o estado em que o equipamento foi devolvido..."></textarea>
                                 </td>
                             </tr>
                         </template>
+
+
 
                     </div>
                 </div>

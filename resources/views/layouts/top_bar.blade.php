@@ -90,9 +90,21 @@
                                 @if (Route::has('movimentacoes.index'))
                                     <a href="{{ route('movimentacoes.index') }}" @class([
                                         'block px-4 py-2 hover:bg-green-800/50',
-                                        'text-green-300' => request()->routeIs('movimentacoes.*'),
+                                        'text-green-300' => request()->routeIs('movimentacoes.index'),
                                     ])>
-                                        <i class="fa-solid fa-right-left"></i> Movimentações
+                                        <i class="fa-solid fa-list"></i> Movimentações
+                                    </a>
+                                    <a href="{{ route('movimentacoes.create') }}" @class([
+                                        'block px-4 py-2 hover:bg-green-800/50',
+                                        'text-green-300' => request()->routeIs('movimentacoes.create'),
+                                    ])>
+                                        <i class="fa-solid fa-file-signature"></i> Termo de responsabilidade
+                                    </a>
+                                    <a href="{{ route('movimentacoes.devolucao.create') }}" @class([
+                                        'block px-4 py-2 hover:bg-green-800/50',
+                                        'text-green-300' => request()->routeIs('movimentacoes.devolucao.*'),
+                                    ])>
+                                        <i class="fa-solid fa-box-open"></i> Termo de devolução
                                     </a>
                                 @else
                                     <span class="block px-4 py-2 text-green-200/60 cursor-not-allowed">
@@ -179,8 +191,16 @@
                 <div class="mt-1 space-y-1 pl-6">
                     @if (Route::has('movimentacoes.index'))
                         <a href="{{ route('movimentacoes.index') }}"
-                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.*')) text-green-300 @endif">
-                            <i class="fa-solid fa-right-left mr-2"></i> Movimentações
+                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.index')) text-green-300 @endif">
+                            <i class="fa-solid fa-list mr-2"></i> Movimentações
+                        </a>
+                        <a href="{{ route('movimentacoes.create') }}"
+                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.create')) text-green-300 @endif">
+                            <i class="fa-solid fa-file-signature mr-2"></i> Termo de responsabilidade
+                        </a>
+                        <a href="{{ route('movimentacoes.devolucao.create') }}"
+                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.devolucao.*')) text-green-300 @endif">
+                            <i class="fa-solid fa-box-open mr-2"></i> Termo de devolução
                         </a>
                     @else
                         <span class="block rounded-md px-3 py-2 text-green-200/60">

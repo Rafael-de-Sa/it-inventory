@@ -46,29 +46,34 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'empresa_id' => ['required', 'integer', 'exists:empresas,id'],
-            'setor_id' => ['required', 'integer', 'exists:setores,id'],
+            'empresa_id'     => ['required', 'integer', 'exists:empresas,id'],
+            'setor_id'       => ['required', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['required', 'integer', 'exists:funcionarios,id'],
 
             'observacao' => ['nullable', 'string', 'max:2000'],
 
-            'equipamentos' => ['required', 'array', 'min:1'],
+            'equipamentos'   => ['required', 'array', 'min:1'],
             'equipamentos.*' => ['integer', 'distinct', 'exists:equipamentos,id'],
 
-            'observacoes_equipamentos' => ['nullable', 'array'],
+            'observacoes_equipamentos'   => ['nullable', 'array'],
             'observacoes_equipamentos.*' => ['nullable', 'string', 'max:2000'],
 
-            'motivo_devolucao' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao,cancelada'],
+            'motivo_devolucao' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
+
+            'motivos_devolucao_equipamentos'   => ['nullable', 'array'],
+            'motivos_devolucao_equipamentos.*' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
         ];
     }
     public function attributes(): array
     {
         return [
-            'empresa_id'     => 'empresa',
-            'setor_id'       => 'setor',
+            'empresa_id' => 'empresa',
+            'setor_id' => 'setor',
             'funcionario_id' => 'funcionário',
-            'observacao'     => 'observação',
-            'equipamentos'   => 'equipamentos',
+            'observacao' => 'observação',
+            'equipamentos' => 'equipamentos',
+            'motivo_devolucao' => 'motivo de devolução',
+            'motivos_devolucao_equipamentos.*' => 'motivo de devolução do equipamento',
         ];
     }
 

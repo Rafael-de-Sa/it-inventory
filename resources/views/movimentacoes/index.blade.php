@@ -188,6 +188,7 @@
                     <tr>
                         <th class="px-4 py-2">ID</th>
                         <th class="px-4 py-2">Data</th>
+                        <th class="px-4 py-2">Tipo</th>
                         <th class="px-4 py-2">Empresa</th>
                         <th class="px-4 py-2">Setor</th>
                         <th class="px-4 py-2">Funcionário</th>
@@ -233,6 +234,9 @@
                             <td class="px-4 py-2 text-center">{{ $movimentacao->id }}</td>
                             <td class="px-4 py-2 text-center">
                                 {{ optional($movimentacao->criado_em)->format('d/m/Y H:i') }}
+                            </td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $movimentacao->tipo_movimentacao === \App\Models\Movimentacao::TIPO_DEVOLUCAO ? 'Devolução' : 'Responsabilidade' }}
                             </td>
                             <td class="px-4 py-2 text-center">
                                 {{ $empresa?->rotulo_empresa ?? ($empresa?->razao_social ?? '-') }}
@@ -297,7 +301,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-4 text-center text-sm text-green-100/80">
+                            <td colspan="9" class="px-4 py-4 text-center text-sm text-green-100/80">
                                 Nenhuma movimentação encontrada para os filtros informados.
                             </td>
                         </tr>

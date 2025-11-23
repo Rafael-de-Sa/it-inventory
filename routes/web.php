@@ -80,4 +80,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/movimentacoes/{movimentacao}/termo-devolucao', [MovimentacaoController::class, 'gerarTermoDevolucao'])
         ->name('movimentacoes.termo-devolucao');
+
+    Route::post(
+        '/movimentacoes/{movimentacao}/upload-termo-devolucao',
+        [MovimentacaoController::class, 'uploadTermoDevolucao']
+    )->name('movimentacoes.upload-termo-devolucao');
 });

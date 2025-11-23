@@ -27,7 +27,8 @@ class Movimentacao extends Model
         'funcionario_id',
         'observacao',
         'termo_responsabilidade',
-        'status'
+        'status',
+        'tipo_movimentacao'
     ];
 
     protected $attributes = [
@@ -86,7 +87,6 @@ class Movimentacao extends Model
 
         $movimentacao->termo_responsabilidade = $caminhoArquivo;
 
-        // Regra de negócio: ao subir termo, marca como concluída
         $movimentacao->status = 'concluida';
 
         $movimentacao->save();

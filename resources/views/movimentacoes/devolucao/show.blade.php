@@ -46,7 +46,7 @@
                     <label class="block mb-1 text-sm font-medium text-green-100">ID da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->id }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
@@ -55,11 +55,11 @@
                     <label class="block mb-1 text-sm font-medium text-green-100">Data da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->criado_em?->format('d/m/Y H:i') ?? '—' }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
-                {{-- Status como “badge” --}}
+                {{-- Status --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Status</label>
                     <div
@@ -69,13 +69,14 @@
                 </div>
             </section>
 
+            {{-- Relacionamentos principais --}}
             <section class="space-y-4">
                 {{-- Funcionário --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Funcionário</label>
                     <input type="text" value="{{ $descricaoFuncionario }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
@@ -84,7 +85,7 @@
                     <label class="block mb-1 text-sm font-medium text-green-100">Setor</label>
                     <input type="text" value="{{ $descricaoSetor }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
@@ -93,18 +94,18 @@
                     <label class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
                     <input type="text" value="{{ $descricaoEmpresa }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
-            </section>
 
-            {{-- Observação --}}
-            <section class="space-y-2">
-                <label class="block mb-1 text-sm font-medium text-green-100">Observação</label>
-                <textarea rows="3"
-                    class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black text-sm
-                           cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
-                    disabled readonly>{{ $movimentacao->observacao ?? 'Sem observações registradas.' }}</textarea>
+                {{-- Observações --}}
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-green-100">Observações</label>
+                    <textarea rows="3"
+                        class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                        disabled readonly>{{ $movimentacao->observacao ?? 'Sem observações registradas.' }}</textarea>
+                </div>
             </section>
 
             {{-- Equipamentos --}}
@@ -117,64 +118,35 @@
                     <table class="min-w-full text-sm table-auto">
                         <thead class="bg-green-900/60 text-green-100">
                             <tr>
-                                <th class="px-4 py-2 text-center">ID</th>
-                                <th class="px-4 py-2 text-center">Descrição</th>
-                                <th class="px-4 py-2 text-center">Patrimônio</th>
-                                <th class="px-4 py-2 text-center">Nº Série</th>
-                                <th class="px-4 py-2 text-center">Status</th>
-                                <th class="px-4 py-2 text-center">Ação</th>
+                                <th class="px-3 py-2 text-left font-semibold">Patrimônio</th>
+                                <th class="px-3 py-2 text-left font-semibold">Tipo</th>
+                                <th class="px-3 py-2 text-left font-semibold">Descrição</th>
+                                <th class="px-3 py-2 text-left font-semibold">Número de série</th>
+                                <th class="px-3 py-2 text-left font-semibold">Status atual</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-green-950/10">
+                        <tbody class="divide-y divide-green-800/60">
                             @forelse ($movimentacao->equipamentos as $equipamento)
-                                @php
-                                    $dadosPivot = $equipamento->pivot; // MovimentacaoEquipamento
-                                    $estaDevolvido = filled($dadosPivot->devolvido_em);
-                                @endphp
-                                <tr class="border-b border-green-800/30">
-                                    <td class="px-4 py-2 text-center">{{ $equipamento->id }}</td>
-                                    <td class="px-4 py-2 text-center">
-                                        {{ $equipamento->descricao ?? '-' }}
+                                <tr class="hover:bg-green-900/50">
+                                    <td class="px-3 py-2">
+                                        {{ $equipamento->patrimonio ?? '—' }}
                                     </td>
-                                    <td class="px-4 py-2 text-center">
-                                        {{ $equipamento->patrimonio ?? '-' }}
+                                    <td class="px-3 py-2">
+                                        {{ $equipamento->tipoEquipamento->nome ?? '—' }}
                                     </td>
-                                    <td class="px-4 py-2 text-center">
-                                        {{ $equipamento->numero_serie ?? '-' }}
+                                    <td class="px-3 py-2">
+                                        {{ $equipamento->descricao ?? ($equipamento->nome ?? '—') }}
                                     </td>
-                                    <td class="px-4 py-2 text-center">
-                                        @if ($estaDevolvido)
-                                            <span
-                                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-500/20 text-green-200 border border-green-500/60">
-                                                Devolvido
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-500/60">
-                                                Em uso
-                                            </span>
-                                        @endif
+                                    <td class="px-3 py-2">
+                                        {{ $equipamento->numero_serie ?? '—' }}
                                     </td>
-                                    <td class="px-4 py-2 text-center">
-                                        @if (!$estaDevolvido)
-                                            @php
-                                                $empresaId = optional($movimentacao->setor)->empresa_id;
-                                                $setorId = $movimentacao->setor_id;
-                                                $funcionarioId = $movimentacao->funcionario_id;
-                                            @endphp
-                                            <a href="{{ route('movimentacoes.devolucao.create') . '?empresa_id=' . $empresaId . '&setor_id=' . $setorId . '&funcionario_id=' . $funcionarioId }}"
-                                                class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/40 px-3 py-1.5 text-xs hover:bg-green-700/40 cursor-pointer">
-                                                <i class="fa-solid fa-rotate-left text-xs"></i>
-                                                <span>Devolver</span>
-                                            </a>
-                                        @else
-                                            <span class="text-xs text-green-200">—</span>
-                                        @endif
+                                    <td class="px-3 py-2">
+                                        {{ ucfirst($equipamento->status ?? 'indefinido') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-4 text-center text-sm text-green-100/80">
+                                    <td colspan="5" class="px-3 py-4 text-center text-sm text-green-200">
                                         Nenhum equipamento vinculado a esta movimentação.
                                     </td>
                                 </tr>
@@ -184,48 +156,62 @@
                 </div>
             </section>
 
-
-            {{-- TERMO DE RESPONSABILIDADE --}}
+            {{-- TERMO DE DEVOLUÇÃO --}}
             <section class="space-y-4">
-                <h3 class="text-lg font-semibold tracking-wide">Termo de responsabilidade</h3>
+                <h3 class="text-lg font-semibold tracking-wide">Termo de devolução</h3>
 
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
-
                     <div class="grid gap-6 md:grid-cols-2 md:items-start">
                         {{-- Coluna esquerda: upload --}}
                         <div class="space-y-2">
                             <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
                             <p class="text-xs text-green-200">
-                                Envie o termo assinado para concluir a movimentação.
+                                Envie o termo de devolução assinado para concluir a movimentação.
                             </p>
 
-                            <form id="form-upload-termo" method="POST" action="{{-- route('movimentacoes.termo.upload', $movimentacao) --}}"
+                            <form id="form-upload-termo-devolucao" method="POST"
+                                action="{{ route('movimentacoes.upload-termo-devolucao', $movimentacao) }}"
                                 enctype="multipart/form-data" class="space-y-3">
                                 @csrf
 
-                                <input type="file" name="arquivo_termo" accept="application/pdf"
+                                <input type="file" name="arquivo_termo_devolucao" accept="application/pdf"
                                     class="block w-full text-sm text-green-50
                                            file:mr-3 file:rounded-lg file:border-0
                                            file:bg-green-700 file:px-4 file:py-2
                                            file:text-sm file:font-medium file:text-white
                                            hover:file:bg-green-600">
                             </form>
+
+                            {{-- Caso você já esteja salvando o caminho do termo, pode exibir algo assim:
+                            @if (!empty($movimentacao->caminho_termo_devolucao))
+                                <p class="text-xs text-green-200 mt-2">
+                                    Termo já enviado:
+                                    <a href="{{ Storage::url($movimentacao->caminho_termo_devolucao) }}"
+                                        target="_blank"
+                                        class="underline hover:text-green-100">
+                                        Visualizar termo de devolução
+                                    </a>
+                                </p>
+                            @endif
+                            --}}
                         </div>
 
                         {{-- Coluna direita: ações do termo --}}
                         <div class="flex flex-col items-stretch gap-3 md:items-end">
                             {{-- Gerar termo --}}
-                            <a href="{{ route('movimentacoes.termo-responsabilidade', $movimentacao) }}" target="_blank"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
+                            <a href="{{ route('movimentacoes.termo-devolucao', $movimentacao) }}" target="_blank"
+                                class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/60
+                                       px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
                                 <i class="fa-solid fa-file-pdf"></i>
-                                <span>Gerar termo de responsabilidade</span>
+                                <span>Gerar termo de devolução</span>
                             </a>
 
                             {{-- Enviar termo (submit do form de cima) --}}
-                            <button type="submit" form="form-upload-termo"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500">
+                            <button type="submit" form="form-upload-termo-devolucao"
+                                class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2
+                                       text-sm font-medium text-white hover:bg-green-500">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>Upload termo de responsabilidade</span>
+                                <span>Upload termo de devolução</span>
                             </button>
                         </div>
                     </div>
@@ -233,9 +219,13 @@
                     {{-- Rodapé do card: Voltar --}}
                     <div
                         class="flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
-                        {{-- Voltar --}}
+                        <p class="text-xs text-green-200">
+                            As ações acima não alteram os dados já exibidos da movimentação.
+                        </p>
+
                         <a href="{{ route('movimentacoes.index') }}"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700 bg-green-900/50 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-800/60">
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
+                                   bg-green-900/50 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-800/60">
                             <i class="fa-solid fa-arrow-left-long"></i>
                             <span>Voltar</span>
                         </a>

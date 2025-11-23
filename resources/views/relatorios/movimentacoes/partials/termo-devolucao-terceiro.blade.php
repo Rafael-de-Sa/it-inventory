@@ -87,7 +87,7 @@
 </table>
 
 <div class="titulo-principal">
-    TERMO DE DEVOLUÇÃO DE EQUIPAMENTOS DE TI – COLABORADOR TERCEIRIZADO
+    TERMO DE DEVOLUÇÃO DE EQUIPAMENTOS (TERCEIRIZADO)
 </div>
 
 <div class="secao-texto">
@@ -99,13 +99,7 @@
     @if ($cpfFormatado)
         , CPF <strong>{{ $cpfFormatado }}</strong>
     @endif
-    , colaborador(a) terceirizado(a) em atuação nas dependências de
-    @if ($nomeEmpresaExibicao)
-        <strong>{{ Str::upper($nomeEmpresaExibicao) }}</strong>,
-    @else
-        desta empresa,
-    @endif
-    declara, para os devidos fins, que devolveu os equipamentos relacionados abaixo,
+    , colaborador(a) terceirizado(a) declara, para os devidos fins, que devolveu os equipamentos relacionados abaixo,
     nas condições descritas, estando ciente de que eventuais perdas, danos ou
     irregularidades decorrentes de uso inadequado poderão ser apuradas e,
     se for o caso, tratadas conforme as responsabilidades civis e contratuais

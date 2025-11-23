@@ -40,13 +40,13 @@
             @endphp
 
             {{-- Dados principais --}}
-            <section class="grid gap-4 md:grid-cols-3">
+            <section class="grid gap-4 md:grid-cols-4">
                 {{-- ID --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">ID da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->id }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
@@ -55,11 +55,11 @@
                     <label class="block mb-1 text-sm font-medium text-green-100">Data da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->criado_em?->format('d/m/Y H:i') ?? '—' }}"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
-                      cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
+                               cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
                         disabled readonly>
                 </div>
 
-                {{-- Status como “badge” --}}
+                {{-- Status --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Status</label>
                     <div
@@ -67,7 +67,18 @@
                         {{ ucfirst($movimentacao->status) }}
                     </div>
                 </div>
+
+                {{-- Tipo de termo --}}
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-green-100">Tipo de termo</label>
+                    <div
+                        class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium bg-sky-900/60 text-sky-100 border-sky-700">
+                        Responsabilidade
+                    </div>
+                </div>
+
             </section>
+
 
             <section class="space-y-4">
                 {{-- Funcionário --}}

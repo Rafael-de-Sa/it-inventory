@@ -33,14 +33,31 @@
 
                 $classesStatus = match ($movimentacao->status) {
                     'pendente' => 'bg-yellow-900/60 text-yellow-100 border-yellow-700',
-                    'finalizada' => 'bg-green-900/60 text-green-100 border-green-700',
+                    'finalizada', 'encerrada' => 'bg-green-900/60 text-green-100 border-green-700',
                     'cancelada' => 'bg-red-900/60 text-red-100 border-red-700',
                     default => 'bg-slate-900/60 text-slate-100 border-slate-700',
                 };
+
+                // tipo de termo conforme vínculo do funcionário
+                $descricaoTipoTermo = $movimentacao->funcionario?->terceirizado
+                    ? 'Termo de devolução – Terceirizado'
+                    : 'Termo de devolução – Funcionário próprio';
+
+                $classesTipoTermo = $movimentacao->funcionario?->terceirizado
+                    ? 'bg-sky-900/60 text-sky-100 border-sky-700'
+                    : 'bg-indigo-900/60 text-indigo-100 border-indigo-700';
+
+                // mapa para mostrar o motivo de forma amigável
+                $motivosDevolucaoLabels = [
+                    'manutencao' => 'Manutenção',
+                    'defeito' => 'Defeito',
+                    'quebra' => 'Quebra',
+                    'devolucao' => 'Devolução',
+                ];
             @endphp
 
             {{-- Dados principais --}}
-            <section class="grid gap-4 md:grid-cols-3">
+            <section class="grid gap-4 md:grid-cols-4">
                 {{-- ID --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">ID da Movimentação</label>
@@ -67,6 +84,15 @@
                         {{ ucfirst($movimentacao->status) }}
                     </div>
                 </div>
+
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-green-100">Tipo de termo</label>
+                    <div
+                        class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium bg-sky-900/60 text-sky-100 border-sky-700">
+                        Devolução
+                    </div>
+                </div>
+
             </section>
 
             {{-- Relacionamentos principais --}}
@@ -98,9 +124,9 @@
                         disabled readonly>
                 </div>
 
-                {{-- Observações --}}
+                {{-- Observações da movimentação --}}
                 <div>
-                    <label class="block mb-1 text-sm font-medium text-green-100">Observações</label>
+                    <label class="block mb-1 text-sm font-medium text-green-100">Observações da movimentação</label>
                     <textarea rows="3"
                         class="w-full rounded-lg border border-green-700 px-3 py-2 bg-gray-300 text-black
                                cursor-default transition-none focus:outline-none focus:ring-0 focus:border-green-700"
@@ -122,11 +148,20 @@
                                 <th class="px-3 py-2 text-left font-semibold">Tipo</th>
                                 <th class="px-3 py-2 text-left font-semibold">Descrição</th>
                                 <th class="px-3 py-2 text-left font-semibold">Número de série</th>
-                                <th class="px-3 py-2 text-left font-semibold">Status atual</th>
+                                <th class="px-3 py-2 text-left font-semibold">Motivo da devolução</th>
+                                <th class="px-3 py-2 text-left font-semibold">Observação da devolução</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-green-800/60">
                             @forelse ($movimentacao->equipamentos as $equipamento)
+                                @php
+                                    /** @var \App\Models\Equipamento $equipamento */
+                                    $pivot = $equipamento->pivot;
+                                    $motivoBruto = $pivot->motivo_devolucao ?? null;
+                                    $motivoFormatado = $motivoBruto
+                                        ? $motivosDevolucaoLabels[$motivoBruto] ?? ucfirst($motivoBruto)
+                                        : '—';
+                                @endphp
                                 <tr class="hover:bg-green-900/50">
                                     <td class="px-3 py-2">
                                         {{ $equipamento->patrimonio ?? '—' }}
@@ -141,12 +176,15 @@
                                         {{ $equipamento->numero_serie ?? '—' }}
                                     </td>
                                     <td class="px-3 py-2">
-                                        {{ ucfirst($equipamento->status ?? 'indefinido') }}
+                                        {{ $motivoFormatado }}
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        {{ $pivot->observacao ?? '—' }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-3 py-4 text-center text-sm text-green-200">
+                                    <td colspan="6" class="px-3 py-4 text-center text-sm text-green-200">
                                         Nenhum equipamento vinculado a esta movimentação.
                                     </td>
                                 </tr>
@@ -156,7 +194,7 @@
                 </div>
             </section>
 
-            {{-- TERMO DE DEVOLUÇÃO --}}
+            {{-- TERMO DE DEVOLUÇÃO (gerar / upload) --}}
             <section class="space-y-4">
                 <h3 class="text-lg font-semibold tracking-wide">Termo de devolução</h3>
 
@@ -166,7 +204,7 @@
                         <div class="space-y-2">
                             <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
                             <p class="text-xs text-green-200">
-                                Envie o termo de devolução assinado para concluir a movimentação.
+                                Envie o termo de devolução assinado para manter o registro associado a esta movimentação.
                             </p>
 
                             <form id="form-upload-termo-devolucao" method="POST"
@@ -182,23 +220,20 @@
                                            hover:file:bg-green-600">
                             </form>
 
-                            {{-- Caso você já esteja salvando o caminho do termo, pode exibir algo assim:
                             @if (!empty($movimentacao->caminho_termo_devolucao))
                                 <p class="text-xs text-green-200 mt-2">
                                     Termo já enviado:
-                                    <a href="{{ Storage::url($movimentacao->caminho_termo_devolucao) }}"
-                                        target="_blank"
+                                    <a href="{{ Storage::url($movimentacao->caminho_termo_devolucao) }}" target="_blank"
                                         class="underline hover:text-green-100">
                                         Visualizar termo de devolução
                                     </a>
                                 </p>
                             @endif
-                            --}}
                         </div>
 
                         {{-- Coluna direita: ações do termo --}}
                         <div class="flex flex-col items-stretch gap-3 md:items-end">
-                            {{-- Gerar termo --}}
+                            {{-- Gerar termo (PDF) --}}
                             <a href="{{ route('movimentacoes.termo-devolucao', $movimentacao) }}" target="_blank"
                                 class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/60
                                        px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
@@ -220,7 +255,8 @@
                     <div
                         class="flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
                         <p class="text-xs text-green-200">
-                            As ações acima não alteram os dados já exibidos da movimentação.
+                            As ações acima não alteram os dados já exibidos da movimentação, apenas gerenciam o arquivo do
+                            termo.
                         </p>
 
                         <a href="{{ route('movimentacoes.index') }}"

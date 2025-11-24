@@ -6,6 +6,7 @@ use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\MovimentacaoController;
+use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\UsuarioController;
@@ -95,4 +96,9 @@ Route::middleware('auth')->group(function () {
         '/movimentacoes/{movimentacao}/termo-devolucao/visualizar',
         [MovimentacaoController::class, 'visualizarTermoDevolucao']
     )->name('movimentacoes.termo.devolucao.visualizar');
+
+    Route::get(
+        '/funcionarios/{funcionario}/relatorios/equipamentos',
+        [RelatorioController::class, 'equipamentosPorFuncionario']
+    )->name('relatorios.funcionarios.equipamentos');
 });

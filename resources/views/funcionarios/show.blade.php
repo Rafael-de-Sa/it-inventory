@@ -8,7 +8,7 @@
             <header class="space-y-1">
                 <div class="flex items-center justify-between gap-3">
                     <h2 class="text-2xl font-semibold tracking-wide">
-                        Funcionário — {{ trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? '')) ?: '—' }}
+                        Funcionário - {{ trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? '')) ?: '—' }}
                     </h2>
 
                 </div>
@@ -176,6 +176,14 @@
                 </a>
 
                 <div class="flex items-center gap-3">
+                    {{-- relatório --}}
+                    <a href="{{ route('relatorios.funcionarios.equipamentos', $funcionario) }}" target="_blank"
+                        rel="noopener noreferrer"
+                        class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Relatório de equipamentos</span>
+                    </a>
+
                     {{-- Editar --}}
                     <a href="{{ route('funcionarios.edit', $funcionario->id) }}"
                         class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"

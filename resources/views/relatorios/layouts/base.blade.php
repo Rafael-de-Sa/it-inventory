@@ -72,7 +72,6 @@
 
         .cabecalho-empresa-linha-secundaria {
             color: #4b5563;
-            /* cinza méd. */
         }
 
         /* ================== TÍTULO ================== */
@@ -83,7 +82,6 @@
             margin: 12px 0 18px 0;
             font-size: 14px;
             color: #14532d;
-            /* verde mais escuro */
             border-bottom: 1px solid #16a34a;
             padding-bottom: 4px;
             border-top: 1px solid #16a34a;
@@ -137,17 +135,14 @@
         .tabela-equipamentos td {
             vertical-align: top;
             text-align: center;
-            /* centraliza por padrão */
         }
 
         .tabela-equipamentos td.texto-esquerda {
             text-align: left;
-            /* para a descrição ficar mais legível */
         }
 
         .tabela-equipamentos tbody tr:nth-child(even) {
             background-color: #f3f4f6;
-            /* listras suaves */
         }
 
         /* ================== RODAPÉ / ASSINATURA ================== */

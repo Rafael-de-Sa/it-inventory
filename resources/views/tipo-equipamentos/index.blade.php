@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-wide">Tipos de equipamento</h1>
@@ -15,9 +14,7 @@
             </a>
         </div>
 
-        {{-- Filtros --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
-            {{-- Campo (coluna a filtrar) --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Campo</label>
                 @php
@@ -34,14 +31,12 @@
                 </select>
             </div>
 
-            {{-- Busca --}}
             <div class="md:col-span-5">
                 <label class="mb-1 block text-sm text-green-100">Busca</label>
                 <input type="text" name="busca" value="{{ request('busca') }}" placeholder="Digite o termo…"
                     class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
             </div>
 
-            {{-- Ordenação --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Ordenar por</label>
                 @php
@@ -59,7 +54,6 @@
                 </select>
             </div>
 
-            {{-- Direção --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Direção</label>
                 @php $dirAtual = request('direcao', 'asc'); @endphp
@@ -69,7 +63,6 @@
                 </select>
             </div>
 
-            {{-- Status (Ativo) --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Ativo</label>
                 <select name="ativo" class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900">
@@ -78,8 +71,6 @@
                     <option value="0" @selected(request('ativo') === '0')>Inativo</option>
                 </select>
             </div>
-
-            {{-- Ações dos filtros --}}
             <div class="md:col-span-12 flex flex-wrap items-end justify-between gap-2">
                 <a href="{{ route('/') }}"
                     class="rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40 inline-flex items-center gap-2"
@@ -105,7 +96,6 @@
             </div>
         </form>
 
-        {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
             <table class="min-w-full text-sm table-auto">
                 <thead class="bg-green-900/60 text-green-100 text-center">
@@ -117,10 +107,8 @@
                     </tr>
                 </thead>
 
-                {{-- Mesmo padrão de fundo/hover do Empresas --}}
                 <tbody class="bg-green-950/10">
                     @php
-                        // Permite receber $tipos OU $listaDeTipos
                         $listaDeTipos = $listaDeTipos ?? ($tipos ?? collect());
                     @endphp
 
@@ -130,7 +118,7 @@
                             <td class="px-4 py-2 text-center">{{ $tipo->nome }}</td>
                             <td class="px-4 py-2 text-center">{{ $tipo->ativo ? 'Ativo' : 'Inativo' }}</td>
 
-                            {{-- Ações padronizadas --}}
+                            {{-- Ações --}}
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center justify-center gap-2">
                                     {{-- Exibir --}}

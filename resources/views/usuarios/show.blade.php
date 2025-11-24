@@ -4,7 +4,6 @@
     <div class="w-full flex justify-center">
         <div class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Usuário —
@@ -21,7 +20,6 @@
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID --}}
                 <div class="md:col-span-3">
                     <label for="usuario_id" class="block mb-1 text-sm font-medium text-green-100">ID</label>
                     <input id="usuario_id" type="text" value="{{ $usuario->id }}"
@@ -70,7 +68,6 @@
                     disabled readonly>
             </div>
 
-            {{-- E-mail --}}
             <div>
                 <label for="usuario_email" class="block mb-1 text-sm font-medium text-green-100">E-mail</label>
                 <input id="usuario_email" type="text" value="{{ $usuario->email ?? 'Sem e-mail vinculado' }}"
@@ -79,7 +76,6 @@
                     disabled readonly>
             </div>
 
-            {{-- Último login --}}
             <div>
                 <label for="usuario_ultimo_login" class="block mb-1 text-sm font-medium text-green-100">
                     Último login
@@ -91,9 +87,7 @@
                     disabled readonly>
             </div>
 
-            {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
-                {{-- Voltar --}}
                 <a href="{{ route('funcionarios.index') }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"
                     title="Voltar" aria-label="Voltar">
@@ -102,7 +96,6 @@
                 </a>
 
                 <div class="flex items-center gap-3">
-                    {{-- Editar --}}
                     <a href="{{ route('usuarios.edit', $usuario->id) }}"
                         class="px-4 py-2 rounded-lg border border-green-700 text-green-100 hover:bg-green-800/40 inline-flex items-center gap-2 cursor-pointer"
                         title="Editar" aria-label="Editar">
@@ -111,7 +104,6 @@
                     </a>
 
                     @if (auth()->id() != $usuario->id)
-                        {{-- Excluir --}}
                         <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
                             onsubmit="return confirm('Excluir o usuário {{ addslashes($usuario->email ?? '(sem e-mail)') }}?');"
                             class="inline">

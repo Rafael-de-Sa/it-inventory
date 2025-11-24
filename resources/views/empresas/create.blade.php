@@ -7,20 +7,17 @@
             data-cep-endpoint="{{ route('empresas.cep', ['cep' => '00000000']) }}">
             @csrf
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Empresa</h2>
                 <p class="text-xs text-green-200">Preencha os dados abaixo.</p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Nome Fantasia --}}
             <div>
                 <label for="nome_fantasia" class="block mb-1 text-sm font-medium text-green-100">Nome Fantasia*</label>
                 <input id="nome_fantasia" name="nome_fantasia" type="text" maxlength="100" autocomplete="organization"
@@ -45,7 +42,6 @@
                 @endif
             </div>
 
-            {{-- Razão Social --}}
             <div>
                 <label for="razao_social" class="block mb-1 text-sm font-medium text-green-100">Razão Social*</label>
                 <input id="razao_social" name="razao_social" type="text" maxlength="100"
@@ -70,7 +66,6 @@
                 @endif
             </div>
 
-            {{-- CNPJ --}}
             <div>
                 <label for="cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ*</label>
                 <input id="cnpj" name="cnpj" type="text" inputmode="numeric" maxlength="18"
@@ -96,12 +91,10 @@
                 @endif
             </div>
 
-            {{-- Endereço --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
                 <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Endereço</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    {{-- CEP --}}
                     <div class="md:col-span-3">
                         <label for="cep" class="block mb-1 text-sm font-medium text-green-100">CEP*</label>
                         <input id="cep" name="cep" type="text" inputmode="numeric" maxlength="9"
@@ -128,7 +121,7 @@
                         @endif
                     </div>
 
-                    {{-- Rua --}}
+                    {{-- Rua  -> te errado depois ajustar todo o sistema para logradouro --}}
                     <div class="md:col-span-9">
                         <label for="rua" class="block mb-1 text-sm font-medium text-green-100">Logradouro*</label>
                         <input id="rua" name="rua" type="text" maxlength="100" autocomplete="address-line1"
@@ -153,7 +146,6 @@
                         @endif
                     </div>
 
-                    {{-- Número --}}
                     <div class="md:col-span-3">
                         <label for="numero" class="block mb-1 text-sm font-medium text-green-100">Número*</label>
                         <input id="numero" name="numero" type="text" inputmode="numeric" maxlength="8"
@@ -179,7 +171,6 @@
                         @endif
                     </div>
 
-                    {{-- Bairro --}}
                     <div class="md:col-span-4">
                         <label for="bairro" class="block mb-1 text-sm font-medium text-green-100">Bairro*</label>
                         <input id="bairro" name="bairro" type="text" maxlength="50" placeholder="Centro"
@@ -205,7 +196,6 @@
                         @endif
                     </div>
 
-                    {{-- Complemento --}}
                     <div class="md:col-span-5">
                         <label for="complemento" class="block mb-1 text-sm font-medium text-green-100">Complemento</label>
                         <input id="complemento" name="complemento" type="text" maxlength="50"
@@ -232,7 +222,6 @@
                         @endif
                     </div>
 
-                    {{-- Cidade --}}
                     <div class="md:col-span-8">
                         <label for="cidade" class="block mb-1 text-sm font-medium text-green-100">Cidade*</label>
                         <input id="cidade" name="cidade" type="text" maxlength="30"
@@ -258,7 +247,6 @@
                         @endif
                     </div>
 
-                    {{-- Estado (UF) --}}
                     <div class="md:col-span-4">
                         <label for="estado" class="block mb-1 text-sm font-medium text-green-100">Estado*</label>
                         <input id="estado" name="estado" type="text" maxlength="2" placeholder="PR"
@@ -286,7 +274,6 @@
                 </div>
             </fieldset>
 
-            {{-- E-mail --}}
             <div>
                 <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail*</label>
                 <input id="email" name="email" type="email" maxlength="60" autocomplete="email"
@@ -310,7 +297,6 @@
                 @endif
             </div>
 
-            {{-- Telefone --}}
             <div>
                 <label for="telefone" class="block mb-1 text-sm font-medium text-green-100">Telefone</label>
                 <input id="telefone" name="telefone" type="text" placeholder="(44) 99999-9999 ou (44) 3333-3333"

@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-wide">Usuários</h1>
@@ -16,10 +15,8 @@
             </a>
         </div>
 
-        {{-- Filtros --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
 
-            {{-- Campo (coluna a filtrar) --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Campo</label>
 
@@ -37,7 +34,6 @@
                 </select>
             </div>
 
-            {{-- Busca --}}
             <div class="md:col-span-5">
                 <label class="mb-1 block text-sm text-green-100">Busca</label>
                 <input type="text" name="busca" value="{{ old('busca', $termoBusca ?? request('busca')) }}"
@@ -45,7 +41,6 @@
                     class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
             </div>
 
-            {{-- Ordenar por --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Ordenar por</label>
                 <select name="ordenar_por"
@@ -67,7 +62,6 @@
                 </select>
             </div>
 
-            {{-- Direção --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Direção</label>
                 @php
@@ -79,7 +73,6 @@
                 </select>
             </div>
 
-            {{-- Ativo --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Ativo</label>
                 <select name="ativo" class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900">
@@ -89,9 +82,7 @@
                 </select>
             </div>
 
-            {{-- Ações do filtro --}}
             <div class="md:col-span-12 flex flex-wrap items-end justify-between gap-2">
-                {{-- Voltar --}}
                 <a href="{{ route('/') }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40"
                     title="Voltar" aria-label="Voltar">
@@ -115,7 +106,6 @@
             </div>
         </form>
 
-        {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
             <table class="min-w-full table-auto text-sm">
                 <thead class="bg-green-900/60 text-center text-green-100">
@@ -206,7 +196,6 @@
             </table>
         </div>
 
-        {{-- Paginação --}}
         <div>
             {{ $listaDeUsuarios->onEachSide(1)->links() }}
         </div>

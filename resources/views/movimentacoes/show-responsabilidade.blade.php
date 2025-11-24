@@ -4,7 +4,6 @@
     <div class="w-full flex justify-center">
         <div class="w-full max-w-5xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Movimentação — #{{ $movimentacao->id }}
@@ -39,9 +38,7 @@
                 };
             @endphp
 
-            {{-- Dados principais --}}
             <section class="grid gap-4 md:grid-cols-4">
-                {{-- ID --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">ID da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->id }}"
@@ -50,7 +47,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Data --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Data da Movimentação</label>
                     <input type="text" value="{{ $movimentacao->criado_em?->format('d/m/Y H:i') ?? '—' }}"
@@ -59,7 +55,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Status --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Status</label>
                     <div
@@ -68,7 +63,6 @@
                     </div>
                 </div>
 
-                {{-- Tipo de termo --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Tipo de termo</label>
                     <div
@@ -81,7 +75,6 @@
 
 
             <section class="space-y-4">
-                {{-- Funcionário --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Funcionário</label>
                     <input type="text" value="{{ $descricaoFuncionario }}"
@@ -90,7 +83,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Setor --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Setor</label>
                     <input type="text" value="{{ $descricaoSetor }}"
@@ -99,7 +91,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Empresa --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
                     <input type="text" value="{{ $descricaoEmpresa }}"
@@ -109,7 +100,6 @@
                 </div>
             </section>
 
-            {{-- Observação --}}
             <section class="space-y-2">
                 <label class="block mb-1 text-sm font-medium text-green-100">Observação</label>
                 <textarea rows="3"
@@ -118,7 +108,6 @@
                     disabled readonly>{{ $movimentacao->observacao ?? 'Sem observações registradas.' }}</textarea>
             </section>
 
-            {{-- Equipamentos --}}
             <section class="space-y-3">
                 <h3 class="text-sm font-semibold text-green-100 tracking-wide text-center">
                     Equipamentos desta movimentação
@@ -139,7 +128,7 @@
                         <tbody class="bg-green-950/10">
                             @forelse ($movimentacao->equipamentos as $equipamento)
                                 @php
-                                    $dadosPivot = $equipamento->pivot; // MovimentacaoEquipamento
+                                    $dadosPivot = $equipamento->pivot;
                                     $estaDevolvido = filled($dadosPivot->devolvido_em);
                                 @endphp
                                 <tr class="border-b border-green-800/30">
@@ -196,16 +185,13 @@
             </section>
 
 
-            {{-- TERMO DE RESPONSABILIDADE --}}
             <section class="space-y-4">
                 <h3 class="text-lg font-semibold tracking-wide">Termo de responsabilidade</h3>
 
-                {{-- Card de ações do termo --}}
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
 
                     @if (empty($movimentacao->termo_responsabilidade))
                         <div class="grid gap-6 md:grid-cols-2 md:items-start">
-                            {{-- Coluna esquerda: upload --}}
                             <div class="space-y-2">
                                 <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
                                 <p class="text-xs text-green-200">
@@ -230,9 +216,7 @@
                                 </form>
                             </div>
 
-                            {{-- Coluna direita: ações do termo --}}
                             <div class="flex flex-col items-stretch gap-3 md:items-end">
-                                {{-- Gerar termo --}}
                                 <a href="{{ route('movimentacoes.termo-responsabilidade', $movimentacao) }}"
                                     target="_blank"
                                     class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
@@ -241,7 +225,6 @@
                                     <span>Gerar termo de responsabilidade</span>
                                 </a>
 
-                                {{-- Enviar termo (submit do form de cima) --}}
                                 <button type="submit" form="form-upload-termo"
                                     class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
                            bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-500/90">
@@ -274,7 +257,6 @@
                         </div>
                     @endif
 
-                    {{-- Rodapé do card: Voltar --}}
                     <div
                         class="mt-6 flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
                         <a href="{{ route('movimentacoes.index') }}"

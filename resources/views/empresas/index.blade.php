@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-wide">Empresas</h1>
@@ -17,9 +16,7 @@
 
         </div>
 
-        {{-- Filtros (um campo de busca + seleção de coluna + ordenação) --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
-            {{-- Campo (coluna a filtrar) --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Campo</label>
                 @php
@@ -29,7 +26,6 @@
                         'nome_fantasia' => 'Nome Fantasia',
                         'razao_social' => 'Razão Social',
                         'cnpj' => 'CNPJ',
-                        // 'email' => 'E-mail',
                         'cidade' => 'Cidade',
                         'estado' => 'UF',
                     ];
@@ -42,7 +38,6 @@
                 </select>
             </div>
 
-            {{-- Busca --}}
             <div class="md:col-span-5">
                 <label class="mb-1 block text-sm text-green-100">Busca</label>
                 <input type="text" name="busca" value="{{ old('busca', $termoBusca ?? request('busca')) }}"
@@ -50,7 +45,6 @@
                     class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
             </div>
 
-            {{-- Ordenação --}}
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-green-100">Ordenar por</label>
                 @php
@@ -59,7 +53,6 @@
                         'nome_fantasia' => 'Nome Fantasia',
                         'razao_social' => 'Razão Social',
                         'cnpj' => 'CNPJ',
-                        // 'email' => 'E-mail',
                         'cidade' => 'Cidade',
                         'estado' => 'UF',
                         'ativo' => 'Ativo',
@@ -93,7 +86,6 @@
             </div>
 
             <div class="md:col-span-12 flex flex-wrap items-end justify-between gap-2">
-                {{-- Voltar para a home --}}
                 <a href="{{ route('/') }}"
                     class="rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40 inline-flex items-center gap-2"
                     title="Voltar" aria-label="Voltar">
@@ -126,23 +118,13 @@
                         <th class="px-4 py-2">Nome Fantasia</th>
                         <th class="px-4 py-2">Razão Social</th>
                         <th class="px-4 py-2">CNPJ</th>
-                        {{-- <th class="px-4 py-2">E-mail</th>
-                        <th class="px-4 py-2">Telefone</th>
-                        <th class="px-4 py-2">Rua</th>
-                        <th class="px-4 py-2">Número</th>
-                        <th class="px-4 py-2">Compl.</th>
-                        <th class="px-4 py-2">Bairro</th>
-                        <th class="px-4 py-2">CEP</th> --}}
                         <th class="px-4 py-2">Cidade</th>
                         <th class="px-4 py-2">UF</th>
                         <th class="px-4 py-2">Ativo</th>
-                        {{-- <th class="px-4 py-2">Criada em</th>
-                        <th class="px-4 py-2">Atualizada em</th> --}}
                         <th class="px-4 py-2">Ações</th>
                     </tr>
                 </thead>
 
-                {{-- Fundo discreto e highlight ao passar o mouse --}}
                 <tbody class="bg-green-950/10">
                     @forelse($listaDeEmpresas as $empresa)
                         <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
@@ -150,20 +132,12 @@
                             <td class="px-4 py-2 text-center">{{ $empresa->nome_fantasia }}</td>
                             <td class="px-4 py-2 text-center">{{ $empresa->razao_social }}</td>
                             <td class="px-4 py-2 text-center">{{ \App\Support\Mask::cnpj($empresa->cnpj) }}</td>
-                            {{-- <td class="px-4 py-2">{{ $empresa->email }}</td>
-                            <td class="px-4 py-2">{{ \App\Support\Mask::telefone($empresa->telefone) }}</td>
-                            <td class="px-4 py-2">{{ $empresa->rua }}</td>
-                            <td class="px-4 py-2">{{ $empresa->numero }}</td>
-                            <td class="px-4 py-2">{{ $empresa->complemento }}</td>
-                            <td class="px-4 py-2">{{ $empresa->bairro }}</td>
-                            <td class="px-4 py-2">{{ \App\Support\Mask::cep($empresa->cep) }}</td> --}}
                             <td class="px-4 py-2 text-center">{{ $empresa->cidade }}</td>
                             <td class="px-4 py-2 text-center">{{ $empresa->estado }}</td>
                             <td class="px-4 py-2 text-center">{{ $empresa->ativo ? 'Ativo' : 'Inativo' }}</td>
-                            {{-- <td class="px-4 py-2">{{ optional($empresa->criado_em)->format('d/m/Y H:i') }}</td>
-                            <td class="px-4 py-2">{{ optional($empresa->atualizado_em)->format('d/m/Y H:i') }}</td> --}}
 
-                            {{-- Ações: Editar / Excluir --}}
+
+                            {{-- Ações --}}
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}

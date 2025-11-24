@@ -4,7 +4,6 @@
     <div class="w-full flex justify-center">
         <div class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Setor — {{ $setor->nome }}
@@ -16,9 +15,7 @@
                 </p>
             </header>
 
-            {{-- ID + Ativo --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID --}}
                 <div class="md:col-span-3">
                     <label for="setor_id" class="mb-1 block text-sm text-green-100">ID</label>
                     <input id="setor_id" type="text" value="{{ $setor->id }}"
@@ -27,7 +24,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Ativo (checkbox com badge) --}}
                 <div class="md:col-span-3">
                     <label for="setor_ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
                     <div class="h-[42px] flex items-center gap-3">
@@ -56,7 +52,6 @@
                 </div>
             </div>
 
-            {{-- Nome do Setor --}}
             <div>
                 <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor</label>
                 <input id="nome" type="text" value="{{ $setor->nome }}"
@@ -64,12 +59,10 @@
                     disabled readonly>
             </div>
 
-            {{-- Empresa (nome + CNPJ) --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
                 <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Empresa</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    {{-- Nome da Empresa --}}
                     <div class="md:col-span-8">
                         <label for="empresa_nome" class="block mb-1 text-sm font-medium text-green-100">Nome da
                             Empresa</label>
@@ -78,7 +71,6 @@
                             disabled readonly>
                     </div>
 
-                    {{-- CNPJ da Empresa --}}
                     <div class="md:col-span-4">
                         <label for="empresa_cnpj" class="block mb-1 text-sm font-medium text-green-100">CNPJ</label>
                         <input id="empresa_cnpj" type="text"

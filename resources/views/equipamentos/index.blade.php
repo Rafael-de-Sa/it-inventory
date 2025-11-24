@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho + Cadastrar (alinhado como Empresas/Setores) --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 class="text-2xl font-semibold tracking-wide">Equipamentos</h1>
 
@@ -13,10 +12,8 @@
             </a>
         </div>
 
-        {{-- Filtros (duas linhas, padronizado) --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
 
-            {{-- Linha 1 --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Campo</label>
                 @php
@@ -74,7 +71,6 @@
                 </select>
             </div>
 
-            {{-- Linha 2 (trouxe o Status pra baixo) --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Status</label>
                 @php $statusAtual = $statusFiltro ?? request('status', 'todos'); @endphp
@@ -88,7 +84,6 @@
                 </select>
             </div>
 
-            {{-- Barra de ações dos filtros (Voltar à esquerda | Aplicar/Limpar à direita) --}}
             <div class="md:col-span-9"></div>
             <div class="md:col-span-12 flex items-end justify-between gap-2">
 
@@ -115,7 +110,6 @@
             </div>
         </form>
 
-        {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
             <table class="min-w-full text-sm">
                 <thead class="bg-green-900/60 text-green-100 text-center">
@@ -138,7 +132,6 @@
                                 {{ $equipamento->tipoEquipamento?->nome ?? '-' }}
                             </td>
 
-                            {{-- Descrição resumida com tooltip --}}
                             <td class="px-4 py-2 text-center">
                                 @php $descricaoCompleta = $equipamento->descricao ?? ''; @endphp
                                 <span class="block max-w-[28rem] truncate" title="{{ $descricaoCompleta }}">
@@ -162,10 +155,8 @@
                             <td class="px-4 py-2 text-center">{{ $equipamento->patrimonio ?? '-' }}</td>
                             <td class="px-4 py-2 text-center">{{ $equipamento->numero_serie ?? '-' }}</td>
 
-                            {{-- Ações com hover padronizado (ícones, borda, fundo e transição) --}}
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
-                                    {{-- Exibir --}}
                                     <a href="{{ route('equipamentos.show', $equipamento->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
           hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -173,7 +164,6 @@
                                         <i class="fa-solid fa-eye text-base align-middle" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Editar --}}
                                     <a href="{{ route('equipamentos.edit', $equipamento->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current
               hover:bg-green-800/20 focus:outline-none cursor-pointer"
@@ -181,7 +171,6 @@
                                         <i class="fa-solid fa-pen-to-square text-base align-middle" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Excluir --}}
                                     <form method="POST" action="{{ route('equipamentos.destroy', $equipamento->id) }}"
                                         onsubmit="return confirm('Tem certeza que deseja excluir este equipamento?');"
                                         class="inline">
@@ -209,7 +198,6 @@
             </table>
         </div>
 
-        {{-- Paginação --}}
         <div>
             {{ $listaDeEquipamentos->onEachSide(1)->links() }}
         </div>

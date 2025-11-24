@@ -6,20 +6,17 @@
             class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
             @csrf
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Tipo de Equipamento</h2>
                 <p class="text-xs text-green-200">Informe o nome do tipo.</p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Campo: Nome --}}
             <div class="space-y-1">
                 <label for="nome" class="block text-sm text-green-100">Nome*</label>
                 <input type="text" id="nome" name="nome" value="{{ old('nome') }}"
@@ -36,7 +33,6 @@
                 @enderror
             </div>
 
-            {{-- Ações (padrão Setor: Cancelar outline + Salvar sólido) --}}
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ route('tipo-equipamentos.index') }}"
                     class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40"

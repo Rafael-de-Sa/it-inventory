@@ -4,7 +4,6 @@
     <div class="w-full flex justify-center">
         <div class="w-full max-w-5xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Movimentação — #{{ $movimentacao->id }}
@@ -38,7 +37,6 @@
                     default => 'bg-slate-900/60 text-slate-100 border-slate-700',
                 };
 
-                // tipo de termo conforme vínculo do funcionário
                 $descricaoTipoTermo = $movimentacao->funcionario?->terceirizado
                     ? 'Termo de devolução – Terceirizado'
                     : 'Termo de devolução – Funcionário próprio';
@@ -47,7 +45,6 @@
                     ? 'bg-sky-900/60 text-sky-100 border-sky-700'
                     : 'bg-indigo-900/60 text-indigo-100 border-indigo-700';
 
-                // mapa para mostrar o motivo de forma amigável
                 $motivosDevolucaoLabels = [
                     'manutencao' => 'Manutenção',
                     'defeito' => 'Defeito',
@@ -95,9 +92,7 @@
 
             </section>
 
-            {{-- Relacionamentos principais --}}
             <section class="space-y-4">
-                {{-- Funcionário --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Funcionário</label>
                     <input type="text" value="{{ $descricaoFuncionario }}"
@@ -106,7 +101,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Setor --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Setor</label>
                     <input type="text" value="{{ $descricaoSetor }}"
@@ -115,7 +109,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Empresa --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Empresa</label>
                     <input type="text" value="{{ $descricaoEmpresa }}"
@@ -124,7 +117,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Observações da movimentação --}}
                 <div>
                     <label class="block mb-1 text-sm font-medium text-green-100">Observações da movimentação</label>
                     <textarea rows="3"
@@ -200,9 +192,7 @@
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
 
                     @if (empty($movimentacao->termo_devolucao))
-                        {{-- CENÁRIO 1: ainda NÃO existe termo de devolução enviado --}}
                         <div class="grid gap-6 md:grid-cols-2 md:items-start">
-                            {{-- Coluna esquerda: upload --}}
                             <div class="space-y-2">
                                 <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
                                 <p class="text-xs text-green-200">
@@ -228,9 +218,7 @@
                                 </form>
                             </div>
 
-                            {{-- Coluna direita: ações do termo --}}
                             <div class="flex flex-col items-stretch gap-3 md:items-end">
-                                {{-- Gerar termo (PDF) --}}
                                 <a href="{{ route('movimentacoes.termo-devolucao', $movimentacao) }}" target="_blank"
                                     class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/60
                                            px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
@@ -238,7 +226,6 @@
                                     <span>Gerar termo de devolução</span>
                                 </a>
 
-                                {{-- Enviar termo (submit do form de cima) --}}
                                 <button type="submit" form="form-upload-termo-devolucao"
                                     class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2
                                            text-sm font-medium text-white hover:bg-green-500">
@@ -248,7 +235,6 @@
                             </div>
                         </div>
                     @else
-                        {{-- CENÁRIO 2: já existe termo de devolução enviado --}}
                         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                             <div class="space-y-1">
                                 <p class="text-sm font-medium text-green-100">
@@ -272,7 +258,6 @@
                         </div>
                     @endif
 
-                    {{-- Rodapé do card: Voltar --}}
                     <div
                         class="flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
 

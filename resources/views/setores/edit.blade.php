@@ -10,7 +10,6 @@
             @csrf
             @method('PUT')
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Editar Setor — {{ $setor->nome }}
@@ -21,7 +20,6 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div @class([
                     'rounded-lg border px-4 py-3 text-sm',
@@ -32,7 +30,6 @@
             @endif
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID (somente leitura) --}}
                 <div class="md:col-span-3">
                     <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">ID</label>
                     <input id="setor_id" type="text" value="{{ $setor->id }}" @class([
@@ -42,7 +39,6 @@
                         readonly>
                 </div>
 
-                {{-- Ativo (checkbox real + hidden) --}}
                 <div class="md:col-span-3">
                     <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
                     <div class="h-[42px] flex items-center gap-3">
@@ -72,7 +68,6 @@
                 </div>
             </div>
 
-            {{-- Nome do Setor --}}
             <div>
                 <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor*</label>
                 <input id="nome" name="nome" type="text" maxlength="100" value="{{ old('nome', $setor->nome) }}"
@@ -90,7 +85,6 @@
                 @enderror
             </div>
 
-            {{-- Empresa (combobox) --}}
             <div>
                 <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([

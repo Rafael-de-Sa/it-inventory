@@ -9,7 +9,6 @@
             @csrf
             @method('PUT')
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Editar Tipo de Equipamento — {{ $tipoEquipamento->nome }}
@@ -20,16 +19,13 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Linha: ID + Ativo --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID (readonly) --}}
                 <div class="md:col-span-3">
                     <label class="block mb-1 text-sm font-medium text-green-100">ID</label>
                     <input type="text" value="{{ $tipoEquipamento->id }}"  @class([
@@ -38,8 +34,7 @@
                     ]) disabled
                         readonly>
                 </div>
-
-                {{-- Ativo (checkbox) --}}
+                
                 <div class="md:col-span-3">
                     <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
                     <div class="h-[42px] flex items-center gap-3">
@@ -69,7 +64,6 @@
                 </div>
             </div>
 
-            {{-- Nome --}}
             <div class="space-y-1">
                 <label for="nome" class="block text-sm text-green-100">Nome*</label>
                 <input
@@ -93,7 +87,6 @@
                 @enderror
             </div>
 
-            {{-- Ações (Cancelar outline + Salvar sólido) --}}
             <div class="flex items-center justify-between pt-2">
                 <a href="{{ route('tipo-equipamentos.show', $tipoEquipamento->id) }}"
                    class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40">

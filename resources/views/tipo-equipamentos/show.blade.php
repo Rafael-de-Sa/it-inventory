@@ -4,7 +4,6 @@
     <div class="w-full flex justify-center">
         <div class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
 
-            {{-- Cabeçalho (mesmo padrão) --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Tipo de Equipamento — {{ $tipoEquipamento->nome }}
@@ -15,9 +14,7 @@
                 </p>
             </header>
 
-            {{-- Linha 1: ID + Ativo (idêntico ao empresas.show) --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID readonly --}}
                 <div class="md:col-span-3">
                     <label class="mb-1 block text-sm text-green-100">ID</label>
                     <input
@@ -29,7 +26,6 @@
                     >
                 </div>
 
-                {{-- Ativo: checkbox desabilitado + chip (alinhado na linha, tom e hover iguais ao empresas.show) --}}
                  <div class="md:col-span-3">
                     <label for="setor_ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
                     <div class="h-[42px] flex items-center gap-3">
@@ -58,7 +54,6 @@
                 </div>
             </div>
 
-            {{-- Nome readonly (mesmo look dos inputs do empresas.show) --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Nome</label>
                 <input
@@ -69,7 +64,6 @@
                 >
             </div>
 
-            {{-- Rodapé de ações (Voltar à esquerda | Editar + Excluir à direita) --}}
             <div class="flex items-center justify-between pt-2">
                 <a href="{{ route('tipo-equipamentos.index') }}"
                    class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40">

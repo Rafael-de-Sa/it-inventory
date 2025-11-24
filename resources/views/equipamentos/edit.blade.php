@@ -7,7 +7,6 @@
             @csrf
             @method('PUT')
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Editar Equipamento — #{{ $equipamento->id }}
@@ -18,16 +17,13 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Linha 1: ID (readonly) + Status --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID --}}
                 <div class="md:col-span-3">
                     <label for="equipamento_id" class="mb-1 block text-sm text-green-100">ID</label>
                     <input id="equipamento_id" type="text" value="{{ $equipamento->id }}"
@@ -36,7 +32,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Status --}}
                 <div class="md:col-span-4">
                     <label for="status" class="mb-1 block text-sm text-green-100">Status*</label>
                     @php $statusAtual = old('status', $equipamento->status); @endphp
@@ -57,9 +52,7 @@
                 </div>
             </div>
 
-            {{-- Linha 2: Tipo / Patrimônio / Número de Série --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- Tipo do Equipamento --}}
                 <div class="md:col-span-6">
                     <label for="tipo_equipamento_id" class="block mb-1 text-sm font-medium text-green-100">Tipo do
                         Equipamento*</label>
@@ -79,7 +72,6 @@
                     @enderror
                 </div>
 
-                {{-- Patrimônio --}}
                 <div class="md:col-span-3">
                     <label for="patrimonio" class="block mb-1 text-sm font-medium text-green-100">Patrimônio</label>
                     <input id="patrimonio" name="patrimonio" type="text"
@@ -93,7 +85,6 @@
                     @enderror
                 </div>
 
-                {{-- Número de Série (será upper no mutator/update) --}}
                 <div class="md:col-span-3">
                     <label for="numero_serie" class="block mb-1 text-sm font-medium text-green-100">Número de Série</label>
                     <input id="numero_serie" name="numero_serie" type="text"
@@ -108,12 +99,10 @@
                 </div>
             </div>
 
-            {{-- Aquisição --}}
             <fieldset class="rounded-xl border border-green-800 bg-green-900/60 p-4 md:p-5 space-y-4">
                 <legend class="px-2 text-sm font-semibold tracking-wide text-green-200">Aquisição</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    {{-- Data da compra --}}
                     <div class="md:col-span-6">
                         <label for="data_compra" class="block mb-1 text-sm font-medium text-green-100">Data da
                             compra</label>
@@ -129,7 +118,6 @@
                         @enderror
                     </div>
 
-                    {{-- Valor da compra --}}
                     <div class="md:col-span-6">
                         <label for="valor_compra" class="block mb-1 text-sm font-medium text-green-100">Valor da
                             compra</label>
@@ -146,7 +134,6 @@
                 </div>
             </fieldset>
 
-            {{-- Descrição --}}
             <div>
                 <label for="descricao" class="block mb-1 text-sm font-medium text-green-100">Descrição*</label>
                 <textarea id="descricao" name="descricao" rows="4" @class([
@@ -160,7 +147,7 @@
                 @enderror
             </div>
 
-            {{-- Barra de ações --}}
+            {{-- ações --}}
             <div class="flex items-center justify-between pt-2">
                 <a href="{{ route('equipamentos.show', $equipamento->id) }}" @class([
                     'px-4 py-2 rounded-lg border inline-flex items-center gap-2',

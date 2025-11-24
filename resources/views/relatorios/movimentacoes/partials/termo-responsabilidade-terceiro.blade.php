@@ -15,7 +15,6 @@
     $cidade = $empresaFuncionario->cidade ?? null;
     $estado = $empresaFuncionario->estado ?? null;
 
-    // Montagem condicional
     $enderecoPartes = [];
 
     if (!empty($rua)) {
@@ -38,18 +37,14 @@
 
     $enderecoFormatado = implode(' – ', $enderecoPartes);
 
-    // Nome completo em maiúsculo (UTF-8)
     $nomeCompleto = trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? ''));
     $nomeCompletoMaiusculo = Str::upper($nomeCompleto);
 @endphp
 
-{{-- Cabeçalho geral: sistema à esquerda, empresa à direita --}}
 <table class="cabecalho-geral">
     <tr>
         <td class="cabecalho-col-sistema">
-            {{-- Cabeçalho do sistema --}}
             <div class="cabecalho-sistema">
-                {{-- IMPORTANTE: arquivo deve existir em /public/assets/logo-teste.png --}}
                 <img src="{{ public_path('assets/logo-teste.png') }}" alt="Logo IT Inventory"
                     class="cabecalho-sistema-logo">
 
@@ -65,7 +60,6 @@
         </td>
 
         <td class="cabecalho-col-empresa">
-            {{-- Cabeçalho da empresa --}}
             <div class="cabecalho-empresa">
                 @if ($razaoSocialEmpresa)
                     <strong>{{ Str::upper($razaoSocialEmpresa) }}</strong><br>
@@ -184,7 +178,6 @@
     materiais causados à empresa.
 </div>
 
-<!-- Assinatura centralizada -->
 <div style="page-break-inside: avoid">
     <div class="assinatura-container">
         <div class="assinatura-linha">

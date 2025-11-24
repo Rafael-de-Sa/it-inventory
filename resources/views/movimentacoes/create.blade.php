@@ -10,7 +10,6 @@
             data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos='@json(old('equipamentos', []))'>
             @csrf
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Movimentação</h2>
                 <p class="text-xs text-green-200">
@@ -18,14 +17,12 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Empresa --}}
             <div>
                 <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
@@ -59,7 +56,6 @@
                 @endif
             </div>
 
-            {{-- Setor --}}
             <div>
                 <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
@@ -90,7 +86,6 @@
                 @endif
             </div>
 
-            {{-- Funcionário --}}
             <div>
                 <label for="funcionario_id" class="block mb-1 text-sm font-medium text-green-100">Funcionário*</label>
                 <select id="funcionario_id" name="funcionario_id" @class([
@@ -121,7 +116,6 @@
                 @endif
             </div>
 
-            {{-- Observação (opcional) --}}
             <div>
                 <label for="observacao" class="block mb-1 text-sm font-medium text-green-100">Observação (opcional)</label>
                 <textarea id="observacao" name="observacao" rows="3" @class([
@@ -148,11 +142,9 @@
                 @endif
             </div>
 
-            {{-- Bloco de equipamentos --}}
             <section class="space-y-4">
                 <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos*</h3>
 
-                {{-- Busca e filtro --}}
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                     <div class="md:col-span-6">
                         <label for="busca_equipamento" class="mb-1 block text-sm text-green-100">Busca equipamento</label>
@@ -180,7 +172,6 @@
                     </div>
                 </div>
 
-                {{-- Tabela de equipamentos disponíveis --}}
                 <div class="rounded-2xl bg-green-900/30 border border-green-800 shadow-sm">
                     <div class="px-4 py-2 border-b border-green-800/60 flex items-center justify-between">
                         <span class="text-sm font-medium text-green-100">Tabela de equipamentos disponíveis</span>
@@ -234,7 +225,6 @@
                     </div>
                 </div>
 
-                {{-- Botões adicionar/remover --}}
                 <div class="flex items-center justify-end gap-3">
                     <button type="button" id="botaoAdicionarEquipamentos"
                         class="inline-flex items-center gap-1.5 rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600">
@@ -247,7 +237,6 @@
                     </button>
                 </div>
 
-                {{-- Tabela de equipamentos selecionados --}}
                 <div class="rounded-2xl bg-green-900/30 border border-green-800 shadow-sm">
                     <div class="px-4 py-2 border-b border-green-800/60 flex items-center justify-between">
                         <span class="text-sm font-medium text-green-100">Equipamentos selecionados</span>
@@ -271,15 +260,14 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-green-950/10">
-                                {{-- preenchido via JS --}}
+                                {{-- JS --}}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                {{-- inputs hidden para equipamentos[] --}}
                 <div id="container_inputs_equipamentos">
-                    {{-- inputs name="equipamentos[]" serão inseridos via JS --}}
+                    {{-- JS --}}
                 </div>
 
                 @if ($errors->has('equipamentos'))

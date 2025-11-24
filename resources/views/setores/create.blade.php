@@ -6,20 +6,17 @@
             class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
             @csrf
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Setor</h2>
                 <p class="text-xs text-green-200">Vincule o setor a uma empresa e informe o nome.</p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Empresa (select) --}}
             <div>
                 <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" required
@@ -44,7 +41,6 @@
                 @endif
             </div>
 
-            {{-- Nome do Setor --}}
             <div>
                 <label for="nome" class="block mb-1 text-sm font-medium text-green-100">Nome do Setor*</label>
                 <input id="nome" name="nome" type="text" maxlength="50"

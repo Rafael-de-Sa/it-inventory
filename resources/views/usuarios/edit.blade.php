@@ -7,7 +7,6 @@
             @csrf
             @method('PUT')
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">
                     Editar Usuário —
@@ -23,16 +22,13 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- ID + Ativo --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID (somente leitura) --}}
                 <div class="md:col-span-3">
                     <label for="usuario_id" class="block mb-1 text-sm font-medium text-green-100">ID</label>
                     <input id="usuario_id" type="text" value="{{ $usuario->id }}" @class([
@@ -42,7 +38,6 @@
                         readonly>
                 </div>
 
-                {{-- Ativo --}}
                 @if (auth()->id() != $usuario->id)
                     <div class="md:col-span-3">
                         <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
@@ -75,7 +70,6 @@
                 @endif
             </div>
 
-            {{-- Funcionário (somente leitura) --}}
             <div>
                 <label for="usuario_funcionario" class="block mb-1 text-sm font-medium text-green-100">
                     Funcionário
@@ -95,7 +89,6 @@
                     disabled readonly>
             </div>
 
-            {{-- E-mail + confirmação --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label for="email" class="block mb-1 text-sm font-medium text-green-100">E-mail*</label>
@@ -131,7 +124,6 @@
                 </div>
             </div>
 
-            {{-- Senha + confirmação (opcional) --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label for="senha" class="block mb-1 text-sm font-medium text-green-100">Nova senha</label>
@@ -171,7 +163,6 @@
                 </div>
             </div>
 
-            {{-- Ações --}}
             <div class="flex items-center justify-between pt-2">
                 <a href="{{ route('usuarios.show', $usuario->id) }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"

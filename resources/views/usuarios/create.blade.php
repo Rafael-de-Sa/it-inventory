@@ -6,7 +6,6 @@
             class="w-full max-w-3xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
             @csrf
 
-            {{-- Cabeçalho --}}
             <header class="space-y-1">
                 <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Usuário</h2>
                 <p class="text-xs text-green-200">
@@ -14,14 +13,12 @@
                 </p>
             </header>
 
-            {{-- Resumo de erros --}}
             @if ($errors->any())
                 <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
                 </div>
             @endif
 
-            {{-- Empresa --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Empresa*</label>
                 <select id="empresa_id" name="empresa_id" @class([
@@ -44,7 +41,6 @@
                 @enderror
             </div>
 
-            {{-- Setor --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Setor*</label>
                 <select id="setor_id" name="setor_id" @class([
@@ -62,7 +58,6 @@
                 @enderror
             </div>
 
-            {{-- Funcionário --}}
             <div>
                 <label class="mb-1 block text-sm text-green-100">Funcionário*</label>
                 <select id="funcionario_id" name="funcionario_id" @class([
@@ -81,9 +76,7 @@
             </div>
 
 
-            {{-- Campos de acesso --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {{-- E-mail --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">E-mail*</label>
                     <input type="email" name="email" value="{{ old('email') }}" @class([
@@ -114,7 +107,6 @@
                     @enderror
                 </div>
 
-                {{-- Senha --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Senha*</label>
                     <input type="password" name="senha" @class([
@@ -130,7 +122,6 @@
                     @enderror
                 </div>
 
-                {{-- Confirmar senha --}}
                 <div>
                     <label class="mb-1 block text-sm text-green-100">Confirmar senha*</label>
                     <input type="password" name="senha_confirmation" @class([
@@ -147,7 +138,6 @@
                 </div>
             </div>
 
-            {{-- Ações --}}
             <div class="flex items-center justify-end gap-3 pt-2">
                 <a href="{{ route('usuarios.index') }}"
                     class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 transition">

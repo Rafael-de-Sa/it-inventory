@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-wide">Movimentações</h1>
@@ -15,7 +14,6 @@
             </a>
         </div>
 
-        {{-- Filtros --}}
         <form method="GET" data-endpoints
             data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
             data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
@@ -23,7 +21,6 @@
             data-old-funcionario-id="{{ request('funcionario_id') }}"
             class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
 
-            {{-- Busca por ID da movimentação --}}
             <div class="md:col-span-3">
                 <label for="busca" class="mb-1 block text-sm text-green-100">ID da movimentação</label>
                 <input type="text" id="busca" name="busca"
@@ -34,12 +31,10 @@
                     ])>
             </div>
 
-            {{-- Status --}}
             <div class="md:col-span-3">
                 <label for="status" class="mb-1 block text-sm text-green-100">Status</label>
                 @php
                     $statusAtual = request('status');
-                    // Ajuste conforme os status reais da sua tabela
                     $mapaStatus = [
                         '' => 'Todos',
                         'pendente' => 'Pendente',
@@ -60,7 +55,6 @@
                 </select>
             </div>
 
-            {{-- Empresa --}}
             <div class="md:col-span-3">
                 <label for="empresa_id" class="mb-1 block text-sm text-green-100">Empresa</label>
                 @php $empresaAtual = request('empresa_id'); @endphp
@@ -77,7 +71,6 @@
                 </select>
             </div>
 
-            {{-- Setor --}}
             <div class="md:col-span-3">
                 <label for="setor_id" class="mb-1 block text-sm text-green-100">Setor</label>
                 @php $setorAtual = request('setor_id'); @endphp
@@ -95,7 +88,6 @@
                 </select>
             </div>
 
-            {{-- Funcionário --}}
             <div class="md:col-span-3">
                 <label for="funcionario_id" class="mb-1 block text-sm text-green-100">Funcionário</label>
                 @php $funcionarioAtual = request('funcionario_id'); @endphp
@@ -116,7 +108,6 @@
                 </select>
             </div>
 
-            {{-- Ordenar por --}}
             <div class="md:col-span-2">
                 <label for="ordenar_por" class="mb-1 block text-sm text-green-100">Ordenar por</label>
                 @php
@@ -139,7 +130,6 @@
                 </select>
             </div>
 
-            {{-- Direção --}}
             <div class="md:col-span-2">
                 <label for="direcao" class="mb-1 block text-sm text-green-100">Direção</label>
                 @php $dirAtual = $direcaoOrdenacao ?? request('direcao', 'asc'); @endphp
@@ -152,10 +142,8 @@
                 </select>
             </div>
 
-            {{-- Espaço para alinhar os botões no fim --}}
             <div class="md:col-span-9"></div>
 
-            {{-- Botões --}}
             <div class="md:col-span-12 flex items-end justify-between gap-2">
 
                 <a href="{{ url()->previous() }}"
@@ -181,7 +169,6 @@
             </div>
         </form>
 
-        {{-- Tabela de resultados --}}
         <div class="overflow-x-auto rounded-2xl border border-green-800 bg-green-900/20">
             <table class="min-w-full text-sm table-auto">
                 <thead class="bg-green-900/60 text-green-100 text-center">
@@ -266,36 +253,11 @@
                             {{-- Ações --}}
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
-                                    {{-- Exibir --}}
                                     <a href="{{ route('movimentacoes.show', $movimentacao->id) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         title="Exibir" aria-label="Exibir">
                                         <i class="fa-solid fa-eye text-base align-middle" aria-hidden="true"></i>
                                     </a>
-
-                                    {{-- Editar (se fizer sentido no seu fluxo) 
-                                    <a href="{{ route('movimentacoes.edit', $movimentacao->id) }}"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current hover:bg-green-800/20 focus:outline-none cursor-pointer"
-                                        title="Editar" aria-label="Editar">
-                                        <i class="fa-solid fa-pen-to-square text-base align-middle"
-                                            aria-hidden="true"></i>
-                                    </a>
-                                    --}}
-
-                                    {{-- Excluir 
-                                    <form method="POST" action="{{ route('movimentacoes.destroy', $movimentacao->id) }}"
-                                        onsubmit="return confirm('Tem certeza que deseja excluir esta movimentação?');"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline hover:bg-red-900/10 focus:outline-none transition-colors cursor-pointer"
-                                            title="Excluir" aria-label="Excluir">
-                                            <i class="fa-solid fa-trash-can text-base text-red-400 group-hover:text-red-300"
-                                                aria-hidden="true"></i>
-                                        </button>
-                                    </form>
-                                    --}}
                                 </div>
                             </td>
                         </tr>

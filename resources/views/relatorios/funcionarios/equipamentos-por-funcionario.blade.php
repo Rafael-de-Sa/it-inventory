@@ -46,7 +46,6 @@
         $cpfFormatadoFuncionario = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
     @endphp
 
-    {{-- Cabeçalho geral: sistema à esquerda, empresa à direita (mesmo dos termos) --}}
     <table class="cabecalho-geral">
         <tr>
             <td class="cabecalho-col-sistema">
@@ -99,12 +98,10 @@
         </tr>
     </table>
 
-    {{-- Título do relatório (mesma classe dos termos) --}}
     <div class="titulo-principal">
         RELATÓRIO DE EQUIPAMENTOS POR FUNCIONÁRIO
     </div>
 
-    {{-- Dados do funcionário --}}
     <div class="secao-texto">
         <p>
             <strong>Funcionário:</strong>
@@ -126,7 +123,6 @@
         @endif
     </div>
 
-    {{-- Tabela de equipamentos --}}
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
             Equipamentos vinculados

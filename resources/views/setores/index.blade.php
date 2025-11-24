@@ -3,7 +3,6 @@
 @section('content')
     <div class="mx-auto w-full max-w-7xl space-y-4">
 
-        {{-- Cabeçalho --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 class="text-2xl font-semibold tracking-wide">Setores</h1>
 
@@ -13,9 +12,7 @@
             </a>
         </div>
 
-        {{-- Filtros --}}
         <form method="GET" class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
-            {{-- Nome do setor --}}
             <div class="md:col-span-4">
                 <label class="mb-1 block text-sm text-green-100">Nome do setor</label>
                 <input type="text" name="nome" value="{{ request('nome') }}"
@@ -23,7 +20,6 @@
                     placeholder="Ex.: Recursos Humanos, Financeiro...">
             </div>
 
-            {{-- Empresa (combobox) --}}
             <div class="md:col-span-5">
                 <label class="mb-1 block text-sm text-green-100">Empresa</label>
                 <select name="empresa_id"
@@ -37,7 +33,6 @@
                 </select>
             </div>
 
-            {{-- Ativo --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Ativo</label>
                 <select name="ativo" class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900">
@@ -47,7 +42,6 @@
                 </select>
             </div>
 
-            {{-- Ordenação --}}
             <div class="md:col-span-3">
                 <label class="mb-1 block text-sm text-green-100">Ordenar por</label>
                 @php $ordenarPorAtual = request('ordenar_por', $ordenarPor ?? 'id'); @endphp
@@ -89,7 +83,6 @@
             </div>
         </form>
 
-        {{-- Tabela --}}
         <div class="overflow-x-auto rounded-xl border border-green-800">
             <table class="min-w-full text-sm table-auto">
                 <thead class="bg-green-900/60 text-green-100 text-center">

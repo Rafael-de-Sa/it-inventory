@@ -170,6 +170,18 @@
                             <td class="px-4 py-2">{{ $funcionario->ativo ? 'Ativo' : 'Inativo' }}</td>
                             <td class="px-4 py-2">{{ $funcionario->terceirizado ? 'Sim' : 'Não' }}</td>
 
+                            @php
+                                $funcionarioPertenceAoUsuarioLogado =
+                                    $usuarioLogado &&
+                                    $funcionario->usuario &&
+                                    $usuarioLogado->id === $funcionario->usuario->id;
+
+                                $podeRealizarDesligamento = $funcionario->podeSerDesligado();
+
+                                $podeMostrarBotaoExcluir =
+                                    !$funcionarioPertenceAoUsuarioLogado && $podeRealizarDesligamento;
+                            @endphp
+
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
                                     {{-- Exibir --}}
@@ -188,20 +200,22 @@
                                         <i class="fa-solid fa-pen-to-square text-base align-middle" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Excluir --}}
-                                    <form method="POST" action="{{ route('funcionarios.destroy', $funcionario->id) }}"
-                                        onsubmit="return confirm('Tem certeza que deseja excluir este funcionário?');"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline
+                                    @if ($podeMostrarBotaoExcluir)
+                                        {{-- Excluir --}}
+                                        <form method="POST" action="{{ route('funcionarios.destroy', $funcionario->id) }}"
+                                            onsubmit="return confirm('Tem certeza que deseja excluir este funcionário?');"
+                                            class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline
                      hover:bg-red-900/10 focus:outline-none transition-colors cursor-pointer"
-                                            title="Excluir" aria-label="Excluir">
-                                            <i class="fa-solid fa-trash text-base align-middle text-red-300 group-hover:text-red-500 transition-colors"
-                                                aria-hidden="true"></i>
-                                        </button>
-                                    </form>
+                                                title="Excluir" aria-label="Excluir">
+                                                <i class="fa-solid fa-trash text-base align-middle text-red-300 group-hover:text-red-500 transition-colors"
+                                                    aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

@@ -26,40 +26,41 @@ class FuncionarioController extends Controller
         $validados   = $request->validated();
 
         $opcoesCampo = [
-            'id'            => 'ID',
-            'nome'          => 'Nome',
-            'empresa_nome'  => 'Nome Empresa',
-            'empresa_cnpj'  => 'CNPJ Empresa',
-            'setor_nome'    => 'Nome Setor',
-            'matricula'     => 'Matrícula',
+            'id' => 'ID',
+            'nome' => 'Nome',
+            'empresa_nome' => 'Nome Empresa',
+            'empresa_cnpj' => 'CNPJ Empresa',
+            'setor_nome' => 'Nome Setor',
+            'matricula' => 'Matrícula',
         ];
 
         $opcoesOrdenacao = [
-            'id'            => 'ID',
-            'nome'          => 'Nome',
-            'empresa_nome'  => 'Nome Empresa',
-            'empresa_cnpj'  => 'CNPJ Empresa',
-            'setor_nome'    => 'Nome Setor',
-            'matricula'     => 'Matrícula',
+            'id' => 'ID',
+            'nome' => 'Nome',
+            'empresa_nome' => 'Nome Empresa',
+            'empresa_cnpj' => 'CNPJ Empresa',
+            'setor_nome' => 'Nome Setor',
+            'matricula' => 'Matrícula',
         ];
 
-        $campo         = $validados['campo']        ?? 'id';
-        $busca         = $validados['busca']        ?? null;
-        $ordenarPor    = $validados['ordenar_por']  ?? 'id';
-        $direcao       = $validados['direcao']      ?? 'asc';
-        $ativo         = $validados['ativo']        ?? 'todos';
-        $terceirizado  = $validados['terceirizado'] ?? 'todos';
+        $campo = $validados['campo']        ?? 'id';
+        $busca = $validados['busca']        ?? null;
+        $ordenarPor = $validados['ordenar_por']  ?? 'id';
+        $direcao = $validados['direcao']      ?? 'asc';
+        $ativo = $validados['ativo']        ?? 'todos';
+        $terceirizado = $validados['terceirizado'] ?? 'todos';
 
         $mapaOrdenacao = [
-            'id'           => 'funcionarios.id',
-            'nome'         => 'funcionarios.nome',
-            'matricula'    => 'funcionarios.matricula',
+            'id' => 'funcionarios.id',
+            'nome' => 'funcionarios.nome',
+            'matricula' => 'funcionarios.matricula',
             'empresa_nome' => 'empresas.nome_fantasia',
             'empresa_cnpj' => 'empresas.cnpj',
-            'setor_nome'   => 'setores.nome',
+            'setor_nome' => 'setores.nome',
         ];
 
         $consulta = Funcionario::query()
+            ->with('usuario') // para saber se pertence ao usuário logado
             ->leftJoin('setores', 'setores.id', '=', 'funcionarios.setor_id')
             ->leftJoin('empresas', 'empresas.id', '=', 'setores.empresa_id')
             ->select([
@@ -103,9 +104,10 @@ class FuncionarioController extends Controller
         $funcionarios = $consulta->paginate(10)->appends($validados);
 
         return view('funcionarios.index', [
-            'funcionarios'     => $funcionarios,
-            'opcoesCampo'      => $opcoesCampo,
-            'opcoesOrdenacao'  => $opcoesOrdenacao,
+            'funcionarios' => $funcionarios,
+            'opcoesCampo' => $opcoesCampo,
+            'opcoesOrdenacao' => $opcoesOrdenacao,
+            'usuarioLogado' => Auth::user(),
         ]);
     }
 
@@ -157,7 +159,7 @@ class FuncionarioController extends Controller
         }
 
         $empresaId = $dados['empresa_id'] ?? null;
-        $setorId   = $dados['setor_id'] ?? null;
+        $setorId = $dados['setor_id'] ?? null;
 
         if ($empresaId && $setorId) {
             $pertence = Setor::where('id', $setorId)
@@ -205,16 +207,16 @@ class FuncionarioController extends Controller
             $funcionarioPertenceAoUsuarioLogado = $usuarioLogado->id === $funcionario->usuario->id;
         }
         $podeMostrarBotoesGerenciais = ! $funcionarioPertenceAoUsuarioLogado;
-        $podeMostrarBotaoDesligar    = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
-        $podeMostrarBotaoExcluir     = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+        $podeMostrarBotaoDesligar = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+        $podeMostrarBotaoExcluir = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
 
         return view('funcionarios.show', [
-            'funcionario'                     => $funcionario,
-            'restricoesDesligamento'          => $restricoesDesligamento,
-            'podeRealizarDesligamento'        => $podeRealizarDesligamento,
+            'funcionario' => $funcionario,
+            'restricoesDesligamento' => $restricoesDesligamento,
+            'podeRealizarDesligamento' => $podeRealizarDesligamento,
             'funcionarioPertenceAoUsuarioLogado' => $funcionarioPertenceAoUsuarioLogado,
-            'podeMostrarBotaoDesligar'        => $podeMostrarBotaoDesligar,
-            'podeMostrarBotaoExcluir'         => $podeMostrarBotaoExcluir,
+            'podeMostrarBotaoDesligar' => $podeMostrarBotaoDesligar,
+            'podeMostrarBotaoExcluir' => $podeMostrarBotaoExcluir,
         ]);
     }
 

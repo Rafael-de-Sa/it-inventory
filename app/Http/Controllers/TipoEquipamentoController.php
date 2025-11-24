@@ -17,12 +17,10 @@ class TipoEquipamentoController extends Controller
     {
         $query = TipoEquipamento::query();
 
-        // Status
         $status = $request->string('status', 'ativos');
         if ($status === 'ativos') $query->where('ativo', true);
         elseif ($status === 'inativos') $query->where('ativo', false);
 
-        // Busca
         $campo = $request->string('campo', 'id');
         $busca = $request->string('busca');
         if ($busca->isNotEmpty()) {
@@ -30,7 +28,6 @@ class TipoEquipamentoController extends Controller
             if ($campo === 'nome') $query->where('nome', 'like', "%{$busca}%");
         }
 
-        // Ordenação
         $ordenarPor = $request->string('ordenar_por', 'id');
         $direcao = $request->string('direcao', 'asc');
         $query->orderBy(in_array($ordenarPor, ['id', 'nome']) ? $ordenarPor : 'id', $direcao === 'desc' ? 'desc' : 'asc');
@@ -96,14 +93,23 @@ class TipoEquipamentoController extends Controller
      */
     public function destroy(TipoEquipamento $tipoEquipamento)
     {
-
-        $tipoEquipamento->loadCount('equipamentos');
+        $tipoEquipamento->loadCount([
+            'equipamentos',
+            'equipamentos as equipamentos_ativos_count' => function ($query) {
+                $query->where('ativo', 1);
+            },
+        ]);
 
         if ($tipoEquipamento->equipamentos_count > 0) {
-            return back()->with(
-                'error',
-                "Não é possível excluir: há {$tipoEquipamento->equipamentos_count} equipamento(s) vinculado(s) a este tipo."
-            );
+            $mensagem = "Não é possível excluir: há {$tipoEquipamento->equipamentos_count} equipamento(s) vinculado(s) a este tipo de equipamento";
+
+            if ($tipoEquipamento->equipamentos_ativos_count > 0) {
+                $mensagem .= " ({$tipoEquipamento->equipamentos_ativos_count} ativo(s)).";
+            } else {
+                $mensagem .= ".";
+            }
+
+            return back()->with('error', $mensagem);
         }
 
         try {
@@ -111,8 +117,9 @@ class TipoEquipamentoController extends Controller
 
             return to_route('tipo-equipamentos.index')
                 ->with('success', 'Tipo de equipamento excluído com sucesso!');
-        } catch (\Throwable $e) {
-            report($e);
+        } catch (\Throwable $erro) {
+            report($erro);
+
             return back()->with('error', 'Erro ao excluir o tipo de equipamento. Tente novamente.');
         }
     }

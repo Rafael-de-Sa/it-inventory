@@ -20,19 +20,17 @@ class SetorController extends Controller
         $dadosValidados   = $request->validated();
 
         $nome             = $dadosValidados['nome']        ?? null;
-        $empresaId        = $dadosValidados['empresa_id']  ?? null;  // select
-        $ativo            = $dadosValidados['ativo']       ?? null;  // '0' | '1' | null
+        $empresaId        = $dadosValidados['empresa_id']  ?? null;
+        $ativo            = $dadosValidados['ativo']       ?? null;
         $ordenarPor       = $dadosValidados['ordenar_por'] ?? 'id';
         $direcao          = ($dadosValidados['direcao'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
         $itensPorPagina   = 25;
 
-        // Campos permitidos p/ ordenação
         $ordenaveis = ['id', 'nome', 'empresa_id', 'nome_empresa', 'cnpj_empresa', 'ativo'];
         if (! in_array($ordenarPor, $ordenaveis, true)) {
             $ordenarPor = 'id';
         }
 
-        // Mapa => coluna real
         $mapaOrdenacao = [
             'id'            => 'setores.id',
             'nome'          => 'setores.nome',
@@ -134,11 +132,10 @@ class SetorController extends Controller
     public function destroy(Setor $setor)
     {
         $setor->loadCount([
-            'funcionarios', // total cadastrados
+            'funcionarios',
             'funcionarios as funcionarios_ativos_count' => fn($q) => $q->where('ativo', 1)
         ]);
 
-        // Bloqueia se houver qualquer funcionário cadastrado no setor
         if ($setor->funcionarios_count > 0) {
             $msg = "Não é possível excluir: há {$setor->funcionarios_count} funcionário(s) cadastrado(s) no setor";
             if ($setor->funcionarios_ativos_count > 0) {

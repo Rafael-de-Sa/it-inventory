@@ -112,13 +112,23 @@ class EmpresaController extends Controller
      */
     public function destroy(Empresa $empresa)
     {
-        $empresa->withCount('setores');
+        $empresa->loadCount([
+            'setores',
+            'setores as setores_ativos_count' => function ($query) {
+                $query->where('ativo', 1);
+            },
+        ]);
 
         if ($empresa->setores_count > 0) {
-            return back()->with(
-                'error',
-                "Não é possível excluir: há {$empresa->setores_count} setor(es) vinculado(s) à empresas."
-            );
+            $mensagem = "Não é possível excluir: há {$empresa->setores_count} setor(es) vinculado(s) a esta empresa";
+
+            if ($empresa->setores_ativos_count > 0) {
+                $mensagem .= " ({$empresa->setores_ativos_count} ativo(s)).";
+            } else {
+                $mensagem .= ".";
+            }
+
+            return back()->with('error', $mensagem);
         }
 
         try {
@@ -126,9 +136,10 @@ class EmpresaController extends Controller
 
             return to_route('empresas.index')
                 ->with('success', 'Empresa excluída com sucesso!');
-        } catch (\Throwable $e) {
-            report($e);
-            return back()->with('error', 'Erro ao excluir a empresas. Tente novamente.');
+        } catch (\Throwable $erro) {
+            report($erro);
+
+            return back()->with('error', 'Erro ao excluir a empresa. Tente novamente.');
         }
     }
 }

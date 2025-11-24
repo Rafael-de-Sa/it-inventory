@@ -3,12 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const setorSelect = document.getElementById('setor_id');
     const funcionarioSelect = document.getElementById('funcionario_id');
 
-    // se a view ainda não tem setor, não faz nada
     if (!empresaSelect || !setorSelect || !funcionarioSelect) return;
 
-    /**
-     * Carrega setores da empresa selecionada
-     */
     async function carregarSetores(empresaId, selectedSetorId = null) {
         setorSelect.innerHTML = '<option value="">Carregando setores...</option>';
         funcionarioSelect.innerHTML = '<option value="">Selecione um setor primeiro...</option>';
@@ -33,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 setorSelect.appendChild(option);
             });
 
-            // se veio old de setor, já carregamos funcionários dele
             if (selectedSetorId) {
                 carregarFuncionariosPorSetor(selectedSetorId, funcionarioSelect.dataset.old || null);
             }
@@ -76,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // quando mudar a empresa → carregar setores
     empresaSelect.addEventListener('change', (e) => {
         const empresaId = e.target.value;
         if (empresaId) {
@@ -87,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // quando mudar o setor → carregar funcionários
     setorSelect.addEventListener('change', (e) => {
         const setorId = e.target.value;
         if (setorId) {
@@ -97,14 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // reaplicar old() depois de erro de validação
     const oldEmpresa = empresaSelect.dataset.old;
     const oldSetor = setorSelect.dataset.old;
     const oldFuncionario = funcionarioSelect.dataset.old;
 
     if (oldEmpresa) {
-        // carrega setores e, dentro dele, funcionários
         carregarSetores(oldEmpresa, oldSetor);
-        // o funcionário é carregado dentro do carregamento de setores
     }
 });

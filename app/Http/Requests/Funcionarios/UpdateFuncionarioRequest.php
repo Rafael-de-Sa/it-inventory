@@ -38,7 +38,6 @@ class UpdateFuncionarioRequest extends FormRequest
 
     public function rules(): array
     {
-        // pode vir o modelo na rota
         $funcionario = $this->route('funcionario');
         $funcionarioId = is_object($funcionario) ? $funcionario->id : $funcionario;
 

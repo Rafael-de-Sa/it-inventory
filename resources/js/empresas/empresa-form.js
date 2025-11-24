@@ -1,4 +1,3 @@
-// resources/js/empresas/empresa-form.js
 import { initCepAutofill } from './cep-autofill';
 import { initMasks, normalize } from '../util/masks';
 
@@ -6,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initMasks();
     initCepAutofill();
 
-    // Normalização final antes de enviar (coerente com as rules do backend)
     const form = document.getElementById('empresaForm')
         || document.getElementById('empresaEditForm');
     if (!form) return;
@@ -16,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const cnpj = document.getElementById('cnpj');
         const uf = document.getElementById('estado');
 
-        // Telefone: aceita 'telefone' ou 'telefones' (legado)
         const tel = document.getElementById('telefone') || document.getElementById('telefones');
 
         if (cep) cep.value = normalize.digits(cep.value, 8);

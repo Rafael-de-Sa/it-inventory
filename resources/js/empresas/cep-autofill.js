@@ -23,7 +23,6 @@ function setHelpMessage(el, text, isError = false) {
 }
 
 async function fetchEndereco(endpointTemplate, cep8) {
-    // usa cache de aba
     if (cache.has(cep8)) return cache.get(cep8);
 
     const endpoint = endpointTemplate.replace(/(\d{8})$/, cep8);
@@ -52,7 +51,7 @@ export function initCepAutofill() {
         || document.getElementById('empresaEditForm');
     if (!form) return;
 
-    const endpointTemplate = form.dataset.cepEndpoint || ''; // ex.: /empresas/cep/00000000
+    const endpointTemplate = form.dataset.cepEndpoint || '';
 
     const elCep = document.getElementById('cep');
     const elRua = document.getElementById('rua');
@@ -63,10 +62,8 @@ export function initCepAutofill() {
 
     if (!elCep || !endpointTemplate) return;
 
-    // grupo de campos que serão bloqueados durante a busca
     const addressEls = [elRua, elBairro, elCidade, elEstado];
 
-    // função principal de busca/preenchimento
     const run = async () => {
         const cep8 = onlyDigits(elCep.value).slice(0, 8);
         if (!isEightDigits(cep8)) {
@@ -74,7 +71,6 @@ export function initCepAutofill() {
             return;
         }
 
-        // estado de carregamento
         setHelpMessage(elHelp, 'Buscando endereço…', false);
         setDisabled(addressEls, true);
 
@@ -84,16 +80,13 @@ export function initCepAutofill() {
             setHelpMessage(elHelp, 'Endereço preenchido automaticamente. Confira os dados.', false);
         } catch (e) {
             setHelpMessage(elHelp, e.message || 'Não foi possível buscar o CEP.', true);
-            // mantém campos habilitados para edição manual
         } finally {
             setDisabled(addressEls, false);
         }
     };
 
-    // Dispara no blur (principal) e quando atingir 8 dígitos (mesmo sem máscara)
     elCep.addEventListener('blur', run);
 
-    // Debounce simples para input
     let t = null;
     elCep.addEventListener('input', () => {
         clearTimeout(t);
@@ -101,7 +94,6 @@ export function initCepAutofill() {
         if (digits.length === 8) {
             t = setTimeout(run, 200);
         } else {
-            // feedback enquanto digita
             setHelpMessage(elHelp, 'Formato: 00000-000', false);
         }
     });

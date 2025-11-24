@@ -35,23 +35,23 @@ class StoreMovimentacaoRequest extends FormRequest
         })));
 
         $this->merge([
-            'empresa_id'     => $this->input('empresa_id') ? (int) $this->input('empresa_id') : null,
-            'setor_id'       => $this->input('setor_id') ? (int) $this->input('setor_id') : null,
+            'empresa_id' => $this->input('empresa_id') ? (int) $this->input('empresa_id') : null,
+            'setor_id' => $this->input('setor_id') ? (int) $this->input('setor_id') : null,
             'funcionario_id' => $this->input('funcionario_id') ? (int) $this->input('funcionario_id') : null,
-            'equipamentos'   => $idsEquipamentos,
+            'equipamentos' => $idsEquipamentos,
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'empresa_id'     => ['required', 'integer', 'exists:empresas,id'],
-            'setor_id'       => ['required', 'integer', 'exists:setores,id'],
+            'empresa_id' => ['required', 'integer', 'exists:empresas,id'],
+            'setor_id' => ['required', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['required', 'integer', 'exists:funcionarios,id'],
 
-            'observacao'     => ['nullable', 'string', 'max:2000'],
+            'observacao' => ['nullable', 'string', 'max:2000'],
 
-            'equipamentos'   => ['required', 'array', 'min:1'],
+            'equipamentos' => ['required', 'array', 'min:1'],
             'equipamentos.*' => ['integer', 'distinct', 'exists:equipamentos,id'],
         ];
     }
@@ -60,27 +60,27 @@ class StoreMovimentacaoRequest extends FormRequest
     {
         return [
             'equipamentos.required' => 'Selecione ao menos um equipamento.',
-            'equipamentos.min'      => 'Selecione ao menos um equipamento.',
+            'equipamentos.min' => 'Selecione ao menos um equipamento.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'empresa_id'     => 'empresa',
-            'setor_id'       => 'setor',
+            'empresa_id' => 'empresa',
+            'setor_id' => 'setor',
             'funcionario_id' => 'funcionário',
-            'observacao'     => 'observação',
-            'equipamentos'   => 'equipamentos',
+            'observacao' => 'observação',
+            'equipamentos' => 'equipamentos',
         ];
     }
 
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            $empresaId       = $this->input('empresa_id');
-            $setorId         = $this->input('setor_id');
-            $funcionarioId   = $this->input('funcionario_id');
+            $empresaId = $this->input('empresa_id');
+            $setorId = $this->input('setor_id');
+            $funcionarioId = $this->input('funcionario_id');
             $idsEquipamentos = $this->input('equipamentos', []);
 
             // setor precisa pertencer à empresa
@@ -100,7 +100,6 @@ class StoreMovimentacaoRequest extends FormRequest
                 }
             }
 
-            // funcionário precisa pertencer ao setor
             if ($setorId && $funcionarioId) {
                 $funcionarioValido = Funcionario::query()
                     ->where('id', $funcionarioId)
@@ -118,7 +117,6 @@ class StoreMovimentacaoRequest extends FormRequest
                 }
             }
 
-            // equipamentos precisam estar ativos e disponíveis
             if (! empty($idsEquipamentos)) {
                 $quantidadeEsperada = count($idsEquipamentos);
 

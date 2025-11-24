@@ -1,9 +1,7 @@
-// resources/js/funcionarios/funcionario-form.js
 import { initMasks, normalize, reapplyMasks } from '../util/masks';
 
 document.addEventListener('DOMContentLoaded', () => {
     initMasks();
-    // Aplica a máscara nos valores que já chegaram preenchidos (old())
     reapplyMasks(['cpf', 'telefone']);
 
     const form = document.getElementById('funcionarioForm');
@@ -14,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const matriculaInput = document.getElementById('matricula');
     const terceirizadoCheck = document.querySelector('input[name="terceirizado"]');
 
-    // Normalização final antes de enviar
     form?.addEventListener('submit', () => {
         if (cpfInput) cpfInput.value = normalize.digits(cpfInput.value, 11);
         if (telInput) telInput.value = normalize.digits(telInput.value, 11);
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Carrega setores por empresa (e repopula em caso de old())
     async function carregarSetores(empresaId, setorSelecionado = null) {
         setorSelect.innerHTML = '<option value="">Carregando setores...</option>';
         if (!empresaId) {
@@ -60,21 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const setorOld = setorSelect?.getAttribute('data-old');
     if (empresaOld) carregarSetores(empresaOld, setorOld || null);
 
-    // Matrícula apenas números (e respeita a validação do back)
     matriculaInput?.addEventListener('input', () => {
         matriculaInput.value = normalize.digits(matriculaInput.value, 8);
     });
 
-    // Terceirizado: limpa e bloqueia matrícula
     const toggleMatricula = () => {
         if (!matriculaInput) return;
         if (terceirizadoCheck?.checked) {
             matriculaInput.value = '';
-            matriculaInput.disabled = true; // usa classes disabled: do Tailwind
+            matriculaInput.disabled = true;
         } else {
             matriculaInput.disabled = false;
         }
     };
     terceirizadoCheck?.addEventListener('change', toggleMatricula);
-    toggleMatricula(); // estado inicial (cobre old('terceirizado'))
+    toggleMatricula();
 });

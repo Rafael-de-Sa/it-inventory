@@ -22,12 +22,11 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // ↓ removemos 'sobrenome' das listas
-            'campo'        => 'nullable|in:id,nome,empresa_nome,empresa_cnpj,setor_nome,matricula',
-            'busca'        => 'nullable|string|max:255',
-            'ordenar_por'  => 'nullable|in:id,nome,empresa_nome,empresa_cnpj,setor_nome,matricula',
-            'direcao'      => 'nullable|in:asc,desc',
-            'ativo'        => 'nullable|in:todos,1,0',
+            'campo' => 'nullable|in:id,nome,empresa_nome,empresa_cnpj,setor_nome,matricula',
+            'busca' => 'nullable|string|max:255',
+            'ordenar_por' => 'nullable|in:id,nome,empresa_nome,empresa_cnpj,setor_nome,matricula',
+            'direcao' => 'nullable|in:asc,desc',
+            'ativo' => 'nullable|in:todos,1,0',
             'terceirizado' => 'nullable|in:todos,1,0',
         ];
     }
@@ -35,11 +34,11 @@ class IndexRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'campo'        => 'campo',
-            'busca'        => 'busca',
-            'ordenar_por'  => 'ordenar por',
-            'direcao'      => 'direção',
-            'ativo'        => 'ativo',
+            'campo' => 'campo',
+            'busca' => 'busca',
+            'ordenar_por' => 'ordenar por',
+            'direcao' => 'direção',
+            'ativo' => 'ativo',
             'terceirizado' => 'terceirizado',
         ];
     }
@@ -47,10 +46,10 @@ class IndexRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'campo.in'        => 'Selecione um campo válido para filtrar.',
-            'ordenar_por.in'  => 'Selecione um campo válido para ordenação.',
-            'direcao.in'      => 'A direção deve ser asc (ascendente) ou desc (descendente).',
-            'ativo.in'        => 'Filtro de ativo inválido. Use: todos, 1 (ativos) ou 0 (inativos).',
+            'campo.in' => 'Selecione um campo válido para filtrar.',
+            'ordenar_por.in' => 'Selecione um campo válido para ordenação.',
+            'direcao.in' => 'A direção deve ser asc (ascendente) ou desc (descendente).',
+            'ativo.in' => 'Filtro de ativo inválido. Use: todos, 1 (ativos) ou 0 (inativos).',
             'terceirizado.in' => 'Filtro de terceirizado inválido. Use: todos, 1 (terceirizados) ou 0 (próprios).',
         ];
     }

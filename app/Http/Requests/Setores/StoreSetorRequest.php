@@ -57,8 +57,8 @@ class StoreSetorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'empresa_id.exists'  => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
-            'nome.unique'        => 'Já existe um setor com este nome nesta empresa.',
+            'empresa_id.exists' => 'A :attribute informada não foi encontrada ou está inativa/arquivada.',
+            'nome.unique' => 'Já existe um setor com este nome nesta empresa.',
         ];
     }
 

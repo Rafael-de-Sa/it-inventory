@@ -50,7 +50,6 @@ class StoreFuncionarioRequest extends FormRequest
                 Rule::unique('funcionarios', 'cpf')->whereNull('apagado_em'),
             ],
 
-            // obrigatório quando NÃO terceirizado
             'matricula' => [
                 'nullable',
                 'required_unless:terceirizado,1',
@@ -84,13 +83,13 @@ class StoreFuncionarioRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'empresa_id'   => 'empresa',
-            'setor_id'     => 'setor',
-            'nome'         => 'nome',
-            'sobrenome'    => 'sobrenome',
-            'cpf'          => 'CPF',
-            'matricula'    => 'matrícula',
-            'telefone'     => 'telefone',
+            'empresa_id' => 'empresa',
+            'setor_id' => 'setor',
+            'nome' => 'nome',
+            'sobrenome' => 'sobrenome',
+            'cpf' => 'CPF',
+            'matricula' => 'matrícula',
+            'telefone' => 'telefone',
             'terceirizado' => 'terceirizado',
         ];
     }

@@ -1,6 +1,4 @@
-// resources/js/nav.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile toggle
     const btnMobile = document.getElementById('btn-mobile');
     const mobileMenu = document.getElementById('mobile-menu');
     if (btnMobile && mobileMenu) {
@@ -9,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dropdowns (desktop)
     const DROPDOWNS = document.querySelectorAll('[data-dropdown]');
     function closeAllDropdowns(except = null) {
         DROPDOWNS.forEach(d => {
@@ -29,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const menu = drop.querySelector('[data-dropdown-menu]');
         if (!button || !menu) return;
 
-        // inicia fechado
         menu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
 
         button.addEventListener('click', (e) => {
@@ -46,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Fecha ao clicar fora / ESC
     document.addEventListener('click', () => closeAllDropdowns());
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeAllDropdowns();

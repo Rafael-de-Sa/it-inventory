@@ -37,30 +37,30 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
         })));
 
         $this->merge([
-            'empresa_id'     => $this->input('empresa_id') ? (int) $this->input('empresa_id') : null,
-            'setor_id'       => $this->input('setor_id') ? (int) $this->input('setor_id') : null,
+            'empresa_id' => $this->input('empresa_id') ? (int) $this->input('empresa_id') : null,
+            'setor_id' => $this->input('setor_id') ? (int) $this->input('setor_id') : null,
             'funcionario_id' => $this->input('funcionario_id') ? (int) $this->input('funcionario_id') : null,
-            'equipamentos'   => $idsEquipamentos,
+            'equipamentos' => $idsEquipamentos,
         ]);
     }
     public function rules(): array
     {
         return [
-            'empresa_id'     => ['required', 'integer', 'exists:empresas,id'],
-            'setor_id'       => ['required', 'integer', 'exists:setores,id'],
+            'empresa_id' => ['required', 'integer', 'exists:empresas,id'],
+            'setor_id' => ['required', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['required', 'integer', 'exists:funcionarios,id'],
 
             'observacao' => ['nullable', 'string', 'max:2000'],
 
-            'equipamentos'   => ['required', 'array', 'min:1'],
+            'equipamentos' => ['required', 'array', 'min:1'],
             'equipamentos.*' => ['integer', 'distinct', 'exists:equipamentos,id'],
 
-            'observacoes_equipamentos'   => ['nullable', 'array'],
+            'observacoes_equipamentos' => ['nullable', 'array'],
             'observacoes_equipamentos.*' => ['nullable', 'string', 'max:2000'],
 
             'motivo_devolucao' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
 
-            'motivos_devolucao_equipamentos'   => ['nullable', 'array'],
+            'motivos_devolucao_equipamentos' => ['nullable', 'array'],
             'motivos_devolucao_equipamentos.*' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
         ];
     }

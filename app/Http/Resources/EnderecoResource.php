@@ -15,8 +15,8 @@ class EnderecoResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'cep'    => (string) data_get($this->resource, 'cep'),
-            'rua'    => (string) data_get($this->resource, 'rua'),
+            'cep' => (string) data_get($this->resource, 'cep'),
+            'rua' => (string) data_get($this->resource, 'rua'),
             'bairro' => (string) data_get($this->resource, 'bairro'),
             'cidade' => (string) data_get($this->resource, 'cidade'),
             'estado' => (string) strtoupper((string) data_get($this->resource, 'estado')),

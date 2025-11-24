@@ -45,4 +45,18 @@ class MovimentacaoEquipamento extends Pivot
     {
         return $this->belongsTo(Equipamento::class);
     }
+
+    public function scopeHistoricoResponsabilidadePorEquipamento($query, int $equipamentoId): void
+    {
+        $query
+            ->with([
+                'movimentacao.funcionario.setor.empresa',
+                'equipamento',
+            ])
+            ->where('equipamento_id', $equipamentoId)
+            ->whereHas('movimentacao', function ($subQuery) {
+                $subQuery->where('tipo_movimentacao', 'responsabilidade');
+            })
+            ->orderByDesc('criado_em');
+    }
 }

@@ -15,9 +15,7 @@
                 </p>
             </header>
 
-            {{-- ID + Ativo --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- ID (input readonly com mesmo estilo de Setores) --}}
                 <div class="md:col-span-3">
                     <label for="equipamento_id" class="mb-1 block text-sm text-green-100">ID</label>
                     <input id="equipamento_id" type="text" value="{{ $equipamento->id }}"
@@ -26,7 +24,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Ativo (checkbox + badge, mesmo padrão) --}}
                 <div class="md:col-span-3">
                     <label for="equipamento_ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
                     <div class="h-[42px] flex items-center gap-3">
@@ -55,9 +52,7 @@
                 </div>
             </div>
 
-            {{-- Tipo, Patrimônio, Número de Série --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {{-- Tipo do Equipamento --}}
                 <div class="md:col-span-6">
                     <label for="tipo_nome" class="block mb-1 text-sm font-medium text-green-100">Tipo do Equipamento</label>
                     <input id="tipo_nome" type="text" value="{{ $equipamento->tipoEquipamento?->nome ?? '—' }}"
@@ -65,7 +60,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Patrimônio --}}
                 <div class="md:col-span-3">
                     <label for="patrimonio" class="block mb-1 text-sm font-medium text-green-100">Patrimônio</label>
                     <input id="patrimonio" type="text" value="{{ $equipamento->patrimonio ?? '—' }}"
@@ -73,7 +67,6 @@
                         disabled readonly>
                 </div>
 
-                {{-- Número de Série --}}
                 <div class="md:col-span-3">
                     <label for="numero_serie" class="block mb-1 text-sm font-medium text-green-100">Número de Série</label>
                     <input id="numero_serie" type="text" value="{{ $equipamento->numero_serie ?? '—' }}"
@@ -88,7 +81,6 @@
                 </legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    {{-- Data da compra (col-esq) --}}
                     <div class="md:col-span-6">
                         <label for="data_compra" class="block mb-1 text-sm font-medium text-green-100">Data da
                             compra</label>
@@ -99,7 +91,6 @@
                             disabled readonly>
                     </div>
 
-                    {{-- Valor da compra (col-dir) --}}
                     <div class="md:col-span-6">
                         <label for="valor_compra" class="block mb-1 text-sm font-medium text-green-100">Valor da
                             compra</label>
@@ -113,7 +104,6 @@
             </fieldset>
 
 
-            {{-- Descrição (mantém quebras de linha, mas com a mesma "cara" dos inputs) --}}
             <div>
                 <label for="descricao" class="block mb-1 text-sm font-medium text-green-100">Descrição</label>
                 <div id="descricao"
@@ -122,7 +112,6 @@
                 </div>
             </div>
 
-            {{-- Barra de ações (Voltar | Editar | Excluir) --}}
             <div class="flex items-center justify-between pt-2">
                 {{-- Voltar --}}
                 <a href="{{ route('equipamentos.index') }}"
@@ -133,6 +122,12 @@
                 </a>
 
                 <div class="flex items-center gap-3">
+                    <a href="{{ route('relatorios.equipamentos.historico', $equipamento) }}" target="_blank"
+                        class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Histórico</span>
+                    </a>
+
                     {{-- Editar --}}
                     <a href="{{ route('equipamentos.edit', $equipamento->id) }}"
                         class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2"

@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
         [MovimentacaoController::class, 'visualizarTermoDevolucao']
     )->name('movimentacoes.termo.devolucao.visualizar');
 
+    //relatorios
     Route::get(
         '/funcionarios/{funcionario}/relatorios/equipamentos',
         [RelatorioController::class, 'equipamentosPorFuncionario']
@@ -104,4 +105,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/funcionarios/{funcionario}/desligar', [FuncionarioController::class, 'desligar'])
         ->name('funcionarios.desligar');
+
+    Route::get(
+        '/equipamentos/{equipamento}/relatorios/historico',
+        [RelatorioController::class, 'historicoEquipamento']
+    )->name('relatorios.equipamentos.historico');
 });

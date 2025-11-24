@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Equipamento;
 use App\Models\Funcionario;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
@@ -53,6 +54,45 @@ class RelatorioController extends Controller
         );
 
         $nomeArquivo = 'relatorio_equipamentos_funcionario_' . $funcionario->id . '.pdf';
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename={$nomeArquivo}");
+    }
+
+    public function historicoEquipamento(Equipamento $equipamento)
+    {
+        $equipamento->load([
+            'tipoEquipamento',
+        ]);
+
+        $listaMovimentacoesResponsabilidade = MovimentacaoEquipamento::query()
+            ->historicoResponsabilidadePorEquipamento($equipamento->id)
+            ->get();
+
+        $dataHoraEmissao = now();
+
+        $pdf = Pdf::loadView('relatorios.equipamentos.historico', [
+            'equipamento' => $equipamento,
+            'listaMovimentacoesResponsabilidade' => $listaMovimentacoesResponsabilidade,
+            'dataHoraEmissao' => $dataHoraEmissao,
+        ])->setPaper('a4', 'portrait');
+
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+
+        $canvas = $dompdf->getCanvas();
+
+        $canvas->page_text(
+            460,
+            810,
+            'Página {PAGE_NUM} de {PAGE_COUNT}',
+            null,
+            9,
+            [0.4, 0.4, 0.4]
+        );
+
+        $nomeArquivo = 'relatorio_historico_equipamento_' . $equipamento->id . '.pdf';
 
         return response($dompdf->output(), 200)
             ->header('Content-Type', 'application/pdf')

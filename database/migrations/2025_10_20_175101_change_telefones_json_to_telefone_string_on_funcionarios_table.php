@@ -12,12 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1) Adiciona a coluna 'telefone' (11 dígitos, opcional)
         Schema::table('funcionarios', function (Blueprint $table) {
             $table->string('telefone', 11)->nullable()->after('matricula');
         });
 
-        // 2) Se existir a coluna antiga 'telefones' (JSON), migra o primeiro número válido para 'telefone'
         if (Schema::hasColumn('funcionarios', 'telefones')) {
             DB::table('funcionarios')
                 ->select('id', 'telefones')
@@ -42,7 +40,6 @@ return new class extends Migration
                                 }
                             }
                         } else {
-                            // não era JSON, salva como veio
                             $val = $raw;
                         }
 
@@ -55,7 +52,6 @@ return new class extends Migration
                     }
                 });
 
-            // 3) Remove a coluna antiga
             Schema::table('funcionarios', function (Blueprint $table) {
                 $table->dropColumn('telefones');
             });
@@ -64,12 +60,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        // 1) Recria o JSON 'telefones'
         Schema::table('funcionarios', function (Blueprint $table) {
             $table->json('telefones')->nullable()->after('matricula');
         });
 
-        // 2) Move 'telefone' -> 'telefones' (array JSON com um item)
         DB::table('funcionarios')
             ->select('id', 'telefone')
             ->orderBy('id')
@@ -82,7 +76,6 @@ return new class extends Migration
                 }
             });
 
-        // 3) Remove 'telefone'
         Schema::table('funcionarios', function (Blueprint $table) {
             $table->dropColumn('telefone');
         });

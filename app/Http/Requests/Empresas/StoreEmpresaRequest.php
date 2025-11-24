@@ -80,7 +80,7 @@ class StoreEmpresaRequest extends FormRequest
             'nome_fantasia' => 'nome fantasia',
             'razao_social' => 'razão social',
             'cnpj' => 'CNPJ',
-            'rua' => 'rua',
+            'rua' => 'logradouro',
             'numero' => 'número',
             'complemento' => 'complemento',
             'bairro' => 'bairro',

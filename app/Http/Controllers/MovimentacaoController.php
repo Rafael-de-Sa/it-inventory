@@ -14,7 +14,6 @@ use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -180,7 +179,6 @@ class MovimentacaoController extends Controller
                 ->get();
 
             foreach ($equipamentos as $equipamento) {
-                // vincula na tabela pivot movimentacao_equipamentos
                 $movimentacao->equipamentos()->attach($equipamento->id);
 
                 $equipamento->update([
@@ -242,7 +240,6 @@ class MovimentacaoController extends Controller
 
                 $observacoesEquipamentos = $dadosValidados['observacoes_equipamentos'] ?? [];
                 $observacaoEquipamento   = $observacoesEquipamentos[$equipamentoId] ?? $observacaoGeral;
-
 
                 $motivosDevolucaoEquipamentos = $dadosValidados['motivos_devolucao_equipamentos'] ?? [];
 
@@ -312,7 +309,6 @@ class MovimentacaoController extends Controller
      */
     public function show(Movimentacao $movimentacao)
     {
-        // Carrega relações necessárias para a tela de show
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
@@ -426,7 +422,7 @@ class MovimentacaoController extends Controller
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
-            'equipamentos', // com pivot->observacao
+            'equipamentos',
         ]);
 
         $nomeArquivo = 'termo_devolucao_movimentacao_' . $movimentacao->id . '.pdf';
@@ -486,10 +482,8 @@ class MovimentacaoController extends Controller
     ) {
         $arquivoTermo = $request->file('arquivo_termo');
 
-        // Pasta dentro de storage/app
         $pastaDestino = 'termos/responsabilidade';
 
-        // Garante que a pasta existe no disco local
         Storage::disk('local')->makeDirectory($pastaDestino);
 
         $idMovimentacao = (string) $movimentacao->id;

@@ -7,10 +7,13 @@ use App\Http\Requests\Funcionarios\StoreFuncionarioRequest;
 use App\Http\Requests\Funcionarios\UpdateFuncionarioRequest;
 use App\Models\Empresa;
 use App\Models\Funcionario;
+use App\Models\Movimentacao;
+use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
 use App\Support\Mask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class FuncionarioController extends Controller
@@ -75,7 +78,6 @@ class FuncionarioController extends Controller
 
         if ($busca !== null && $busca !== '') {
             if ($campo === 'nome') {
-                // Busca por nome OU sobrenome
                 $consulta->where(function ($q) use ($busca) {
                     $q->where('funcionarios.nome', 'like', "%{$busca}%")
                         ->orWhere('funcionarios.sobrenome', 'like', "%{$busca}%");
@@ -90,9 +92,7 @@ class FuncionarioController extends Controller
             }
         }
 
-        // Ordenação
         if ($ordenarPor === 'nome') {
-            // Ordena por nome e, em caso de empate, por sobrenome
             $consulta->orderBy('funcionarios.nome', $direcao)
                 ->orderBy('funcionarios.sobrenome', $direcao);
         } else {
@@ -131,9 +131,6 @@ class FuncionarioController extends Controller
         ]);
     }
 
-    /**
-     * Retorna os setores vinculados a uma empresa (usado por AJAX)
-     */
     public function setoresPorEmpresa(Empresa $empresa)
     {
         $setores = $empresa->setores()
@@ -188,14 +185,37 @@ class FuncionarioController extends Controller
     /**
      * Display the specified resource.
      */
+
     public function show(Funcionario $funcionario)
     {
-        $funcionario->with([
+        $funcionario->load([
             'setor:id,nome,empresa_id',
             'setor.empresa:id,nome_fantasia,cnpj',
+            'usuario:id,funcionario_id,ativo',
         ]);
 
-        return view('funcionarios.show', compact('funcionario'));
+        $restricoesDesligamento   = $funcionario->obterRestricoesDesligamento();
+        $podeRealizarDesligamento = $funcionario->podeSerDesligado();
+
+        $usuarioLogado = Auth::user();
+
+        $funcionarioPertenceAoUsuarioLogado = false;
+
+        if ($usuarioLogado && $funcionario->usuario) {
+            $funcionarioPertenceAoUsuarioLogado = $usuarioLogado->id === $funcionario->usuario->id;
+        }
+        $podeMostrarBotoesGerenciais = ! $funcionarioPertenceAoUsuarioLogado;
+        $podeMostrarBotaoDesligar    = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+        $podeMostrarBotaoExcluir     = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+
+        return view('funcionarios.show', [
+            'funcionario'                     => $funcionario,
+            'restricoesDesligamento'          => $restricoesDesligamento,
+            'podeRealizarDesligamento'        => $podeRealizarDesligamento,
+            'funcionarioPertenceAoUsuarioLogado' => $funcionarioPertenceAoUsuarioLogado,
+            'podeMostrarBotaoDesligar'        => $podeMostrarBotaoDesligar,
+            'podeMostrarBotaoExcluir'         => $podeMostrarBotaoExcluir,
+        ]);
     }
 
     /**
@@ -236,22 +256,17 @@ class FuncionarioController extends Controller
 
         $dados = $request->validated();
 
-        // Bools (checkboxes)
         $dados['terceirizado'] = $request->boolean('terceirizado');
         $dados['ativo']        = $request->boolean('ativo');
 
-        // Regras para desligado_em
         if (array_key_exists('ativo', $dados)) {
             if ($dados['ativo'] === false && $funcionario->ativo === true) {
-                // inativando agora
                 $dados['desligado_em'] = now();
             } elseif ($dados['ativo'] === true) {
-                // reativando: zera desligado_em (ajuste se preferir manter histórico)
                 $dados['desligado_em'] = null;
             }
         }
 
-        // Não persistimos empresa_id (ela é inferida pelo setor)
         unset($dados['empresa_id']);
 
         $funcionario->update($dados);
@@ -265,9 +280,58 @@ class FuncionarioController extends Controller
      */
     public function destroy(Funcionario $funcionario)
     {
+        $funcionario->loadMissing('usuario');
+
+        if ($funcionario->usuario) {
+            $usuario = $funcionario->usuario;
+
+            $usuario->ativo = false;
+            $usuario->save();
+        }
+
         $funcionario->delete();
 
         return redirect()->route('funcionarios.index')
             ->with('success', 'Funcionário removido com sucesso.');
+    }
+
+    public function desligar(Funcionario $funcionario)
+    {
+        $restricoes = $funcionario->obterRestricoesDesligamento();
+
+        if ($restricoes['ja_desligado']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Este funcionário já está marcado como desligado.');
+        }
+
+        if ($restricoes['equipamentos_em_uso']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível realizar o desligamento: ainda existem equipamentos sob responsabilidade do funcionário.');
+        }
+
+        if ($restricoes['termos_responsabilidade_pendentes'] || $restricoes['termos_devolucao_pendentes']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível realizar o desligamento: existem termos de responsabilidade ou devolução pendentes de upload.');
+        }
+
+        DB::transaction(function () use ($funcionario) {
+            $funcionario->desligado_em = today();
+            $funcionario->ativo = false;
+            $funcionario->save();
+
+            $funcionario->loadMissing('usuario');
+
+            if ($funcionario->usuario) {
+                $usuario = $funcionario->usuario;
+                $usuario->delete();
+            }
+        });
+
+        return redirect()
+            ->route('funcionarios.show', $funcionario->id)
+            ->with('success', 'Desligamento do funcionário e inativação do usuário vinculados realizados com sucesso.');
     }
 }

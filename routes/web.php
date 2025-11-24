@@ -101,4 +101,7 @@ Route::middleware('auth')->group(function () {
         '/funcionarios/{funcionario}/relatorios/equipamentos',
         [RelatorioController::class, 'equipamentosPorFuncionario']
     )->name('relatorios.funcionarios.equipamentos');
+
+    Route::post('/funcionarios/{funcionario}/desligar', [FuncionarioController::class, 'desligar'])
+        ->name('funcionarios.desligar');
 });

@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('nome', 30);
             $table->string('sobrenome', 50);
 
-            //Não deixei como unique pois posso contratar um colaborador novamente e 
-            // ele terá outra matricula, mas CPF será o mesmo
             $table->string('cpf', 11);
 
             $table->string('matricula', 8)->unique()->nullable();

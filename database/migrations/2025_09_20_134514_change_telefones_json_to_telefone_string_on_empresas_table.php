@@ -59,12 +59,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // 1) Recria o JSON 'telefones'
         Schema::table('empresas', function (Blueprint $table) {
             $table->json('telefones')->nullable()->after('email');
         });
-
-        // 2) Move de volta 'telefone' -> 'telefones' (como array JSON com um item)
         DB::table('empresas')->select('id', 'telefone')->orderBy('id')
             ->chunkById(500, function ($rows) {
                 foreach ($rows as $r) {
@@ -73,7 +70,6 @@ return new class extends Migration
                 }
             });
 
-        // 3) Remove 'telefone'
         Schema::table('empresas', function (Blueprint $table) {
             $table->dropColumn('telefone');
         });

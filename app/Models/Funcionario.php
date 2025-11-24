@@ -65,6 +65,59 @@ class Funcionario extends Model
             ->whereDoesntHave('usuario')
             ->whereNull('apagado_em');
     }
-}
 
-//TODO: Ajustar o cadastro de Funcionário para quando carregar o create, só carregar empresas com setor ativo
+    public function jaEstaDesligado(): bool
+    {
+        return ! is_null($this->desligado_em);
+    }
+
+    public function possuiEquipamentosEmUso(): bool
+    {
+        return MovimentacaoEquipamento::query()
+            ->whereNull('devolvido_em')
+            ->whereHas('movimentacao', function ($consultaMovimentacao) {
+                $consultaMovimentacao
+                    ->where('funcionario_id', $this->id)
+                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                    ->where('status', '!=', 'cancelada');
+            })
+            ->exists();
+    }
+
+    public function possuiTermosResponsabilidadePendentes(): bool
+    {
+        return Movimentacao::query()
+            ->where('funcionario_id', $this->id)
+            ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+            ->where('status', '!=', 'cancelada')
+            ->whereNull('termo_responsabilidade')
+            ->exists();
+    }
+
+    public function possuiTermosDevolucaoPendentes(): bool
+    {
+        return Movimentacao::query()
+            ->where('funcionario_id', $this->id)
+            ->where('tipo_movimentacao', Movimentacao::TIPO_DEVOLUCAO)
+            ->where('status', '!=', 'cancelada')
+            ->whereNull('termo_devolucao')
+            ->exists();
+    }
+
+    public function obterRestricoesDesligamento(): array
+    {
+        return [
+            'ja_desligado' => $this->jaEstaDesligado(),
+            'equipamentos_em_uso' => $this->possuiEquipamentosEmUso(),
+            'termos_responsabilidade_pendentes' => $this->possuiTermosResponsabilidadePendentes(),
+            'termos_devolucao_pendentes' => $this->possuiTermosDevolucaoPendentes(),
+        ];
+    }
+
+    public function podeSerDesligado(): bool
+    {
+        $restricoes = $this->obterRestricoesDesligamento();
+
+        return ! in_array(true, $restricoes, true);
+    }
+}

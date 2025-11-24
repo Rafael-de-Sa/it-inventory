@@ -145,7 +145,6 @@ class UsuarioController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-
     {
         $listaEmpresas = Empresa::aptasParaUsuario()
             ->select('id', 'razao_social', 'cnpj')

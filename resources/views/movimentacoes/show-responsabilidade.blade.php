@@ -200,58 +200,92 @@
             <section class="space-y-4">
                 <h3 class="text-lg font-semibold tracking-wide">Termo de responsabilidade</h3>
 
+                {{-- Card de ações do termo --}}
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
 
-                    <div class="grid gap-6 md:grid-cols-2 md:items-start">
-                        {{-- Coluna esquerda: upload --}}
-                        <div class="space-y-2">
-                            <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
-                            <p class="text-xs text-green-200">
-                                Envie o termo assinado para concluir a movimentação.
-                            </p>
+                    @if (empty($movimentacao->termo_responsabilidade))
+                        <div class="grid gap-6 md:grid-cols-2 md:items-start">
+                            {{-- Coluna esquerda: upload --}}
+                            <div class="space-y-2">
+                                <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
+                                <p class="text-xs text-green-200">
+                                    Envie o termo assinado para concluir a movimentação.
+                                </p>
 
-                            <form id="form-upload-termo" method="POST" action="{{-- route('movimentacoes.termo.upload', $movimentacao) --}}"
-                                enctype="multipart/form-data" class="space-y-3">
-                                @csrf
+                                <form id="form-upload-termo" method="POST"
+                                    action="{{ route('movimentacoes.upload-termo-responsabilidade', $movimentacao) }}"
+                                    enctype="multipart/form-data" class="space-y-3">
+                                    @csrf
 
-                                <input type="file" name="arquivo_termo" accept="application/pdf"
-                                    class="block w-full text-sm text-green-50
-                                           file:mr-3 file:rounded-lg file:border-0
-                                           file:bg-green-700 file:px-4 file:py-2
-                                           file:text-sm file:font-medium file:text-white
-                                           hover:file:bg-green-600">
-                            </form>
+                                    <input type="file" name="arquivo_termo" accept="application/pdf"
+                                        class="block w-full text-sm text-green-50
+                               file:mr-3 file:rounded-lg file:border-0
+                               file:bg-green-700 file:px-4 file:py-2
+                               file:text-sm file:font-medium file:text-white
+                               hover:file:bg-green-600">
+
+                                    @error('arquivo_termo')
+                                        <p class="text-xs text-red-300">{{ $message }}</p>
+                                    @enderror
+                                </form>
+                            </div>
+
+                            {{-- Coluna direita: ações do termo --}}
+                            <div class="flex flex-col items-stretch gap-3 md:items-end">
+                                {{-- Gerar termo --}}
+                                <a href="{{ route('movimentacoes.termo-responsabilidade', $movimentacao) }}"
+                                    target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
+                           bg-green-800/80 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>Gerar termo de responsabilidade</span>
+                                </a>
+
+                                {{-- Enviar termo (submit do form de cima) --}}
+                                <button type="submit" form="form-upload-termo"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
+                           bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-500/90">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Upload termo de responsabilidade</span>
+                                </button>
+                            </div>
                         </div>
+                    @else
+                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                            <div class="space-y-1">
+                                <p class="text-sm font-medium text-green-100">
+                                    Termo de responsabilidade
+                                </p>
+                                <p class="text-xs text-green-200">
+                                    Já existe um termo de responsabilidade enviado para esta movimentação.
+                                    Não é permitido enviar um novo arquivo.
+                                </p>
+                            </div>
 
-                        {{-- Coluna direita: ações do termo --}}
-                        <div class="flex flex-col items-stretch gap-3 md:items-end">
-                            {{-- Gerar termo --}}
-                            <a href="{{ route('movimentacoes.termo-responsabilidade', $movimentacao) }}" target="_blank"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
-                                <i class="fa-solid fa-file-pdf"></i>
-                                <span>Gerar termo de responsabilidade</span>
-                            </a>
-
-                            {{-- Enviar termo (submit do form de cima) --}}
-                            <button type="submit" form="form-upload-termo"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>Upload termo de responsabilidade</span>
-                            </button>
+                            <div class="flex flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-3">
+                                <a href="{{ route('movimentacoes.termo.responsabilidade.visualizar', $movimentacao) }}"
+                                    target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
+                           bg-green-800/80 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/60">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>Visualizar termo</span>
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     {{-- Rodapé do card: Voltar --}}
                     <div
-                        class="flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
-                        {{-- Voltar --}}
+                        class="mt-6 flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
                         <a href="{{ route('movimentacoes.index') }}"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700 bg-green-900/50 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-800/60">
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-800
+                   bg-green-900/60 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-800/60">
                             <i class="fa-solid fa-arrow-left-long"></i>
                             <span>Voltar</span>
                         </a>
                     </div>
                 </div>
+
             </section>
         </div>
     </div>

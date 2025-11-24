@@ -64,38 +64,6 @@ class Movimentacao extends Model
             ->withTimestamps();
     }
 
-    public function uploadTermoResponsabilidade(
-        UploadTermoResponsabilidadeRequest $request,
-        Movimentacao $movimentacao
-    ) {
-        $arquivoTermo = $request->file('arquivo_termo');
-
-        $pastaDestino = 'movimentacoes/termo_responsabilidade';
-        Storage::disk('public')->makeDirectory($pastaDestino);
-
-        $idMovimentacao = (string) $movimentacao->id;
-        $timestampArquivo = now()->format('Ymd_His');
-        $extensaoArquivo = $arquivoTermo->getClientOriginalExtension();
-
-        $nomeArquivo = $idMovimentacao . '_' . $timestampArquivo . '.' . $extensaoArquivo;
-
-        $caminhoArquivo = $arquivoTermo->storeAs(
-            $pastaDestino,
-            $nomeArquivo,
-            'public'
-        );
-
-        $movimentacao->termo_responsabilidade = $caminhoArquivo;
-
-        $movimentacao->status = 'concluida';
-
-        $movimentacao->save();
-
-        return redirect()
-            ->route('movimentacoes.show', $movimentacao->id)
-            ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
-    }
-
     public function scopeResponsabilidades($query)
     {
         return $query->where('tipo_movimentacao', self::TIPO_RESPONSABILIDADE);

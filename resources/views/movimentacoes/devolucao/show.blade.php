@@ -194,70 +194,87 @@
                 </div>
             </section>
 
-            {{-- TERMO DE DEVOLUÇÃO (gerar / upload) --}}
             <section class="space-y-4">
                 <h3 class="text-lg font-semibold tracking-wide">Termo de devolução</h3>
 
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
-                    <div class="grid gap-6 md:grid-cols-2 md:items-start">
-                        {{-- Coluna esquerda: upload --}}
-                        <div class="space-y-2">
-                            <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
-                            <p class="text-xs text-green-200">
-                                Envie o termo de devolução assinado para manter o registro associado a esta movimentação.
-                            </p>
 
-                            <form id="form-upload-termo-devolucao" method="POST"
-                                action="{{ route('movimentacoes.upload-termo-devolucao', $movimentacao) }}"
-                                enctype="multipart/form-data" class="space-y-3">
-                                @csrf
-
-                                <input type="file" name="arquivo_termo_devolucao" accept="application/pdf"
-                                    class="block w-full text-sm text-green-50
-                                           file:mr-3 file:rounded-lg file:border-0
-                                           file:bg-green-700 file:px-4 file:py-2
-                                           file:text-sm file:font-medium file:text-white
-                                           hover:file:bg-green-600">
-                            </form>
-
-                            @if (!empty($movimentacao->caminho_termo_devolucao))
-                                <p class="text-xs text-green-200 mt-2">
-                                    Termo já enviado:
-                                    <a href="{{ Storage::url($movimentacao->caminho_termo_devolucao) }}" target="_blank"
-                                        class="underline hover:text-green-100">
-                                        Visualizar termo de devolução
-                                    </a>
+                    @if (empty($movimentacao->caminho_termo_devolucao))
+                        {{-- CENÁRIO 1: ainda NÃO existe termo de devolução enviado --}}
+                        <div class="grid gap-6 md:grid-cols-2 md:items-start">
+                            {{-- Coluna esquerda: upload --}}
+                            <div class="space-y-2">
+                                <p class="text-sm font-medium text-green-100">Upload do termo assinado (PDF)</p>
+                                <p class="text-xs text-green-200">
+                                    Envie o termo de devolução assinado para manter o registro associado a esta
+                                    movimentação.
                                 </p>
-                            @endif
-                        </div>
 
-                        {{-- Coluna direita: ações do termo --}}
-                        <div class="flex flex-col items-stretch gap-3 md:items-end">
-                            {{-- Gerar termo (PDF) --}}
-                            <a href="{{ route('movimentacoes.termo-devolucao', $movimentacao) }}" target="_blank"
-                                class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/60
-                                       px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
-                                <i class="fa-solid fa-file-pdf"></i>
-                                <span>Gerar termo de devolução</span>
-                            </a>
+                                <form id="form-upload-termo-devolucao" method="POST"
+                                    action="{{ route('movimentacoes.upload-termo-devolucao', $movimentacao) }}"
+                                    enctype="multipart/form-data" class="space-y-3">
+                                    @csrf
 
-                            {{-- Enviar termo (submit do form de cima) --}}
-                            <button type="submit" form="form-upload-termo-devolucao"
-                                class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2
-                                       text-sm font-medium text-white hover:bg-green-500">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>Upload termo de devolução</span>
-                            </button>
+                                    <input type="file" name="arquivo_termo" accept="application/pdf"
+                                        class="block w-full text-sm text-green-50
+                                               file:mr-3 file:rounded-lg file:border-0
+                                               file:bg-green-700 file:px-4 file:py-2
+                                               file:text-sm file:font-medium file:text-white
+                                               hover:file:bg-green-600">
+
+                                    @error('arquivo_termo')
+                                        <p class="text-xs text-red-300">{{ $message }}</p>
+                                    @enderror
+                                </form>
+                            </div>
+
+                            {{-- Coluna direita: ações do termo --}}
+                            <div class="flex flex-col items-stretch gap-3 md:items-end">
+                                {{-- Gerar termo (PDF) --}}
+                                <a href="{{ route('movimentacoes.termo-devolucao', $movimentacao) }}" target="_blank"
+                                    class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/60
+                                           px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/50">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>Gerar termo de devolução</span>
+                                </a>
+
+                                {{-- Enviar termo (submit do form de cima) --}}
+                                <button type="submit" form="form-upload-termo-devolucao"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2
+                                           text-sm font-medium text-white hover:bg-green-500">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Upload termo de devolução</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        {{-- CENÁRIO 2: já existe termo de devolução enviado --}}
+                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                            <div class="space-y-1">
+                                <p class="text-sm font-medium text-green-100">
+                                    Termo de devolução armazenado
+                                </p>
+                                <p class="text-xs text-green-200">
+                                    Já existe um termo de devolução enviado para esta movimentação.
+                                    Não é permitido enviar um novo arquivo.
+                                </p>
+                            </div>
+
+                            <div class="flex flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-3">
+                                <a href="{{ route('movimentacoes.termo.devolucao.visualizar', $movimentacao) }}?v={{ $movimentacao->atualizado_em?->timestamp ?? now()->timestamp }}"
+                                    target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
+                                           bg-green-800/80 px-4 py-2 text-sm font-medium text-green-50 hover:bg-green-700/60">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>Visualizar termo de devolução</span>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
 
                     {{-- Rodapé do card: Voltar --}}
                     <div
                         class="flex flex-col gap-3 border-t border-green-800 pt-4 md:flex-row md:items-center md:justify-between">
-                        <p class="text-xs text-green-200">
-                            As ações acima não alteram os dados já exibidos da movimentação, apenas gerenciam o arquivo do
-                            termo.
-                        </p>
 
                         <a href="{{ route('movimentacoes.index') }}"
                             class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-700
@@ -268,6 +285,7 @@
                     </div>
                 </div>
             </section>
+
         </div>
     </div>
 @endsection

@@ -85,4 +85,14 @@ Route::middleware('auth')->group(function () {
         '/movimentacoes/{movimentacao}/upload-termo-devolucao',
         [MovimentacaoController::class, 'uploadTermoDevolucao']
     )->name('movimentacoes.upload-termo-devolucao');
+
+    Route::get(
+        '/movimentacoes/{movimentacao}/termo-responsabilidade/visualizar',
+        [MovimentacaoController::class, 'visualizarTermoResponsabilidade']
+    )->name('movimentacoes.termo.responsabilidade.visualizar');
+
+    Route::get(
+        '/movimentacoes/{movimentacao}/termo-devolucao/visualizar',
+        [MovimentacaoController::class, 'visualizarTermoDevolucao']
+    )->name('movimentacoes.termo.devolucao.visualizar');
 });

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Movimentacoes\IndexRequest;
 use App\Http\Requests\Movimentacoes\StoreDevolucaoMovimentacaoRequest;
 use App\Http\Requests\Movimentacoes\StoreMovimentacaoRequest;
+use App\Http\Requests\Movimentacoes\UploadTermoDevolucaoRequest;
+use App\Http\Requests\Movimentacoes\UploadTermoResponsabilidadeRequest;
 use App\Models\Empresa;
 use App\Models\Equipamento;
 use App\Models\Funcionario;
@@ -14,6 +16,7 @@ use App\Models\Setor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MovimentacaoController extends Controller
 {
@@ -475,5 +478,121 @@ class MovimentacaoController extends Controller
             });
 
         return response()->json($equipamentosEmUso);
+    }
+
+    public function uploadTermoResponsabilidade(
+        UploadTermoResponsabilidadeRequest $request,
+        Movimentacao $movimentacao
+    ) {
+        $arquivoTermo = $request->file('arquivo_termo');
+
+        // Pasta dentro de storage/app
+        $pastaDestino = 'termos/responsabilidade';
+
+        // Garante que a pasta existe no disco local
+        Storage::disk('local')->makeDirectory($pastaDestino);
+
+        $idMovimentacao = (string) $movimentacao->id;
+        $timestampArquivo = now()->format('Ymd_His');
+        $extensaoArquivo = $arquivoTermo->getClientOriginalExtension();
+
+        $nomeArquivo = $idMovimentacao . '_' . $timestampArquivo . '.' . $extensaoArquivo;
+
+        $caminhoArquivo = $arquivoTermo->storeAs(
+            $pastaDestino,
+            $nomeArquivo,
+            'local'
+        );
+
+        $movimentacao->termo_responsabilidade = $caminhoArquivo;
+        $movimentacao->status = 'concluida';
+        $movimentacao->save();
+
+        return redirect()
+            ->route('movimentacoes.index', $movimentacao->id)
+            ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
+    }
+
+    protected function visualizarTermoGenerico(
+        Movimentacao $movimentacao,
+        string $campoTermo,
+        string $descricaoTermo
+    ) {
+        $caminhoRelativo = $movimentacao->{$campoTermo};
+
+        if (empty($caminhoRelativo)) {
+            abort(404, "Nenhum termo de {$descricaoTermo} foi armazenado para esta movimentação.");
+        }
+
+        if (! Storage::disk('local')->exists($caminhoRelativo)) {
+            abort(404, "Arquivo do termo de {$descricaoTermo} não foi encontrado no sistema.");
+        }
+
+        $caminhoAbsoluto = storage_path('app/private/' . $caminhoRelativo);
+
+        if (! file_exists($caminhoAbsoluto)) {
+            abort(404, "Arquivo do termo de {$descricaoTermo} não foi encontrado no sistema.");
+        }
+
+        return response()->file($caminhoAbsoluto, [
+            'Content-Type' => 'application/pdf',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ]);
+    }
+
+    public function visualizarTermoResponsabilidade(Movimentacao $movimentacao)
+    {
+        return $this->visualizarTermoGenerico(
+            $movimentacao,
+            'termo_responsabilidade',
+            'responsabilidade'
+        );
+    }
+
+    public function visualizarTermoDevolucao(Movimentacao $movimentacao)
+    {
+        return $this->visualizarTermoGenerico(
+            $movimentacao,
+            'termo_devolucao',
+            'devolução'
+        );
+    }
+
+    public function uploadTermoDevolucao(UploadTermoDevolucaoRequest $request, Movimentacao $movimentacao)
+    {
+        $dadosValidados = $request->validate([
+            'arquivo_termo' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+        ], [], [
+            'arquivo_termo' => 'arquivo do termo de devolução',
+        ]);
+
+        $arquivoTermo = $dadosValidados['arquivo_termo'];
+
+        $pastaDestino = 'termos/devolucao';
+
+        Storage::disk('local')->makeDirectory($pastaDestino);
+
+        $nomeArquivo = sprintf(
+            '%d_%s.%s',
+            $movimentacao->id,
+            now()->format('Ymd_His'),
+            $arquivoTermo->getClientOriginalExtension()
+        );
+
+        $caminhoArquivo = $arquivoTermo->storeAs(
+            $pastaDestino,
+            $nomeArquivo,
+            'local'
+        );
+
+        $movimentacao->termo_devolucao = $caminhoArquivo;
+        $movimentacao->status = 'encerrada';
+        $movimentacao->save();
+
+        return redirect()
+            ->route('movimentacoes.index', $movimentacao)
+            ->with('success', 'Termo de devolução enviado com sucesso e movimentação encerrada.');
     }
 }

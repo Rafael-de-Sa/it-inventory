@@ -199,7 +199,7 @@
 
                 <div class="rounded-2xl border border-green-800 bg-green-900/40 p-6 space-y-6">
 
-                    @if (empty($movimentacao->caminho_termo_devolucao))
+                    @if (empty($movimentacao->termo_devolucao))
                         {{-- CENÁRIO 1: ainda NÃO existe termo de devolução enviado --}}
                         <div class="grid gap-6 md:grid-cols-2 md:items-start">
                             {{-- Coluna esquerda: upload --}}

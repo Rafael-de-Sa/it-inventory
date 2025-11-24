@@ -43,32 +43,36 @@
                 </div>
 
                 {{-- Ativo --}}
-                <div class="md:col-span-3">
-                    <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
-                    <div class="h-[42px] flex items-center gap-3">
-                        <input type="hidden" name="ativo" value="0">
-                        <input id="ativo" name="ativo" type="checkbox" value="1" @checked(old('ativo', $usuario->ativo))
-                            @class([
-                                'h-5 w-5 rounded focus:ring-0 focus:outline-none',
-                                'border-green-700 text-green-700',
-                            ])>
+                @if (auth()->id() != $usuario->id)
+                    <div class="md:col-span-3">
+                        <label for="ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
+                        <div class="h-[42px] flex items-center gap-3">
+                            <input type="hidden" name="ativo" value="0">
+                            <input id="ativo" name="ativo" type="checkbox" value="1" @checked(old('ativo', $usuario->ativo))
+                                @class([
+                                    'h-5 w-5 rounded focus:ring-0 focus:outline-none',
+                                    'border-green-700 text-green-700',
+                                ])>
 
-                        @if (old('ativo', $usuario->ativo))
-                            <span
-                                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border border-green-600/60 bg-green-600/15 text-green-100 ring-1 ring-inset ring-green-400/10">
-                                <i class="fa-solid fa-check-circle text-[10px]"></i> Ativo
-                            </span>
-                        @else
-                            <span
-                                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border border-gray-500/60 bg-gray-500/15 text-gray-200/80 ring-1 ring-inset ring-gray-400/10">
-                                <i class="fa-solid fa-circle-xmark text-[10px]"></i> Inativo
-                            </span>
-                        @endif
+                            @if (old('ativo', $usuario->ativo))
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border border-green-600/60 bg-green-600/15 text-green-100 ring-1 ring-inset ring-green-400/10">
+                                    <i class="fa-solid fa-check-circle text-[10px]"></i> Ativo
+                                </span>
+                            @else
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border border-gray-500/60 bg-gray-500/15 text-gray-200/80 ring-1 ring-inset ring-gray-400/10">
+                                    <i class="fa-solid fa-circle-xmark text-[10px]"></i> Inativo
+                                </span>
+                            @endif
+                        </div>
+                        @error('ativo')
+                            <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('ativo')
-                        <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
-                    @enderror
-                </div>
+                @else
+                    <input type="hidden" name="ativo" value="1">
+                @endif
             </div>
 
             {{-- Funcionário (somente leitura) --}}

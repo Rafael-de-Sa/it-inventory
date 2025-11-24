@@ -20,7 +20,6 @@
                 </p>
             </header>
 
-            {{-- ID + Ativo --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
                 {{-- ID --}}
                 <div class="md:col-span-3">
@@ -31,11 +30,9 @@
                         disabled readonly>
                 </div>
 
-                {{-- Ativo (checkbox) --}}
                 <div class="md:col-span-3">
                     <label for="usuario_ativo" class="block mb-1 text-sm font-medium text-green-100">Ativo</label>
 
-                    {{-- mesma “altura de campo” do input ao lado (≈ 42px) --}}
                     <div class="h-[42px] flex items-center gap-3">
                         <input id="usuario_ativo" type="checkbox" disabled @checked($usuario->ativo)
                             class="h-5 w-5 rounded border-green-700 bg-gray-300 text-green-600 cursor-default
@@ -62,7 +59,6 @@
                 </div>
             </div>
 
-            {{-- Funcionário --}}
             <div>
                 <label for="usuario_funcionario" class="block mb-1 text-sm font-medium text-green-100">
                     Funcionário
@@ -114,19 +110,21 @@
                         <span>Editar</span>
                     </a>
 
-                    {{-- Excluir --}}
-                    <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
-                        onsubmit="return confirm('Excluir o usuário {{ addslashes($usuario->email ?? '(sem e-mail)') }}?');"
-                        class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="cursor-pointer px-4 py-2 rounded-lg border border-red-700 text-red-200 hover:bg-red-900/30 inline-flex items-center gap-2"
-                            aria-label="Excluir">
-                            <i class="fa-solid fa-trash"></i>
-                            <span>Excluir</span>
-                        </button>
-                    </form>
+                    @if (auth()->id() != $usuario->id)
+                        {{-- Excluir --}}
+                        <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
+                            onsubmit="return confirm('Excluir o usuário {{ addslashes($usuario->email ?? '(sem e-mail)') }}?');"
+                            class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="cursor-pointer px-4 py-2 rounded-lg border border-red-700 text-red-200 hover:bg-red-900/30 inline-flex items-center gap-2"
+                                aria-label="Excluir">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>Excluir</span>
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

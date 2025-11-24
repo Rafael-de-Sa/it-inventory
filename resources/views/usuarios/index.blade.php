@@ -131,12 +131,10 @@
                 <tbody class="bg-green-950/10">
                     @forelse ($listaDeUsuarios as $usuario)
                         <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
-                            {{-- ID --}}
                             <td class="px-4 py-2 text-center">
                                 {{ $usuario->id }}
                             </td>
 
-                            {{-- Funcionário (nome + sobrenome em uma linha) --}}
                             <td class="px-4 py-2 text-center">
                                 @if ($usuario->funcionario)
                                     {{ trim($usuario->funcionario->nome . ' ' . $usuario->funcionario->sobrenome) }}
@@ -153,7 +151,6 @@
                                 @endif
                             </td>
 
-                            {{-- Último login --}}
                             <td class="px-4 py-2 text-center">
                                 @if ($usuario->ultimo_login)
                                     {{ $usuario->ultimo_login->format('d/m/Y H:i') }}
@@ -167,34 +164,34 @@
                             {{-- Ações --}}
                             <td class="px-4 py-2 text-center">
                                 <div class="inline-flex items-center gap-2">
-                                    {{-- Exibir --}}
+
                                     <a href="{{ route('usuarios.show', $usuario->id) }}"
                                         class="inline-flex h-8 w-8 items-center justify-center rounded-md text-current no-underline hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         title="Exibir" aria-label="Exibir">
                                         <i class="fa-solid fa-eye text-base" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Editar --}}
                                     <a href="{{ route('usuarios.edit', $usuario->id) }}"
                                         class="inline-flex h-8 w-8 items-center justify-center cursor-pointer rounded-md text-current no-underline hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         title="Editar" aria-label="Editar">
                                         <i class="fa-solid fa-pen-to-square text-base" aria-hidden="true"></i>
                                     </a>
 
-                                    {{-- Excluir --}}
-                                    <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
-                                        onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
+                                    @if (auth()->id() != $usuario->id)
+                                        <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }}"
+                                            onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
+                                            class="inline">
+                                            @csrf
+                                            @method('DELETE')
 
-                                        <button type="submit"
-                                            class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline                     hover:bg-red-900/10 focus:outline-none transition-colors cursor-pointer"
-                                            title="Excluir" aria-label="Excluir">
-                                            <i class="fa-solid fa-trash text-base align-middle text-red-300 group-hover:text-red-500 transition-colors"
-                                                aria-hidden="true"></i>
-                                        </button>
-                                    </form>
+                                            <button type="submit"
+                                                class="group inline-flex items-center justify-center w-8 h-8 rounded-md no-underline                     hover:bg-red-900/10 focus:outline-none transition-colors cursor-pointer"
+                                                title="Excluir" aria-label="Excluir">
+                                                <i class="fa-solid fa-trash text-base align-middle text-red-300 group-hover:text-red-500 transition-colors"
+                                                    aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

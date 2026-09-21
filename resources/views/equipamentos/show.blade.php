@@ -121,6 +121,10 @@
                     <span>Voltar</span>
                 </a>
 
+                {{-- //TODO: Ajustar exibição de Histórico
+                    Foi identificado que ao clicar em histórico, aparentemente caso o usuário tenha sido excluido (memso softdelete) ele não trás a informação e por se tratar de um histórico, creio que a informação tem que vir mesmo com o soft delete
+                --}}
+
                 <div class="flex items-center gap-3">
                     <a href="{{ route('relatorios.equipamentos.historico', $equipamento) }}" target="_blank"
                         class="px-4 py-2 rounded-lg border border-green-700 hover:bg-green-800/40 inline-flex items-center gap-2">

@@ -27,7 +27,7 @@ class Funcionario extends Model
     ];
 
     protected $casts = [
-        'telefones ' => 'array',
+        'telefones' => 'array',
         'desligado_em' => 'date',
         'ativo' => 'boolean',
         'terceirizado' => 'boolean',

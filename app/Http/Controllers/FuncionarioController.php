@@ -288,18 +288,41 @@ class FuncionarioController extends Controller
      */
     public function destroy(Funcionario $funcionario)
     {
+        $restricoes = $funcionario->obterRestricoesDesligamento();
+
+        if ($restricoes['ja_desligado']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Este funcionário já está desligado e não pode ser excluído.');
+        }
+
+        if ($restricoes['equipamentos_em_uso']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível excluir o funcionário enquanto houver equipamentos sob sua responsabilidade.');
+        }
+
+        if (
+            $restricoes['termos_responsabilidade_pendentes'] ||
+            $restricoes['termos_devolucao_pendentes']
+        ) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível excluir o funcionário enquanto houver termos pendentes.');
+        }
+
         $funcionario->loadMissing('usuario');
 
         if ($funcionario->usuario) {
             $usuario = $funcionario->usuario;
-
             $usuario->ativo = false;
             $usuario->save();
         }
 
         $funcionario->delete();
 
-        return redirect()->route('funcionarios.index')
+        return redirect()
+            ->route('funcionarios.index')
             ->with('success', 'Funcionário removido com sucesso.');
     }
 

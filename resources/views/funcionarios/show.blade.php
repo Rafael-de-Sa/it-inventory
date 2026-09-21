@@ -186,6 +186,13 @@
                             <span>Relatório de equipamentos</span>
                         </a>
 
+
+                        {{-- //TODO: Ajustar erro ao já estar desligado
+                        No caso ao utilizar o botão de realizar desligamento, no formato que está atualmente registra a data atualmente
+                        para melhoria, podeira solicitar a data por um model?
+
+                        Ao estar desligado ele dá como erro que o usuário não pode ser desligado, pois já está desligado
+                        --}}
                         {{-- Desligar funcionário --}}
                         @if ($podeMostrarBotaoDesligar)
                             <form method="POST" action="{{ route('funcionarios.desligar', $funcionario->id) }}"

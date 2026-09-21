@@ -11,4 +11,12 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
     --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-page: #052e16;
+    --color-surface: #14532d;
+    --color-line: #166534;
+    --color-line-strong: #15803d;
+    --color-primary: #15803d;
+    --color-primary-hover: #16a34a;
+    --color-label: #dcfce7;
+    --color-muted: #bbf7d0;
 }

@@ -162,11 +162,20 @@
                     <span class="text-sm">Terceirizado</span>
                 </label>
 
-                <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" name="ativo" value="1" @checked(old('ativo', $funcionario->ativo))
-                        class="h-5 w-5 rounded border border-green-700">
-                    <span class="text-sm">Ativo</span>
-                </label>
+                <div>
+                    <label class="inline-flex items-center gap-2">
+                        <input type="checkbox" @checked($funcionario->ativo) disabled
+                            class="h-5 w-5 rounded border border-green-700 disabled:cursor-not-allowed disabled:opacity-60">
+
+                        <span class="text-sm">Ativo</span>
+                    </label>
+
+                    <input type="hidden" name="ativo" value="{{ $funcionario->ativo ? 1 : 0 }}">
+
+                    @error('ativo')
+                        <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             {{-- Ações --}}

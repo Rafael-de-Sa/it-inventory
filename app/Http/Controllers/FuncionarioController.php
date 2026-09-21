@@ -263,8 +263,14 @@ class FuncionarioController extends Controller
 
         if (array_key_exists('ativo', $dados)) {
             if ($dados['ativo'] === false && $funcionario->ativo === true) {
-                $dados['desligado_em'] = now();
-            } elseif ($dados['ativo'] === true) {
+                return back()
+                    ->withErrors([
+                        'ativo' => 'Para desligar um funcionário, utilize a opção "Registrar desligamento".'
+                    ])
+                    ->withInput();
+            }
+
+            if ($dados['ativo'] === true) {
                 $dados['desligado_em'] = null;
             }
         }

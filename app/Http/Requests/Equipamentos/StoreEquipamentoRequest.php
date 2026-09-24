@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Equipamentos;
 
+use App\Models\Equipamento;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -51,7 +52,7 @@ class StoreEquipamentoRequest extends FormRequest
             'tipo_equipamento_id' => ['required', 'integer', 'exists:tipo_equipamentos,id'],
             'data_compra' => ['nullable', 'date'],
             'valor_compra' => ['nullable', 'numeric', 'between:0,9999999999.99'],
-            'status' => ['required', 'in:em_uso,defeituoso,descartado,disponivel,em_manutencao'],
+            'status' => ['required', Rule::in(array_keys(Equipamento::STATUS))],
             'descricao' => ['required', 'string', 'max:65535'],
             'patrimonio' => ['nullable', 'string', 'max:255', 'unique:equipamentos,patrimonio'],
             'numero_serie' => ['nullable', 'string', 'max:255', 'unique:equipamentos,numero_serie'],

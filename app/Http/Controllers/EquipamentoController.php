@@ -7,6 +7,7 @@ use App\Http\Requests\Equipamentos\StoreEquipamentoRequest;
 use App\Http\Requests\Equipamentos\UpdateEquipamentoRequest;
 use App\Models\Equipamento;
 use App\Models\TipoEquipamento;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class EquipamentoController extends Controller
@@ -108,13 +109,7 @@ class EquipamentoController extends Controller
             ->orderBy('nome')
             ->pluck('nome', 'id');
 
-        // Lista de status conforme enum da migration
-        $listaStatus = [
-            'disponivel'     => 'Disponível',
-            'em_manutencao'  => 'Em manutenção',
-            'defeituoso'     => 'Defeituoso',
-            'descartado'     => 'Descartado',
-        ];
+        $listaStatus = Arr::only(Equipamento::STATUS, Equipamento::STATUS_CADASTRO);
 
         return view('equipamentos.create', compact('opcoesTipos', 'listaStatus'));
     }

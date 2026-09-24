@@ -1,72 +1,53 @@
 @extends('layouts.main_layout')
 
 @section('content')
-    <div class="w-full flex justify-center">
-        <div
-            class="w-full max-w-5xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg px-6 py-10 md:px-10 md:py-14">
+    @php
+        $areas = [
+            [
+                'icone' => 'fa-solid fa-clipboard-list',
+                'titulo' => 'Cadastros',
+                'texto' => 'Gerencie empresas, setores, funcionários, usuários, tipos de equipamento e equipamentos.',
+            ],
+            [
+                'icone' => 'fa-solid fa-right-left',
+                'titulo' => 'Movimentações',
+                'texto' => 'Registre entregas, devoluções e acompanhe o histórico de movimentações por funcionário, setor e equipamento.',
+            ],
+            [
+                'icone' => 'fa-solid fa-file-signature',
+                'titulo' => 'Termos',
+                'texto' => 'Gere termos de responsabilidade e devolução padronizados para funcionários próprios e terceirizados.',
+            ],
+        ];
+    @endphp
 
-            <div class="flex flex-col items-center text-center space-y-6">
+    <x-ui.card size="lg">
+        <div class="flex flex-col items-center space-y-6 py-4 text-center">
+            <span class="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 ring-1 ring-brand-600/20 ring-inset">
+                <i class="fa-solid fa-laptop" aria-hidden="true"></i> Gestão de Ativos de TI
+            </span>
 
-                <h1 class="text-3xl md:text-4xl font-semibold tracking-wide leading-snug">
-                    <span class="block">
-                        Boas-vindas ao
-                    </span>
-                    <span class="block md:inline text-green-300">
-                        IT Inventory
-                    </span>
-                    <span class="block md:inline">
-                        – Sistema de Gestão de Ativos de TI
-                    </span>
-                </h1>
+            <h1 class="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+                Boas-vindas ao <span class="text-brand-700">IT Inventory</span>
+            </h1>
 
-                <p class="text-sm md:text-base text-green-100 max-w-2xl">
-                    Utilize o sistema para cadastrar empresas, setores, funcionários, usuários e equipamentos,
-                    controlar as movimentações de entrega e devolução e gerar os termos de responsabilidade
-                    de forma centralizada e padronizada.
-                </p>
+            <p class="max-w-2xl text-sm leading-relaxed text-ink-muted md:text-base">
+                Utilize o sistema para cadastrar empresas, setores, funcionários, usuários e equipamentos,
+                controlar as movimentações de entrega e devolução e gerar os termos de responsabilidade
+                de forma centralizada e padronizada.
+            </p>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl mt-4">
-                    <div class="rounded-xl border border-green-800/80 bg-green-900/40 px-4 py-3 text-left sm:text-center">
-                        <div class="flex sm:flex-col items-center gap-3">
-                            <i class="fa-solid fa-clipboard-list text-lg md:text-xl"></i>
-                            <div class="space-y-1">
-                                <p class="text-xs text-green-200 uppercase tracking-wide">Cadastros</p>
-                                <p class="text-sm text-green-50">
-                                    Gerencie empresas, setores, funcionários, usuários, tipos de equipamento e
-                                    equipamentos.
-                                </p>
-                            </div>
-                        </div>
+            <div class="grid w-full max-w-3xl grid-cols-1 gap-4 pt-2 sm:grid-cols-3">
+                @foreach ($areas as $area)
+                    <div class="rounded-lg border border-line bg-surface-muted p-4 text-left">
+                        <span class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-600/15">
+                            <i class="{{ $area['icone'] }}" aria-hidden="true"></i>
+                        </span>
+                        <p class="text-sm font-semibold text-ink">{{ $area['titulo'] }}</p>
+                        <p class="mt-1 text-sm leading-relaxed text-ink-muted">{{ $area['texto'] }}</p>
                     </div>
-
-                    <div class="rounded-xl border border-green-800/80 bg-green-900/40 px-4 py-3 text-left sm:text-center">
-                        <div class="flex sm:flex-col items-center gap-3">
-                            <i class="fa-solid fa-right-left text-lg md:text-xl"></i>
-                            <div class="space-y-1">
-                                <p class="text-xs text-green-200 uppercase tracking-wide">Movimentações</p>
-                                <p class="text-sm text-green-50">
-                                    Registre entregas, devoluções e acompanhe o histórico de movimentações
-                                    por funcionário, setor e equipamento.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rounded-xl border border-green-800/80 bg-green-900/40 px-4 py-3 text-left sm:text-center">
-                        <div class="flex sm:flex-col items-center gap-3">
-                            <i class="fa-solid fa-file-signature text-lg md:text-xl"></i>
-                            <div class="space-y-1">
-                                <p class="text-xs text-green-200 uppercase tracking-wide">Termos</p>
-                                <p class="text-sm text-green-50">
-                                    Gere termos de responsabilidade e devolução padronizados para
-                                    funcionários próprios e terceirizados.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-
         </div>
-    </div>
+    </x-ui.card>
 @endsection

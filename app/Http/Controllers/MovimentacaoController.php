@@ -181,7 +181,7 @@ class MovimentacaoController extends Controller
             foreach ($equipamentos as $equipamento) {
                 $movimentacao->equipamentos()->attach($equipamento->id);
 
-                $equipamento->update([
+                $equipamento->comHistorico('emprestimo', $movimentacao)->update([
                     'status' => 'em_uso',
                 ]);
             }
@@ -248,6 +248,7 @@ class MovimentacaoController extends Controller
                     ?? 'devolucao';
 
                 $responsabilidadePivot->update([
+                    'devolucao_movimentacao_id' => $movimentacaoDevolucao->id,
                     'devolvido_em'     => now()->toDateString(),
                     'motivo_devolucao' => $motivoDevolucaoEquipamento,
                     'observacao'       => $observacaoEquipamento
@@ -268,13 +269,14 @@ class MovimentacaoController extends Controller
                     continue;
                 }
 
-                $novoStatusEquipamento = match ($motivoDevolucaoEquipamento) {
-                    'manutencao'          => 'em_manutencao',
-                    'defeito', 'quebra'   => 'defeituoso',
-                    default               => 'disponivel',
-                };
+                $novoStatusEquipamento = MovimentacaoEquipamento::statusEquipamentoAposDevolucao($motivoDevolucaoEquipamento);
 
-                $equipamento->update([
+                $observacaoHistorico = trim(
+                    'Motivo: ' . (MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO[$motivoDevolucaoEquipamento] ?? $motivoDevolucaoEquipamento)
+                    . '. ' . ($observacaoEquipamento ?? '')
+                );
+
+                $equipamento->comHistorico('devolucao', $movimentacaoDevolucao, $observacaoHistorico)->update([
                     'status' => $novoStatusEquipamento,
                 ]);
             }
@@ -499,12 +501,17 @@ class MovimentacaoController extends Controller
         );
 
         $movimentacao->termo_responsabilidade = $caminhoArquivo;
-        $movimentacao->status = 'concluida';
+
+        // Se todos os equipamentos já foram devolvidos, o termo continua "encerrada".
+        if ($movimentacao->status === 'pendente') {
+            $movimentacao->status = 'concluida';
+        }
+
         $movimentacao->save();
 
         return redirect()
             ->route('movimentacoes.index', $movimentacao->id)
-            ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
+            ->with('success', 'Termo de responsabilidade enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
     }
 
     protected function visualizarTermoGenerico(
@@ -556,13 +563,7 @@ class MovimentacaoController extends Controller
 
     public function uploadTermoDevolucao(UploadTermoDevolucaoRequest $request, Movimentacao $movimentacao)
     {
-        $dadosValidados = $request->validate([
-            'arquivo_termo' => ['required', 'file', 'mimes:pdf', 'max:10240'],
-        ], [], [
-            'arquivo_termo' => 'arquivo do termo de devolução',
-        ]);
-
-        $arquivoTermo = $dadosValidados['arquivo_termo'];
+        $arquivoTermo = $request->file('arquivo_termo');
 
         $pastaDestino = 'termos/devolucao';
 

@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             funcionarios.forEach((funcionario) => {
                 const opcao = document.createElement('option');
                 opcao.value = funcionario.id;
-                opcao.textContent = funcionario.rotulo; // nome + matrícula + "Terceirizado" se for o caso
+                opcao.textContent = funcionario.rotulo;
 
                 if (String(funcionario.id) === String(funcionarioSelecionadoId)) {
                     opcao.selected = true;
@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Eventos
     if (campoEmpresa) {
         campoEmpresa.addEventListener('change', (evento) => {
             const empresaIdSelecionada = evento.target.value || '';
@@ -233,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicializações
     preencherFiltroTipo();
 
     if (oldEmpresaId) {

@@ -15,7 +15,7 @@
 
         $cnpjFormatado = !empty($empresaFuncionario?->cnpj) ? Mask::cnpj($empresaFuncionario->cnpj) : null;
 
-        $rua = $empresaFuncionario->rua ?? null;
+        $logradouro = $empresaFuncionario->logradouro ?? null;
         $numero = $empresaFuncionario->numero ?? null;
         $bairro = $empresaFuncionario->bairro ?? null;
         $cidade = $empresaFuncionario->cidade ?? null;
@@ -23,8 +23,8 @@
 
         $partesEndereco = [];
 
-        if (!empty($rua)) {
-            $partesEndereco[] = $rua . (!empty($numero) ? ', ' . $numero : '');
+        if (!empty($logradouro)) {
+            $partesEndereco[] = $logradouro . (!empty($numero) ? ', ' . $numero : '');
         } elseif (!empty($numero)) {
             $partesEndereco[] = 'Nº ' . $numero;
         }
@@ -46,7 +46,6 @@
         $cpfFormatadoFuncionario = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
     @endphp
 
-    {{-- Cabeçalho geral: sistema à esquerda, empresa à direita (mesmo dos termos) --}}
     <table class="cabecalho-geral">
         <tr>
             <td class="cabecalho-col-sistema">
@@ -99,12 +98,10 @@
         </tr>
     </table>
 
-    {{-- Título do relatório (mesma classe dos termos) --}}
     <div class="titulo-principal">
         RELATÓRIO DE EQUIPAMENTOS POR FUNCIONÁRIO
     </div>
 
-    {{-- Dados do funcionário --}}
     <div class="secao-texto">
         <p>
             <strong>Funcionário:</strong>
@@ -126,7 +123,6 @@
         @endif
     </div>
 
-    {{-- Tabela de equipamentos --}}
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
             Equipamentos vinculados

@@ -212,6 +212,11 @@ class UsuarioController extends Controller
 
         $usuario->ativo = $dados['ativo'] ?? false;
 
+        // Quem está logado não altera o próprio perfil (evita perder o acesso por engano).
+        if (auth()->id() !== $usuario->id) {
+            $usuario->perfil = $dados['perfil'];
+        }
+
         if (!empty($dados['senha'])) {
             $usuario->senha = Hash::make($dados['senha']);
         }

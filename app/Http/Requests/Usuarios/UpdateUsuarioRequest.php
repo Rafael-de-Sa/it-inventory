@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Usuarios;
 
+use App\Enums\Perfil;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -46,6 +47,9 @@ class UpdateUsuarioRequest extends FormRequest
             'senha_confirmation' => ['nullable', 'string', 'min:8'],
 
             'ativo' => ['nullable', 'boolean'],
+
+            // Ignorado quando o usuário edita o próprio cadastro (não pode mudar o próprio perfil).
+            'perfil' => ['required', Rule::enum(Perfil::class)],
         ];
     }
 
@@ -69,6 +73,7 @@ class UpdateUsuarioRequest extends FormRequest
             'senha' => 'senha',
             'senha_confirmation' => 'confirmação de senha',
             'ativo' => 'status',
+            'perfil' => 'perfil de acesso',
         ];
     }
 

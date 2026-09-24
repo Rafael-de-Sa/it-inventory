@@ -7,6 +7,7 @@ use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDevolucaoMovimentacaoRequest extends FormRequest
 {
@@ -58,10 +59,10 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
             'observacoes_equipamentos' => ['nullable', 'array'],
             'observacoes_equipamentos.*' => ['nullable', 'string', 'max:2000'],
 
-            'motivo_devolucao' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
+            'motivo_devolucao' => ['nullable', 'string', Rule::in(MovimentacaoEquipamento::MOTIVOS_SELECIONAVEIS)],
 
             'motivos_devolucao_equipamentos' => ['nullable', 'array'],
-            'motivos_devolucao_equipamentos.*' => ['nullable', 'string', 'in:manutencao,defeito,quebra,devolucao'],
+            'motivos_devolucao_equipamentos.*' => ['nullable', 'string', Rule::in(MovimentacaoEquipamento::MOTIVOS_SELECIONAVEIS)],
         ];
     }
     public function attributes(): array

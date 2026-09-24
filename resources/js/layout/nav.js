@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenu = document.getElementById('mobile-menu');
     if (btnMobile && mobileMenu) {
         btnMobile.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+            const aberto = !mobileMenu.classList.toggle('hidden');
+            btnMobile.setAttribute('aria-expanded', String(aberto));
         });
     }
 

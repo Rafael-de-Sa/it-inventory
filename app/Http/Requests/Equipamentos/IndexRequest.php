@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Equipamentos;
 
+use App\Models\Equipamento;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class IndexRequest extends FormRequest
 {
@@ -26,7 +28,7 @@ class IndexRequest extends FormRequest
             'busca' => ['nullable', 'string', 'max:255'],
             'ordenar_por' => ['nullable', 'in:id,tipo,patrimonio,numero_serie,status'],
             'direcao' => ['nullable', 'in:asc,desc'],
-            'status' => ['nullable', 'in:todos,em_uso,defeituoso,descartado,disponivel,em_manutencao'],
+            'status' => ['nullable', Rule::in(['todos', ...array_keys(Equipamento::STATUS)])],
         ];
     }
 

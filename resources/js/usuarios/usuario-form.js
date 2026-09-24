@@ -39,9 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Carrega funcionários do setor selecionado
-     */
+    //Carrega funcionários do setor selecionado
     async function carregarFuncionariosPorSetor(setorId, selectedFuncionarioId = null) {
         funcionarioSelect.innerHTML = '<option value="">Carregando funcionários...</option>';
 

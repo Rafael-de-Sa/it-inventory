@@ -11,7 +11,6 @@ use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ViaCepController;
-use App\Models\Movimentacao;
 use Illuminate\Support\Facades\Route;
 
 //sem login
@@ -20,94 +19,106 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login');
 });
 
-//autenticados
+//autenticados (permissões por perfil: App\Providers\AppServiceProvider::definirPermissoes)
 Route::middleware('auth')->group(function () {
     Route::get('/', [MainController::class, 'index'])->name('/');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::resource('empresas', EmpresaController::class);
+    //funcionários: TIC e Departamento Pessoal
+    Route::middleware('can:gerenciar-funcionarios')->group(function () {
+        Route::resource('funcionarios', FuncionarioController::class)->except('destroy');
 
-    Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
+        Route::get('empresas/{empresa}/setores', [FuncionarioController::class, 'setoresPorEmpresa'])
+            ->name('funcionarios.setoresPorEmpresa');
 
-    Route::resource('setores', SetorController::class)
-        ->parameters(['setores' => 'setor']);
+        Route::post('/funcionarios/{funcionario}/desligar', [FuncionarioController::class, 'desligar'])
+            ->name('funcionarios.desligar');
 
-    Route::resource('tipo-equipamentos', TipoEquipamentoController::class);
+        Route::get(
+            '/funcionarios/{funcionario}/relatorios/equipamentos',
+            [RelatorioController::class, 'equipamentosPorFuncionario']
+        )->name('relatorios.funcionarios.equipamentos');
+    });
 
-    Route::resource('equipamentos', EquipamentoController::class);
+    Route::delete('/funcionarios/{funcionario}', [FuncionarioController::class, 'destroy'])
+        ->middleware('can:excluir-funcionarios')
+        ->name('funcionarios.destroy');
 
-    Route::resource('funcionarios', FuncionarioController::class);
+    //cadastros: TIC
+    Route::middleware('can:gerenciar-cadastros')->group(function () {
+        Route::resource('empresas', EmpresaController::class);
 
-    Route::get('empresas/{empresa}/setores', [FuncionarioController::class, 'setoresPorEmpresa'])
-        ->name('funcionarios.setoresPorEmpresa');
+        Route::get('/empresas/cep/{cep}', [ViaCepController::class, 'show'])->name('empresas.cep');
 
-    Route::resource('usuarios', UsuarioController::class);
+        Route::resource('setores', SetorController::class)
+            ->parameters(['setores' => 'setor']);
 
-    Route::get('/empresas/{empresa}/setores-ativos', [UsuarioController::class, 'setoresAtivos']);
+        Route::resource('tipo-equipamentos', TipoEquipamentoController::class);
 
-    Route::get('/setores/{setor}/funcionarios-disponiveis', [UsuarioController::class, 'funcionariosPorSetor']);
+        Route::resource('equipamentos', EquipamentoController::class);
 
-    Route::resource('movimentacoes', MovimentacaoController::class)
-        ->parameters(['movimentacoes' => 'movimentacao'])
-        ->except(['destroy', 'update', 'edit']);
+        Route::get(
+            '/equipamentos/{equipamento}/relatorios/historico',
+            [RelatorioController::class, 'historicoEquipamento']
+        )->name('relatorios.equipamentos.historico');
 
-    Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::class, 'setoresParaMovimentacao'])
-        ->name('movimentacoes.setores-para-movimentacao');
+        Route::resource('usuarios', UsuarioController::class);
 
-    Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
-        ->name('movimentacoes.funcionarios-para-movimentacao');
+        Route::get('/empresas/{empresa}/setores-ativos', [UsuarioController::class, 'setoresAtivos']);
 
-    Route::post(
-        '/movimentacoes/{movimentacao}/upload-termo-responsabilidade',
-        [MovimentacaoController::class, 'uploadTermoResponsabilidade']
-    )->name('movimentacoes.upload-termo-responsabilidade');
+        Route::get('/setores/{setor}/funcionarios-disponiveis', [UsuarioController::class, 'funcionariosPorSetor']);
+    });
 
-    Route::get(
-        '/movimentacoes/{movimentacao}/termo-responsabilidade',
-        [MovimentacaoController::class, 'gerarTermoResponsabilidade']
-    )->name('movimentacoes.termo-responsabilidade');
+    //movimentações: TIC
+    Route::middleware('can:gerenciar-movimentacoes')->group(function () {
+        Route::resource('movimentacoes', MovimentacaoController::class)
+            ->parameters(['movimentacoes' => 'movimentacao'])
+            ->except(['destroy', 'update', 'edit']);
 
-    //devolução
-    Route::get('/movimentacoes/devolucao/create', [MovimentacaoController::class, 'createDevolucao'])
-        ->name('movimentacoes.devolucao.create');
+        Route::get('/empresas/{empresa}/setores-movimentacao', [MovimentacaoController::class, 'setoresParaMovimentacao'])
+            ->name('movimentacoes.setores-para-movimentacao');
 
-    Route::post('/movimentacoes/devolucao', [MovimentacaoController::class, 'storeDevolucao'])
-        ->name('movimentacoes.devolucao.store');
+        Route::get('/setores/{setor}/funcionarios-movimentacao', [MovimentacaoController::class, 'funcionariosParaMovimentacao'])
+            ->name('movimentacoes.funcionarios-para-movimentacao');
 
-    Route::get(
-        '/movimentacoes/devolucao/funcionarios/{funcionario}/equipamentos-em-uso',
-        [MovimentacaoController::class, 'equipamentosEmUsoParaDevolucao']
-    )->name('movimentacoes.equipamentos-em-uso');
+        Route::post(
+            '/movimentacoes/{movimentacao}/upload-termo-responsabilidade',
+            [MovimentacaoController::class, 'uploadTermoResponsabilidade']
+        )->name('movimentacoes.upload-termo-responsabilidade');
 
-    Route::get('/movimentacoes/{movimentacao}/termo-devolucao', [MovimentacaoController::class, 'gerarTermoDevolucao'])
-        ->name('movimentacoes.termo-devolucao');
+        Route::get(
+            '/movimentacoes/{movimentacao}/termo-responsabilidade',
+            [MovimentacaoController::class, 'gerarTermoResponsabilidade']
+        )->name('movimentacoes.termo-responsabilidade');
 
-    Route::post(
-        '/movimentacoes/{movimentacao}/upload-termo-devolucao',
-        [MovimentacaoController::class, 'uploadTermoDevolucao']
-    )->name('movimentacoes.upload-termo-devolucao');
+        //devolução
+        Route::get('/movimentacoes/devolucao/create', [MovimentacaoController::class, 'createDevolucao'])
+            ->name('movimentacoes.devolucao.create');
 
-    Route::get(
-        '/movimentacoes/{movimentacao}/termo-responsabilidade/visualizar',
-        [MovimentacaoController::class, 'visualizarTermoResponsabilidade']
-    )->name('movimentacoes.termo.responsabilidade.visualizar');
+        Route::post('/movimentacoes/devolucao', [MovimentacaoController::class, 'storeDevolucao'])
+            ->name('movimentacoes.devolucao.store');
 
-    Route::get(
-        '/movimentacoes/{movimentacao}/termo-devolucao/visualizar',
-        [MovimentacaoController::class, 'visualizarTermoDevolucao']
-    )->name('movimentacoes.termo.devolucao.visualizar');
+        Route::get(
+            '/movimentacoes/devolucao/funcionarios/{funcionario}/equipamentos-em-uso',
+            [MovimentacaoController::class, 'equipamentosEmUsoParaDevolucao']
+        )->name('movimentacoes.equipamentos-em-uso');
 
-    //relatorios
-    Route::get(
-        '/funcionarios/{funcionario}/relatorios/equipamentos',
-        [RelatorioController::class, 'equipamentosPorFuncionario']
-    )->name('relatorios.funcionarios.equipamentos');
+        Route::get('/movimentacoes/{movimentacao}/termo-devolucao', [MovimentacaoController::class, 'gerarTermoDevolucao'])
+            ->name('movimentacoes.termo-devolucao');
 
-    Route::post('/funcionarios/{funcionario}/desligar', [FuncionarioController::class, 'desligar'])
-        ->name('funcionarios.desligar');
+        Route::post(
+            '/movimentacoes/{movimentacao}/upload-termo-devolucao',
+            [MovimentacaoController::class, 'uploadTermoDevolucao']
+        )->name('movimentacoes.upload-termo-devolucao');
 
-    Route::get(
-        '/equipamentos/{equipamento}/relatorios/historico',
-        [RelatorioController::class, 'historicoEquipamento']
-    )->name('relatorios.equipamentos.historico');
+        Route::get(
+            '/movimentacoes/{movimentacao}/termo-responsabilidade/visualizar',
+            [MovimentacaoController::class, 'visualizarTermoResponsabilidade']
+        )->name('movimentacoes.termo.responsabilidade.visualizar');
+
+        Route::get(
+            '/movimentacoes/{movimentacao}/termo-devolucao/visualizar',
+            [MovimentacaoController::class, 'visualizarTermoDevolucao']
+        )->name('movimentacoes.termo.devolucao.visualizar');
+    });
 });

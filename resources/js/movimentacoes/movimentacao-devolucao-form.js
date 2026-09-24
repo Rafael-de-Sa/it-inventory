@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!Array.isArray(equipamentos) || equipamentos.length === 0) {
                 const linhaVazia = document.createElement('tr');
                 linhaVazia.innerHTML = `
-                    <td colspan="7" class="px-4 py-3 text-center text-sm text-green-100/80">
+                    <td colspan="7" class="px-4 py-10 text-center text-sm text-ink-muted">
                         Nenhum equipamento em uso para este funcionário.
                     </td>
                 `;

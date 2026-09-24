@@ -48,7 +48,7 @@ class UpdateEmpresaRequest extends FormRequest
             'cnpj' => ['required', 'digits:14', new CnpjValido, Rule::unique('empresas', 'cnpj')->ignore($empresaId)],
             'cep' => ['required', 'digits:8'],
 
-            'rua' => ['required', 'string', 'min:3', 'max:100'],
+            'logradouro' => ['required', 'string', 'min:3', 'max:100'],
             'numero' => ['required', 'string', 'max:8'],
             'complemento' => ['nullable', 'string', 'max:50'],
             'bairro' => ['required', 'string', 'min:3', 'max:50'],
@@ -81,7 +81,7 @@ class UpdateEmpresaRequest extends FormRequest
             'nome_fantasia' => 'nome fantasia',
             'razao_social' => 'razão social',
             'cnpj' => 'CNPJ',
-            'rua' => 'logradouro',
+            'logradouro' => 'logradouro',
             'numero' => 'número',
             'complemento' => 'complemento',
             'bairro' => 'bairro',

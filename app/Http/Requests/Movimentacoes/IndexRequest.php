@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Movimentacoes;
 
+use App\Models\Movimentacao;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class IndexRequest extends FormRequest
 {
@@ -28,7 +30,7 @@ class IndexRequest extends FormRequest
             'setor_id' => ['nullable', 'integer', 'exists:setores,id'],
             'funcionario_id' => ['nullable', 'integer', 'exists:funcionarios,id'],
 
-            'status' => ['nullable', 'string', 'in:pendente,cancelada,concluida,encerrada'],
+            'status' => ['nullable', 'string', Rule::in(array_keys(Movimentacao::STATUS))],
 
             'ordenar_por' => ['nullable', 'in:id,data,status'],
             'direcao' => ['nullable', 'in:asc,desc'],

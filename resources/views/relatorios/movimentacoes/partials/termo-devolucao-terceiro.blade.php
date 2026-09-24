@@ -7,15 +7,15 @@
     $cnpjFormatado = !empty($empresaFuncionario?->cnpj) ? Mask::cnpj($empresaFuncionario->cnpj) : null;
     $cpfFormatado = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
 
-    $rua = $empresaFuncionario->rua ?? null;
+    $logradouro = $empresaFuncionario->logradouro ?? null;
     $numero = $empresaFuncionario->numero ?? null;
     $bairro = $empresaFuncionario->bairro ?? null;
     $cidade = $empresaFuncionario->cidade ?? null;
     $estado = $empresaFuncionario->estado ?? null;
 
     $enderecoPartes = [];
-    if ($rua) {
-        $enderecoPartes[] = $rua;
+    if ($logradouro) {
+        $enderecoPartes[] = $logradouro;
     }
     if ($numero) {
         $enderecoPartes[] = "nº {$numero}";
@@ -124,12 +124,7 @@
                 $numeroItem = $indiceEquipamento + 1;
                 $pivot = $equipamento->pivot;
 
-                $motivosDevolucaoLabels = [
-                    'manutencao' => 'Manutenção',
-                    'defeito' => 'Defeito',
-                    'quebra' => 'Quebra',
-                    'devolucao' => 'Devolução',
-                ];
+                $motivosDevolucaoLabels = \App\Models\MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO;
 
                 $motivoDevolucaoFormatado = $motivosDevolucaoLabels[$pivot->motivo_devolucao] ?? 'Não informado';
             @endphp

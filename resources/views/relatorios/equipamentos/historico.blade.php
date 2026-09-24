@@ -96,6 +96,49 @@
 
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
+            Linha do tempo
+        </h2>
+
+        @if ($linhaDoTempo->isEmpty())
+            <p>Não há eventos registrados para este equipamento.</p>
+        @else
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Data / hora</th>
+                        <th class="texto-esquerda">Evento</th>
+                        <th class="texto-esquerda">Status</th>
+                        <th>Mov.</th>
+                        <th class="texto-esquerda">Usuário</th>
+                        <th class="texto-esquerda">Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($linhaDoTempo as $evento)
+                        <tr>
+                            <td>{{ $evento->ocorrido_em->format('d/m/Y H:i') }}</td>
+                            <td class="texto-esquerda">{{ $evento->evento_rotulo }}</td>
+                            <td class="texto-esquerda">{{ $evento->transicao_status ?? '-' }}</td>
+                            <td>{{ $evento->movimentacao_id ? '#' . $evento->movimentacao_id : '-' }}</td>
+                            <td class="texto-esquerda">
+                                {{ $evento->usuario?->funcionario?->nome_completo ?? ($evento->usuario?->email ?? '-') }}
+                            </td>
+                            <td class="texto-esquerda">
+                                {{ $evento->observacao ?? ($evento->reconstruido ? '' : '-') }}
+                                @if ($evento->reconstruido)
+                                    @if ($evento->observacao)<br>@endif
+                                    <span class="nota-discreta">Registro anterior ao histórico</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="secao-texto">
+        <h2 class="subtitulo-secao">
             Histórico de termos de responsabilidade
         </h2>
 
@@ -111,6 +154,7 @@
                         <th class="texto-esquerda">Motivo devolução</th>
                         <th class="texto-esquerda">Funcionário</th>
                         <th class="texto-esquerda">Observação da devolução</th>
+                        <th>Situação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,22 +162,14 @@
                         @php
                             $movimentacao = $registroPivot->movimentacao;
                             $funcionario = $movimentacao?->funcionario;
-
-                            $nomeCompletoFuncionario = $funcionario
-                                ? trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? ''))
-                                : null;
-
+                            $nomeCompletoFuncionario = $funcionario?->nome_completo;
                             $foiDevolvido = !is_null($registroPivot->devolvido_em);
+                            $motivoPadronizado = $registroPivot->motivo_devolucao_rotulo;
 
-                            $motivoBruto = $registroPivot->motivo_devolucao;
-
-                            $motivoPadronizado = match ($motivoBruto) {
-                                'manutencao' => 'Manutenção',
-                                'defeito' => 'Defeito',
-                                'quebra' => 'Quebra',
-                                'devolucao' => 'Devolução',
-                                'cancelada' => 'Movimentação cancelada',
-                                default => null,
+                            $situacao = match (true) {
+                                !$movimentacao => '-',
+                                $movimentacao->trashed() => 'Excluída',
+                                default => $movimentacao->status_rotulo,
                             };
                         @endphp
 
@@ -151,7 +187,10 @@
                             </td>
 
                             <td>
-                                {{ $registroPivot->devolvido_em?->format('d/m/Y') ?? '-' }}
+                                {{ $registroPivot->devolvido_em?->format('d/m/Y') ?? 'Em uso' }}
+                                @if ($registroPivot->devolucao_movimentacao_id)
+                                    <br><span style="font-size: 9px; color: #4b5563;">Termo #{{ $registroPivot->devolucao_movimentacao_id }}</span>
+                                @endif
                             </td>
 
                             <td class="texto-esquerda">
@@ -182,6 +221,8 @@
                                     -
                                 @endif
                             </td>
+
+                            <td>{{ $situacao }}</td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\Mask;
 
 class Empresa extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
@@ -19,7 +20,7 @@ class Empresa extends Model
         'nome_fantasia',
         'razao_social',
         'cnpj',
-        'rua',
+        'logradouro',
         'numero',
         'complemento',
         'bairro',

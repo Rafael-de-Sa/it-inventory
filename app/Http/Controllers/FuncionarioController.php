@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Funcionarios\DesligarFuncionarioRequest;
 use App\Http\Requests\Funcionarios\IndexRequest;
 use App\Http\Requests\Funcionarios\StoreFuncionarioRequest;
 use App\Http\Requests\Funcionarios\UpdateFuncionarioRequest;
@@ -68,7 +69,8 @@ class FuncionarioController extends Controller
                 'empresas.nome_fantasia as empresa_nome',
                 'empresas.cnpj as empresa_cnpj',
                 'setores.nome as setor_nome',
-            ]);
+            ])
+            ->comRestricoesDesligamento(); // usado para decidir se mostra o botão Excluir de cada linha
 
         if ($ativo !== 'todos') {
             $consulta->where('funcionarios.ativo', (int) $ativo);
@@ -208,7 +210,8 @@ class FuncionarioController extends Controller
         }
         $podeMostrarBotoesGerenciais = ! $funcionarioPertenceAoUsuarioLogado;
         $podeMostrarBotaoDesligar = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
-        $podeMostrarBotaoExcluir = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+        $podeMostrarBotaoExcluir = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento
+            && $usuarioLogado?->can('excluir-funcionarios');
 
         return view('funcionarios.show', [
             'funcionario' => $funcionario,
@@ -263,8 +266,14 @@ class FuncionarioController extends Controller
 
         if (array_key_exists('ativo', $dados)) {
             if ($dados['ativo'] === false && $funcionario->ativo === true) {
-                $dados['desligado_em'] = now();
-            } elseif ($dados['ativo'] === true) {
+                return back()
+                    ->withErrors([
+                        'ativo' => 'Para desligar um funcionário, utilize a opção "Registrar desligamento".'
+                    ])
+                    ->withInput();
+            }
+
+            if ($dados['ativo'] === true) {
                 $dados['desligado_em'] = null;
             }
         }
@@ -282,22 +291,45 @@ class FuncionarioController extends Controller
      */
     public function destroy(Funcionario $funcionario)
     {
+        $restricoes = $funcionario->obterRestricoesDesligamento();
+
+        if ($restricoes['ja_desligado']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Este funcionário já está desligado e não pode ser excluído.');
+        }
+
+        if ($restricoes['equipamentos_em_uso']) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível excluir o funcionário enquanto houver equipamentos sob sua responsabilidade.');
+        }
+
+        if (
+            $restricoes['termos_responsabilidade_pendentes'] ||
+            $restricoes['termos_devolucao_pendentes']
+        ) {
+            return redirect()
+                ->route('funcionarios.show', $funcionario->id)
+                ->with('error', 'Não é possível excluir o funcionário enquanto houver termos pendentes.');
+        }
+
         $funcionario->loadMissing('usuario');
 
         if ($funcionario->usuario) {
             $usuario = $funcionario->usuario;
-
             $usuario->ativo = false;
             $usuario->save();
         }
 
         $funcionario->delete();
 
-        return redirect()->route('funcionarios.index')
+        return redirect()
+            ->route('funcionarios.index')
             ->with('success', 'Funcionário removido com sucesso.');
     }
 
-    public function desligar(Funcionario $funcionario)
+    public function desligar(DesligarFuncionarioRequest $request, Funcionario $funcionario)
     {
         $restricoes = $funcionario->obterRestricoesDesligamento();
 
@@ -319,8 +351,8 @@ class FuncionarioController extends Controller
                 ->with('error', 'Não é possível realizar o desligamento: existem termos de responsabilidade ou devolução pendentes de upload.');
         }
 
-        DB::transaction(function () use ($funcionario) {
-            $funcionario->desligado_em = today();
+        DB::transaction(function () use ($funcionario, $request) {
+            $funcionario->desligado_em = $request->validated('desligado_em');
             $funcionario->ativo = false;
             $funcionario->save();
 

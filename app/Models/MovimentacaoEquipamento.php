@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MovimentacaoEquipamento extends Pivot
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'movimentacao_equipamentos';
     public $timestamps = true;
@@ -16,8 +17,21 @@ class MovimentacaoEquipamento extends Pivot
     const UPDATED_AT = 'atualizado_em';
     const DELETED_AT = 'apagado_em';
 
+    /** Motivos de devolução (enum da migration) e seus rótulos. */
+    public const MOTIVOS_DEVOLUCAO = [
+        'devolucao' => 'Devolução',
+        'manutencao' => 'Manutenção',
+        'defeito' => 'Defeito',
+        'quebra' => 'Quebra',
+        'cancelada' => 'Movimentação cancelada',
+    ];
+
+    /** Motivos que o usuário pode escolher ao registrar uma devolução ("cancelada" é de uso interno). */
+    public const MOTIVOS_SELECIONAVEIS = ['manutencao', 'defeito', 'quebra', 'devolucao'];
+
     protected $fillable = [
         'movimentacao_id',
+        'devolucao_movimentacao_id',
         'equipamento_id',
         'termo_devolucao',
         'observacao',
@@ -36,9 +50,30 @@ class MovimentacaoEquipamento extends Pivot
         'motivo_devolucao' => 'devolucao'
     ];
 
+    /** Status que o equipamento assume ao ser devolvido com o motivo informado. */
+    public static function statusEquipamentoAposDevolucao(?string $motivo): string
+    {
+        return match ($motivo) {
+            'manutencao' => 'em_manutencao',
+            'defeito', 'quebra' => 'defeituoso',
+            default => 'disponivel',
+        };
+    }
+
+    protected function motivoDevolucaoRotulo(): Attribute
+    {
+        return Attribute::get(fn () => self::MOTIVOS_DEVOLUCAO[$this->motivo_devolucao] ?? null);
+    }
+
     public function movimentacao()
     {
         return $this->belongsTo(Movimentacao::class);
+    }
+
+    /** Movimentação de devolução que encerrou este item (só em itens de responsabilidade). */
+    public function movimentacaoDevolucao()
+    {
+        return $this->belongsTo(Movimentacao::class, 'devolucao_movimentacao_id');
     }
 
     public function equipamento()
@@ -50,13 +85,41 @@ class MovimentacaoEquipamento extends Pivot
     {
         $query
             ->with([
-                'movimentacao.funcionario.setor.empresa',
-                'equipamento',
+                'movimentacao' => function ($queryMovimentacao) {
+                    $queryMovimentacao
+                        ->withTrashed()
+                        ->with([
+                            'funcionario' => function ($queryFuncionario) {
+                                $queryFuncionario
+                                    ->withTrashed()
+                                    ->with([
+                                        'setor' => function ($querySetor) {
+                                            $querySetor
+                                                ->withTrashed()
+                                                ->with([
+                                                    'empresa' => function ($queryEmpresa) {
+                                                        $queryEmpresa->withTrashed();
+                                                    },
+                                                ]);
+                                        },
+                                    ]);
+                            },
+                        ]);
+                },
+                'movimentacaoDevolucao' => function ($queryDevolucao) {
+                    $queryDevolucao->withTrashed();
+                },
+                'equipamento' => function ($queryEquipamento) {
+                    $queryEquipamento->withTrashed();
+                },
             ])
             ->where('equipamento_id', $equipamentoId)
             ->whereHas('movimentacao', function ($subQuery) {
-                $subQuery->where('tipo_movimentacao', 'responsabilidade');
+                $subQuery
+                    ->withTrashed()
+                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE);
             })
-            ->orderByDesc('criado_em');
+            ->orderByDesc('criado_em')
+            ->orderByDesc('id');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,6 +21,7 @@ class Funcionario extends Model
         'sobrenome',
         'cpf',
         'matricula',
+        'admitido_em',
         'desligado_em',
         'ativo',
         'telefone',
@@ -28,6 +30,7 @@ class Funcionario extends Model
 
     protected $casts = [
         'telefones' => 'array',
+        'admitido_em' => 'date',
         'desligado_em' => 'date',
         'ativo' => 'boolean',
         'terceirizado' => 'boolean',
@@ -40,6 +43,11 @@ class Funcionario extends Model
         'ativo' => true,
         'terceirizado' => false
     ];
+
+    protected function nomeCompleto(): Attribute
+    {
+        return Attribute::get(fn () => trim($this->nome . ' ' . $this->sobrenome));
+    }
 
     public function setor()
     {

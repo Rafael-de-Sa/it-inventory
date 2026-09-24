@@ -62,6 +62,17 @@ class UpdateFuncionarioRequest extends FormRequest
             ],
 
             'telefone' => ['nullable', 'string', 'max:15'],
+
+            'admitido_em' => array_filter([
+                'required',
+                'date',
+                'before_or_equal:today',
+                // Continua desligado após a edição: a admissão não pode passar da data de desligamento.
+                is_object($funcionario) && $funcionario->desligado_em && ! $this->boolean('ativo')
+                    ? 'before_or_equal:' . $funcionario->desligado_em->toDateString()
+                    : null,
+            ]),
+
             'terceirizado' => ['nullable', 'boolean'],
             'ativo' => ['boolean'],
         ];
@@ -84,6 +95,8 @@ class UpdateFuncionarioRequest extends FormRequest
             'matricula.numeric' => 'A matrícula deve conter apenas números.',
             'matricula.unique' => 'Já existe um funcionário com esta matrícula.',
             'telefone.max' => 'O telefone pode ter no máximo :max caracteres.',
+            'admitido_em.required' => 'Informe a data de admissão.',
+            'admitido_em.before_or_equal' => 'A data de admissão não pode ser futura nem posterior ao desligamento.',
             'terceirizado.boolean' => 'O campo terceirizado deve ser verdadeiro ou falso.',
             'ativo.boolean' => 'O campo ativo deve ser verdadeiro ou falso.',
         ];

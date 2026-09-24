@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Funcionarios\DesligarFuncionarioRequest;
 use App\Http\Requests\Funcionarios\IndexRequest;
 use App\Http\Requests\Funcionarios\StoreFuncionarioRequest;
 use App\Http\Requests\Funcionarios\UpdateFuncionarioRequest;
@@ -326,7 +327,7 @@ class FuncionarioController extends Controller
             ->with('success', 'Funcionário removido com sucesso.');
     }
 
-    public function desligar(Funcionario $funcionario)
+    public function desligar(DesligarFuncionarioRequest $request, Funcionario $funcionario)
     {
         $restricoes = $funcionario->obterRestricoesDesligamento();
 
@@ -348,8 +349,8 @@ class FuncionarioController extends Controller
                 ->with('error', 'Não é possível realizar o desligamento: existem termos de responsabilidade ou devolução pendentes de upload.');
         }
 
-        DB::transaction(function () use ($funcionario) {
-            $funcionario->desligado_em = today();
+        DB::transaction(function () use ($funcionario, $request) {
+            $funcionario->desligado_em = $request->validated('desligado_em');
             $funcionario->ativo = false;
             $funcionario->save();
 

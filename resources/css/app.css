@@ -20,3 +20,24 @@
     --color-label: #dcfce7;
     --color-muted: #bbf7d0;
 }
+
+/* Controles de formulário compartilhados pelos componentes x-form.* */
+@layer components {
+    .form-control {
+        @apply w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400 focus:outline-none;
+    }
+
+    /* Altura fixa: o Chrome ignora o line-height do <select>, que ficava ~3px mais baixo que o <input>. */
+    input.form-control,
+    select.form-control {
+        @apply h-10.5;
+    }
+
+    .form-control-invalid {
+        @apply border-red-500 ring-1 ring-red-400 placeholder-red-300 focus:border-red-400 focus:ring-red-400;
+    }
+
+    .form-control-readonly {
+        @apply cursor-default bg-gray-300 text-black focus:border-green-700 focus:ring-0;
+    }
+}

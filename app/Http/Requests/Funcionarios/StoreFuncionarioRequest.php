@@ -60,6 +60,8 @@ class StoreFuncionarioRequest extends FormRequest
 
             'telefone' => ['nullable', 'digits_between:10,11'],
 
+            'admitido_em' => ['required', 'date', 'before_or_equal:today'],
+
             'terceirizado' => ['required', 'boolean'],
         ];
     }
@@ -77,6 +79,8 @@ class StoreFuncionarioRequest extends FormRequest
             'matricula.required_unless' => 'Informe a matrícula para funcionários próprios (não terceirizados).',
             'cpf.digits' => 'O CPF deve conter exatamente 11 dígitos.',
             'telefone.digits_between' => 'Informe um telefone com DDD (10 ou 11 dígitos).',
+            'admitido_em.required' => 'Informe a data de admissão.',
+            'admitido_em.before_or_equal' => 'A data de admissão não pode ser futura.',
         ];
     }
 
@@ -90,6 +94,7 @@ class StoreFuncionarioRequest extends FormRequest
             'cpf' => 'CPF',
             'matricula' => 'matrícula',
             'telefone' => 'telefone',
+            'admitido_em' => 'data de admissão',
             'terceirizado' => 'terceirizado',
         ];
     }

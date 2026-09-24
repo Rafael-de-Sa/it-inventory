@@ -6,33 +6,30 @@ use App\Http\Requests\TipoEquipamentos\IndexRequest;
 use App\Http\Requests\TipoEquipamentos\StoreTipoEquipamentoRequest;
 use App\Http\Requests\TipoEquipamentos\UpdateTipoEquipamentoRequest;
 use App\Models\TipoEquipamento;
-use Illuminate\Http\Request;
 
 class TipoEquipamentoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
-        $query = TipoEquipamento::query();
+        $dadosValidados = $request->validated();
 
-        $status = $request->string('status', 'ativos');
-        if ($status === 'ativos') $query->where('ativo', true);
-        elseif ($status === 'inativos') $query->where('ativo', false);
+        $campo      = $dadosValidados['campo']       ?? 'id';
+        $busca      = $dadosValidados['busca']       ?? null;
+        $ativo      = $dadosValidados['ativo']       ?? null;
+        $ordenarPor = $dadosValidados['ordenar_por'] ?? 'id';
+        $direcao    = $dadosValidados['direcao']     ?? 'asc';
 
-        $campo = $request->string('campo', 'id');
-        $busca = $request->string('busca');
-        if ($busca->isNotEmpty()) {
-            if ($campo === 'id') $query->where('id', $busca);
-            if ($campo === 'nome') $query->where('nome', 'like', "%{$busca}%");
-        }
-
-        $ordenarPor = $request->string('ordenar_por', 'id');
-        $direcao = $request->string('direcao', 'asc');
-        $query->orderBy(in_array($ordenarPor, ['id', 'nome']) ? $ordenarPor : 'id', $direcao === 'desc' ? 'desc' : 'asc');
-
-        $tipos = $query->paginate(25);
+        $tipos = TipoEquipamento::query()
+            ->when(in_array($ativo, ['0', '1'], true), fn ($query) => $query->where('ativo', $ativo === '1'))
+            ->when(filled($busca), fn ($query) => $campo === 'id'
+                ? $query->where('id', $busca)
+                : $query->where('nome', 'like', "%{$busca}%"))
+            ->orderBy($ordenarPor, $direcao)
+            ->paginate(25)
+            ->withQueryString();
 
         return view('tipo-equipamentos.index', compact('tipos'));
     }

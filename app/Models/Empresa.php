@@ -9,7 +9,7 @@ use App\Support\Mask;
 
 class Empresa extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = true;
     const CREATED_AT = 'criado_em';

@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MovimentacaoEquipamento extends Pivot
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'movimentacao_equipamentos';
     public $timestamps = true;

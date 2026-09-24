@@ -6,12 +6,13 @@ use App\Observers\EquipamentoObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy(EquipamentoObserver::class)]
 class Equipamento extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /** Contexto do próximo evento de histórico (ver comHistorico()); não é persistido. */
     private array $contextoHistorico = [];

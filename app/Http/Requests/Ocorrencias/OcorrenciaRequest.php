@@ -25,6 +25,8 @@ class OcorrenciaRequest extends FormRequest
             'canal' => $texto($this->input('canal')),
             'protocolo' => $texto($this->input('protocolo')),
             'valor_cobrado' => Mask::decimal($this->input('valor_cobrado')),
+            'custo_manutencao' => Mask::decimal($this->input('custo_manutencao')),
+            'fornecedor' => $texto($this->input('fornecedor')),
         ]);
     }
 
@@ -41,6 +43,8 @@ class OcorrenciaRequest extends FormRequest
             'canal' => ['nullable', 'string', 'max:30'],
             'protocolo' => ['nullable', 'string', 'max:50'],
             'valor_cobrado' => ['nullable', 'numeric', 'decimal:0,2', 'between:0,99999999.99'],
+            'custo_manutencao' => ['nullable', 'numeric', 'decimal:0,2', 'between:0,99999999.99'],
+            'fornecedor' => ['nullable', 'string', 'max:80'],
             'observacao' => ['nullable', 'string', 'max:2000'],
         ];
     }
@@ -55,6 +59,7 @@ class OcorrenciaRequest extends FormRequest
             'reportado_em.before_or_equal' => 'A data em que o problema foi reportado não pode ser futura.',
             'solucao.required_with' => 'Informe a solução ao liberar o equipamento.',
             'valor_cobrado.numeric' => 'Informe o valor apenas com números (ex.: 150,00).',
+            'custo_manutencao.numeric' => 'Informe o custo apenas com números (ex.: 350,00).',
         ];
     }
 
@@ -72,6 +77,8 @@ class OcorrenciaRequest extends FormRequest
             'canal' => 'canal',
             'protocolo' => 'protocolo',
             'valor_cobrado' => 'valor cobrado do colaborador',
+            'custo_manutencao' => 'custo da manutenção',
+            'fornecedor' => 'fornecedor / assistência técnica',
             'observacao' => 'observação',
         ];
     }

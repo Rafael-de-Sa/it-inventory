@@ -13,6 +13,7 @@ use App\Models\Funcionario;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
+use App\Services\RegistroDevolucao;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -194,98 +195,17 @@ class MovimentacaoController extends Controller
 
     public function storeDevolucao(StoreDevolucaoMovimentacaoRequest $request)
     {
-        $dadosValidados      = $request->validated();
-        $setorId             = $dadosValidados['setor_id'];
-        $funcionarioId       = $dadosValidados['funcionario_id'];
-        $idsEquipamentos     = $dadosValidados['equipamentos'];
-        $observacaoGeral     = $dadosValidados['observacao'] ?? null;
-        $motivoDevolucaoGeral = $dadosValidados['motivo_devolucao'] ?? 'devolucao';
+        $dados = $request->validated();
+        $motivoGeral = $dados['motivo_devolucao'] ?? 'devolucao';
 
-        DB::transaction(function () use (
-            $setorId,
-            $funcionarioId,
-            $idsEquipamentos,
-            $observacaoGeral,
-            $motivoDevolucaoGeral,
-            $dadosValidados
-        ) {
+        $itens = collect($dados['equipamentos'])->mapWithKeys(fn ($equipamentoId) => [
+            (int) $equipamentoId => [
+                'motivo' => $dados['motivos_devolucao_equipamentos'][$equipamentoId] ?? $motivoGeral,
+                'observacao' => $dados['observacoes_equipamentos'][$equipamentoId] ?? null,
+            ],
+        ])->all();
 
-            $movimentacaoDevolucao = Movimentacao::create([
-                'setor_id'          => $setorId,
-                'funcionario_id'    => $funcionarioId,
-                'observacao'        => $observacaoGeral,
-                'status'            => 'pendente',
-                'tipo_movimentacao' => Movimentacao::TIPO_DEVOLUCAO,
-            ]);
-
-
-            $responsabilidadesEmAberto = MovimentacaoEquipamento::query()
-                ->whereIn('equipamento_id', $idsEquipamentos)
-                ->whereNull('devolvido_em')
-                ->whereHas('movimentacao', function ($query) use ($funcionarioId) {
-                    $query
-                        ->where('funcionario_id', $funcionarioId)
-                        ->comEmprestimo()
-                        ->where('status', '!=', 'cancelada');
-                })
-                ->lockForUpdate()
-                ->get();
-
-            $idsMovimentacoesResponsabilidade = [];
-
-            foreach ($responsabilidadesEmAberto as $responsabilidadePivot) {
-                /** @var MovimentacaoEquipamento $responsabilidadePivot */
-                $equipamentoId = $responsabilidadePivot->equipamento_id;
-                $idsMovimentacoesResponsabilidade[] = $responsabilidadePivot->movimentacao_id;
-
-                $observacoesEquipamentos = $dadosValidados['observacoes_equipamentos'] ?? [];
-                $observacaoEquipamento   = $observacoesEquipamentos[$equipamentoId] ?? $observacaoGeral;
-
-                $motivosDevolucaoEquipamentos = $dadosValidados['motivos_devolucao_equipamentos'] ?? [];
-
-                $motivoDevolucaoEquipamento = $motivosDevolucaoEquipamentos[$equipamentoId]
-                    ?? $motivoDevolucaoGeral
-                    ?? 'devolucao';
-
-                $responsabilidadePivot->update([
-                    'devolucao_movimentacao_id' => $movimentacaoDevolucao->id,
-                    'devolvido_em'     => now()->toDateString(),
-                    'motivo_devolucao' => $motivoDevolucaoEquipamento,
-                    'observacao'       => $observacaoEquipamento
-                ]);
-
-                $movimentacaoDevolucao->equipamentos()->attach($equipamentoId, [
-                    'motivo_devolucao' => $motivoDevolucaoEquipamento,
-                    'observacao'       => $observacaoEquipamento,
-                    'devolvido_em'     => now()->toDateString()
-                ]);
-
-                $equipamento = Equipamento::query()
-                    ->where('id', $equipamentoId)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (! $equipamento) {
-                    continue;
-                }
-
-                $novoStatusEquipamento = MovimentacaoEquipamento::statusEquipamentoAposDevolucao($motivoDevolucaoEquipamento);
-
-                $observacaoHistorico = trim(
-                    'Motivo: ' . (MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO[$motivoDevolucaoEquipamento] ?? $motivoDevolucaoEquipamento)
-                    . '. ' . ($observacaoEquipamento ?? '')
-                );
-
-                $equipamento->comHistorico('devolucao', $movimentacaoDevolucao, $observacaoHistorico)->update([
-                    'status' => $novoStatusEquipamento,
-                ]);
-            }
-
-            Movimentacao::query()
-                ->whereIn('id', array_unique($idsMovimentacoesResponsabilidade))
-                ->get()
-                ->each(fn (Movimentacao $termo) => $termo->encerrarSeTudoDevolvido());
-        });
+        RegistroDevolucao::registrar($dados['setor_id'], $dados['funcionario_id'], $itens, $dados['observacao'] ?? null);
 
         return redirect()
             ->route('movimentacoes.index')

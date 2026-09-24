@@ -5,7 +5,7 @@
 --}}
 @php
     $data = fn (string $campo, $padrao = null) => $ocorrencia?->{$campo}?->format('Y-m-d') ?? $padrao;
-    $valorCobrado = filled($ocorrencia?->valor_cobrado) ? number_format((float) $ocorrencia->valor_cobrado, 2, ',', '.') : null;
+    $moeda = fn ($valor) => filled($valor) ? number_format((float) $valor, 2, ',', '.') : null;
 @endphp
 
 <x-form.fieldset legend="Equipamento">
@@ -14,7 +14,21 @@
     @else
         <x-form.select name="equipamento_id" label="Equipamento" required placeholder="Selecione…"
             :options="$equipamentos" :value="$equipamentoId" data-responsaveis="{{ $responsaveis->toJson() }}"
-            help="Se o equipamento estiver com a TI (disponível), passa para “Em manutenção” até a liberação." />
+            help="O equipamento passa para “Em manutenção” até a liberação." />
+
+        {{-- Preenchido pelo JS quando o equipamento está com um funcionário. --}}
+        <div data-responsavel hidden class="space-y-2 rounded-lg border border-line bg-surface p-3">
+            <p class="text-sm text-ink">
+                <i class="fa-solid fa-user-tie mr-1 text-ink-subtle" aria-hidden="true"></i>
+                Com <strong data-responsavel-nome></strong> — termo #<span data-responsavel-termo></span>
+            </p>
+            <x-form.checkbox name="recolher" label="Recolher o equipamento para manutenção" :checked="true" />
+            <p class="pl-6 text-xs text-ink-muted">
+                Registra a devolução (motivo Manutenção) e gera o termo de devolução para assinatura.
+                Desmarque se o problema for resolvido com o equipamento ainda com o funcionário, ou se ele for
+                substituído na hora (use “Registrar troca” na ocorrência).
+            </p>
+        </div>
     @endif
 
     <x-form.select name="funcionario_id" label="Último usuário" placeholder="Não informado"
@@ -47,8 +61,8 @@
         <x-form.input name="protocolo" label="Protocolo / nº do chamado" maxlength="50"
             :value="$ocorrencia?->protocolo" wrapper-class="md:col-span-4" />
         <x-form.input name="valor_cobrado" label="Valor cobrado do colaborador (R$)" inputmode="numeric"
-            placeholder="0,00" data-mascara="moeda" :value="$valorCobrado" wrapper-class="md:col-span-4"
-            help="Aparece para o DP no relatório do funcionário." />
+            placeholder="0,00" data-mascara="moeda" :value="$moeda($ocorrencia?->valor_cobrado)" wrapper-class="md:col-span-4"
+            help="Registro para a TI; não aparece nos relatórios do DP." />
     </x-form.grid>
     <datalist id="canais_chamado">
         @foreach ($canais as $canal)
@@ -63,6 +77,11 @@
             wrapper-class="md:col-span-4" help="Preenchida, a ocorrência fica resolvida." />
         <x-form.textarea name="solucao" label="Solução" rows="2" :value="$ocorrencia?->solucao"
             placeholder="Ex.: limpeza do app, troca do equipamento…" wrapper-class="md:col-span-8" />
+        <x-form.input name="custo_manutencao" label="Custo da manutenção (R$)" inputmode="numeric" placeholder="0,00"
+            data-mascara="moeda" :value="$moeda($ocorrencia?->custo_manutencao)" wrapper-class="md:col-span-4"
+            help="O que a empresa pagou (peças, serviço)." />
+        <x-form.input name="fornecedor" label="Fornecedor / assistência técnica" maxlength="80"
+            :value="$ocorrencia?->fornecedor" wrapper-class="md:col-span-8" />
     </x-form.grid>
 </x-form.fieldset>
 

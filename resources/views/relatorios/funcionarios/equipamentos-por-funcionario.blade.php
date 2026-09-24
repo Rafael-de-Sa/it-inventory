@@ -158,36 +158,6 @@
         @endif
     </div>
 
-    @if ($ocorrenciasComValor->isNotEmpty())
-        <div class="secao-texto">
-            <h2 class="subtitulo-secao">
-                Valores cobrados em ocorrências
-            </h2>
-
-            <table class="tabela-equipamentos">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th class="texto-esquerda">Equipamento</th>
-                        <th class="texto-esquerda">Problema</th>
-                        <th>Valor (R$)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($ocorrenciasComValor as $ocorrencia)
-                        @php $equipamento = $ocorrencia->equipamento; @endphp
-                        <tr>
-                            <td>{{ $ocorrencia->reportado_em->format('d/m/Y') }}</td>
-                            <td class="texto-esquerda">@include('relatorios.partials.equipamento-celula')</td>
-                            <td class="texto-esquerda">{{ $ocorrencia->problema }}</td>
-                            <td>{{ number_format((float) $ocorrencia->valor_cobrado, 2, ',', '.') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
-
     <div class="rodape-emissao">
         Relatório gerado em {{ $dataGeracaoRelatorio->format('d/m/Y H:i') }}
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\RegistroDevolucao;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,9 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Problema reportado em um equipamento (erro, defeito, bloqueio...), do registro até a liberação pela TI.
  *
- * Status do equipamento: fora de uso (com a TI, "Disponível") a ocorrência o coloca "Em manutenção" e o
- * devolve para "Disponível" ao ser liberada. Com um funcionário ("Em uso") o status não muda: para tirar
- * o equipamento dele, registra-se uma devolução ou uma troca.
+ * Status do equipamento:
+ * - com um funcionário ("Em uso"), a ocorrência pode recolhê-lo: registra a devolução (motivo Manutenção),
+ *   gerando o termo de devolução, e o equipamento fica "Em manutenção";
+ * - com a TI ("Disponível"), vai direto para "Em manutenção";
+ * - na liberação, o que a própria ocorrência colocou em manutenção volta para "Disponível".
  */
 class Ocorrencia extends Model
 {
@@ -30,6 +33,7 @@ class Ocorrencia extends Model
         'funcionario_id',
         'usuario_id',
         'troca_movimentacao_id',
+        'devolucao_movimentacao_id',
         'reportado_em',
         'data_problema',
         'problema',
@@ -39,6 +43,8 @@ class Ocorrencia extends Model
         'canal',
         'protocolo',
         'valor_cobrado',
+        'custo_manutencao',
+        'fornecedor',
         'observacao',
     ];
 
@@ -48,6 +54,7 @@ class Ocorrencia extends Model
         'previsao_em' => 'date',
         'liberado_em' => 'date',
         'valor_cobrado' => 'decimal:2',
+        'custo_manutencao' => 'decimal:2',
         'alterou_status' => 'boolean',
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',
@@ -71,9 +78,17 @@ class Ocorrencia extends Model
 
     protected function valorCobradoFormatado(): Attribute
     {
-        return Attribute::get(fn () => filled($this->valor_cobrado)
-            ? 'R$ ' . number_format((float) $this->valor_cobrado, 2, ',', '.')
-            : null);
+        return Attribute::get(fn () => self::reais($this->valor_cobrado));
+    }
+
+    protected function custoManutencaoFormatado(): Attribute
+    {
+        return Attribute::get(fn () => self::reais($this->custo_manutencao));
+    }
+
+    public static function reais($valor): ?string
+    {
+        return filled($valor) ? 'R$ ' . number_format((float) $valor, 2, ',', '.') : null;
     }
 
     /**
@@ -92,6 +107,62 @@ class Ocorrencia extends Model
             ->update(['status' => 'em_manutencao']);
 
         $this->forceFill(['alterou_status' => true])->saveQuietly();
+    }
+
+    /**
+     * Recolhe o equipamento de quem está com ele: devolução com motivo Manutenção (termo de devolução pendente
+     * de assinatura) e status "Em manutenção". Sem empréstimo em aberto, equivale a colocarEquipamentoEmManutencao().
+     */
+    public function recolherEquipamento(): void
+    {
+        $emprestimo = $this->equipamento->emprestimoEmAberto();
+
+        if (! $this->estaAberta() || ! $emprestimo) {
+            $this->colocarEquipamentoEmManutencao();
+
+            return;
+        }
+
+        $funcionario = $emprestimo->movimentacao->funcionario;
+
+        $devolucao = RegistroDevolucao::registrar(
+            $funcionario->setor_id ?? $emprestimo->movimentacao->setor_id,
+            $funcionario->id,
+            [$this->equipamento_id => ['motivo' => 'manutencao', 'observacao' => "Ocorrência #{$this->id}: {$this->problema}"]],
+            "Recolhido para manutenção (ocorrência #{$this->id}).",
+        );
+
+        $this->forceFill(['devolucao_movimentacao_id' => $devolucao->id, 'alterou_status' => true])->saveQuietly();
+    }
+
+    /**
+     * Link para devolver ao funcionário o equipamento recolhido por esta ocorrência, já liberado: abre o termo de
+     * responsabilidade com o funcionário e o equipamento preenchidos. Null quando não se aplica — em especial se o
+     * equipamento já foi emprestado de novo depois da devolução (para ele ou para outra pessoa).
+     */
+    public function urlDevolverAoFuncionario(): ?string
+    {
+        $devolucao = $this->devolucao;
+        $funcionario = $devolucao?->funcionario;
+        $equipamento = $this->equipamento;
+
+        if ($this->estaAberta() || ! $funcionario || $funcionario->desligado_em || ! $funcionario->ativo
+            || $equipamento->status !== 'disponivel' || ! $equipamento->ativo) {
+            return null;
+        }
+
+        $emprestadoDepois = MovimentacaoEquipamento::query()
+            ->where('equipamento_id', $equipamento->id)
+            ->where('movimentacao_id', '>', $devolucao->id)
+            ->whereHas('movimentacao', fn ($m) => $m->comEmprestimo()->where('status', '!=', 'cancelada'))
+            ->exists();
+
+        return $emprestadoDepois ? null : route('movimentacoes.create', [
+            'empresa_id' => $funcionario->setor?->empresa_id,
+            'setor_id' => $funcionario->setor_id,
+            'funcionario_id' => $funcionario->id,
+            'equipamentos' => [$equipamento->id],
+        ]);
     }
 
     /** Na liberação, devolve para "Disponível" o equipamento que a própria ocorrência colocou em manutenção. */
@@ -120,6 +191,11 @@ class Ocorrencia extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class);
+    }
+
+    public function devolucao()
+    {
+        return $this->belongsTo(Movimentacao::class, 'devolucao_movimentacao_id');
     }
 
     public function troca()

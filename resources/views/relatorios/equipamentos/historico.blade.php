@@ -166,6 +166,41 @@
         @endif
     </div>
 
+    @isset($indicadores)
+        <div class="secao-texto">
+            <h2 class="subtitulo-secao">
+                Indicadores de manutenção
+            </h2>
+
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Custo de manutenção</th>
+                        <th>% do valor de compra</th>
+                        <th>Ocorrências</th>
+                        <th>Resolução média</th>
+                        <th>Tempo parado</th>
+                        <th>Disponibilidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ \App\Models\Ocorrencia::reais($indicadores['custo']) }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::percentual($indicadores['percentual_custo']) }}</td>
+                        <td>{{ $indicadores['ocorrencias'] }}{{ $indicadores['abertas'] ? ' (' . $indicadores['abertas'] . ' em aberto)' : '' }}</td>
+                        <td>{{ $indicadores['resolucao_media_dias'] !== null ? str_replace('.', ',', $indicadores['resolucao_media_dias']) . ' dia(s)' : '—' }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::duracao($indicadores['segundos_parado']) }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::percentual($indicadores['disponibilidade']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="nota-discreta">
+                Tempo parado e disponibilidade consideram os períodos em manutenção ou defeituoso na linha do tempo,
+                desde o primeiro registro do equipamento até hoje (ou até a baixa/descarte).
+            </p>
+        </div>
+    @endisset
+
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
             Ocorrências
@@ -184,7 +219,7 @@
                         <th>Chamado</th>
                         <th>Liberado</th>
                         <th class="texto-esquerda">Solução</th>
-                        <th>Valor cobrado</th>
+                        <th>Custo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -202,7 +237,7 @@
                                     <br><span class="nota-discreta">Troca #{{ $ocorrencia->troca_movimentacao_id }}</span>
                                 @endif
                             </td>
-                            <td>{{ $ocorrencia->valor_cobrado_formatado ?? '-' }}</td>
+                            <td>{{ $ocorrencia->custo_manutencao_formatado ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

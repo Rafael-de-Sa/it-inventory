@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Ocorrências de equipamento (issue #10): problema reportado, acompanhamento e liberação pela TI.
- * O efeito no status do equipamento fica no model (Ocorrencia::colocarEquipamentoEmManutencao / liberarEquipamento).
+ * O efeito no status do equipamento fica no model (Ocorrencia::recolherEquipamento / colocarEquipamentoEmManutencao /
+ * liberarEquipamento).
  */
 class OcorrenciaController extends Controller
 {
@@ -65,20 +66,25 @@ class OcorrenciaController extends Controller
             // Sem último usuário informado, vale quem está com o equipamento.
             $dados['funcionario_id'] ??= $equipamento->emprestimoEmAberto()?->movimentacao?->funcionario_id;
 
+            $recolher = $dados['recolher'];
+            unset($dados['recolher']);
+
             $ocorrencia = Ocorrencia::create([...$dados, 'usuario_id' => Auth::id()]);
-            $ocorrencia->colocarEquipamentoEmManutencao();
+
+            $recolher ? $ocorrencia->recolherEquipamento() : $ocorrencia->colocarEquipamentoEmManutencao();
 
             return $ocorrencia;
         });
 
         return redirect()
             ->route('ocorrencias.show', $ocorrencia)
-            ->with('success', "Ocorrência #{$ocorrencia->id} registrada.");
+            ->with('success', "Ocorrência #{$ocorrencia->id} registrada."
+                . ($ocorrencia->devolucao_movimentacao_id ? " Equipamento recolhido: gere o termo de devolução #{$ocorrencia->devolucao_movimentacao_id} para assinatura." : ''));
     }
 
     public function show(Ocorrencia $ocorrencia)
     {
-        $ocorrencia->load(['equipamento.tipoEquipamento', 'funcionario', 'usuario.funcionario', 'troca']);
+        $ocorrencia->load(['equipamento.tipoEquipamento', 'funcionario', 'usuario.funcionario', 'troca', 'devolucao']);
 
         return view('ocorrencias.show', [
             'ocorrencia' => $ocorrencia,
@@ -158,13 +164,18 @@ class OcorrenciaController extends Controller
                 $funcionario->id => $funcionario->nome_completo . ($funcionario->matricula ? " ({$funcionario->matricula})" : ''),
             ]);
 
-        // equipamento_id => funcionario_id de quem está com ele (para sugerir o último usuário no formulário).
+        // equipamento_id => quem está com ele: preenche o último usuário e oferece recolher o equipamento.
         $responsaveis = MovimentacaoEquipamento::query()
             ->whereNull('devolvido_em')
             ->whereHas('movimentacao', fn ($m) => $m->comEmprestimo()->where('status', '!=', 'cancelada'))
-            ->with('movimentacao:id,funcionario_id')
+            ->with('movimentacao.funcionario')
             ->get()
-            ->mapWithKeys(fn (MovimentacaoEquipamento $item) => [$item->equipamento_id => $item->movimentacao->funcionario_id]);
+            ->mapWithKeys(fn (MovimentacaoEquipamento $item) => [$item->equipamento_id => [
+                'funcionario_id' => $item->movimentacao->funcionario_id,
+                'nome' => $item->movimentacao->funcionario?->nome_completo
+                    . ($item->movimentacao->funcionario?->matricula ? " ({$item->movimentacao->funcionario->matricula})" : ''),
+                'termo' => $item->movimentacao_id,
+            ]]);
 
         $problemasAnteriores = Ocorrencia::query()
             ->select('problema')

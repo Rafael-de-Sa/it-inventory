@@ -95,6 +95,104 @@ class OcorrenciaTest extends TestCase
         $this->get(route('ocorrencias.show', $ocorrencia))->assertOk()->assertSee('Registrar troca');
     }
 
+    public function test_recolher_registra_a_devolucao_e_gera_o_termo(): void
+    {
+        $funcionario = Funcionario::factory()->create();
+        $equipamento = $this->emUsoCom($funcionario);
+        $termoOriginal = MovimentacaoEquipamento::where('equipamento_id', $equipamento->id)->value('movimentacao_id');
+
+        $this->get(route('ocorrencias.create', ['equipamento_id' => $equipamento->id]))->assertOk()
+            ->assertSee('Recolher o equipamento para manutenção')
+            ->assertSee('"nome":"' . $funcionario->nome_completo);
+
+        $this->registrar($equipamento, ['recolher' => '1'])->assertSessionHasNoErrors()
+            ->assertSessionHas('success', fn ($mensagem) => str_contains($mensagem, 'termo de devolução'));
+
+        $ocorrencia = Ocorrencia::sole();
+        $devolucao = $ocorrencia->devolucao;
+
+        $this->assertSame(Movimentacao::TIPO_DEVOLUCAO, $devolucao->tipo_movimentacao);
+        $this->assertSame('pendente', $devolucao->status);
+        $this->assertSame($funcionario->id, $devolucao->funcionario_id);
+        $this->assertSame($funcionario->id, $ocorrencia->funcionario_id);
+        $this->assertTrue($ocorrencia->alterou_status);
+
+        $item = MovimentacaoEquipamento::where('movimentacao_id', $termoOriginal)->sole();
+        $this->assertSame('manutencao', $item->motivo_devolucao);
+        $this->assertSame($devolucao->id, $item->devolucao_movimentacao_id);
+
+        $this->assertSame('em_manutencao', $equipamento->fresh()->status);
+        $this->assertNull($equipamento->fresh()->emprestimoEmAberto());
+        $this->assertSame('encerrada', Movimentacao::find($termoOriginal)->status);
+        // O termo de devolução fica pendente de assinatura (bloqueia o desligamento até ser enviado).
+        $this->assertTrue($funcionario->fresh()->obterRestricoesDesligamento()['termos_devolucao_pendentes']);
+
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertOk()
+            ->assertSee('Equipamento recolhido para manutenção')->assertSee('Gerar termo de devolução')
+            ->assertDontSee('Registrar troca');
+        $this->get(route('movimentacoes.termo-devolucao', $devolucao))->assertOk();
+
+        // Liberado: volta para a TI como disponível.
+        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Tela substituída'])
+            ->assertSessionHasNoErrors();
+        $this->assertSame('disponivel', $equipamento->fresh()->status);
+    }
+
+    public function test_devolver_ao_funcionario_so_ate_o_equipamento_ser_emprestado_de_novo(): void
+    {
+        $funcionario = Funcionario::factory()->create();
+        $equipamento = $this->emUsoCom($funcionario);
+
+        $this->registrar($equipamento, ['recolher' => '1'])->assertSessionHasNoErrors();
+        $ocorrencia = Ocorrencia::sole();
+
+        // Aberta: ainda em manutenção, sem opção de devolver.
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertDontSee('Devolver ao funcionário');
+
+        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Tela substituída'])
+            ->assertSessionHasNoErrors();
+
+        $url = $ocorrencia->fresh()->urlDevolverAoFuncionario();
+        $this->assertNotNull($url);
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertSee('Devolver ao funcionário');
+
+        // O termo de responsabilidade abre com o funcionário e o equipamento selecionados.
+        $this->get($url)->assertOk()
+            ->assertSee('data-old-funcionario-id="' . $funcionario->id . '"', false)
+            ->assertSee('data-old-equipamentos="[' . $equipamento->id . ']"', false);
+
+        // Emprestado de novo (aqui para outra pessoa): a opção some, e continua sem aparecer depois da devolução.
+        $outro = Funcionario::factory()->create();
+        $this->post(route('movimentacoes.store'), [
+            'empresa_id' => $outro->setor->empresa_id,
+            'setor_id' => $outro->setor_id,
+            'funcionario_id' => $outro->id,
+            'equipamentos' => [$equipamento->id],
+        ])->assertSessionHasNoErrors();
+        $this->assertNull($ocorrencia->fresh()->urlDevolverAoFuncionario());
+
+        $this->post(route('movimentacoes.devolucao.store'), [
+            'empresa_id' => $outro->setor->empresa_id,
+            'setor_id' => $outro->setor_id,
+            'funcionario_id' => $outro->id,
+            'equipamentos' => [$equipamento->id],
+            'motivos_devolucao_equipamentos' => [$equipamento->id => 'devolucao'],
+        ])->assertSessionHasNoErrors();
+        $this->assertSame('disponivel', $equipamento->fresh()->status);
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertDontSee('Devolver ao funcionário');
+    }
+
+    public function test_recolher_equipamento_com_a_ti_so_coloca_em_manutencao(): void
+    {
+        $equipamento = Equipamento::factory()->create();
+
+        $this->registrar($equipamento, ['recolher' => '1'])->assertSessionHasNoErrors();
+
+        $this->assertNull(Ocorrencia::sole()->devolucao_movimentacao_id);
+        $this->assertSame('em_manutencao', $equipamento->fresh()->status);
+        $this->assertSame(0, Movimentacao::where('tipo_movimentacao', Movimentacao::TIPO_DEVOLUCAO)->count());
+    }
+
     public function test_ultimo_usuario_informado_prevalece(): void
     {
         $equipamento = $this->emUsoCom(Funcionario::factory()->create());
@@ -201,15 +299,14 @@ class OcorrenciaTest extends TestCase
         $this->get(route('relatorios.equipamentos.historico', $equipamento))->assertOk();
         $this->get(route('relatorios.funcionarios.equipamentos', $funcionario))->assertOk();
 
+        // O valor cobrado do colaborador não vai para o relatório do funcionário (gerado pelo DP).
         $html = view('relatorios.funcionarios.equipamentos-por-funcionario', [
             'funcionario' => $funcionario->load('setor.empresa'),
             'listaDeEquipamentosEmUso' => collect(),
-            'ocorrenciasComValor' => collect([$ocorrencia->load('equipamento.tipoEquipamento')]),
             'dataGeracaoRelatorio' => now(),
         ])->render();
+        $this->assertStringNotContainsString('150,00', $html);
 
-        $this->assertStringContainsString('Valores cobrados em ocorrências', $html);
-        $this->assertStringContainsString('150,00', $html);
 
         $this->get(route('equipamentos.show', $equipamento))->assertOk()->assertSee('Tela quebrada')->assertSee('Trocar');
     }

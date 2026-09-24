@@ -9,6 +9,7 @@ use App\Http\Requests\Equipamentos\StoreEquipamentoRequest;
 use App\Http\Requests\Equipamentos\UpdateEquipamentoRequest;
 use App\Models\Equipamento;
 use App\Models\TipoEquipamento;
+use App\Services\IndicadoresManutencao;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -154,7 +155,9 @@ class EquipamentoController extends Controller
             'ocorrencias' => fn ($consulta) => $consulta->latest('reportado_em')->latest('id'),
         ]);
 
-        return view('equipamentos.show', compact('equipamento'));
+        $indicadores = IndicadoresManutencao::doEquipamento($equipamento, ocorrencias: $equipamento->ocorrencias);
+
+        return view('equipamentos.show', compact('equipamento', 'indicadores'));
     }
 
     /**

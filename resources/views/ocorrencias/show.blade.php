@@ -20,6 +20,20 @@
             </x-slot:subtitle>
         </x-ui.card-header>
 
+        @if ($ocorrencia->devolucao)
+            <x-ui.alert icon="fa-solid fa-box-open" title="Equipamento recolhido para manutenção">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <span>
+                        Devolução registrada no
+                        <a href="{{ route('movimentacoes.show', $ocorrencia->devolucao) }}" class="font-medium underline">termo de devolução #{{ $ocorrencia->devolucao->id }}</a>
+                        ({{ $ocorrencia->devolucao->status_rotulo }}).
+                    </span>
+                    <x-ui.button :href="route('movimentacoes.termo-devolucao', $ocorrencia->devolucao)" target="_blank"
+                        rel="noopener noreferrer" variant="soft" icon="fa-solid fa-file-pdf" class="text-sm">Gerar termo de devolução</x-ui.button>
+                </div>
+            </x-ui.alert>
+        @endif
+
         @if ($ocorrencia->troca)
             <x-ui.alert icon="fa-solid fa-right-left">
                 Resolvida com a
@@ -72,6 +86,10 @@
             <x-form.grid>
                 <x-form.readonly label="Liberado pela TI em" :value="$data($ocorrencia->liberado_em)" wrapper-class="md:col-span-4" />
                 <x-form.readonly label="Solução" :value="$ocorrencia->solucao" multiline wrapper-class="md:col-span-8" />
+                <x-form.readonly label="Custo da manutenção" :value="$ocorrencia->custo_manutencao_formatado"
+                    wrapper-class="md:col-span-4" />
+                <x-form.readonly label="Fornecedor / assistência técnica" :value="$ocorrencia->fornecedor"
+                    wrapper-class="md:col-span-8" />
             </x-form.grid>
         </x-form.fieldset>
 
@@ -81,6 +99,13 @@
             <x-ui.button :href="route('ocorrencias.index')" icon="fa-solid fa-arrow-left">Voltar</x-ui.button>
 
             <div class="flex flex-wrap items-center gap-3">
+                @if ($urlDevolver = $ocorrencia->urlDevolverAoFuncionario())
+                    <x-ui.button :href="$urlDevolver" variant="soft" icon="fa-solid fa-user-check">
+                        Devolver ao funcionário
+                    </x-ui.button>
+                @endif
+                <x-ui.button :href="route('relatorios.ocorrencia', $ocorrencia)" target="_blank" rel="noopener noreferrer"
+                    icon="fa-solid fa-file-pdf">Relatório</x-ui.button>
                 @if ($emprestimo && ! $ocorrencia->troca)
                     <x-ui.button :href="route('movimentacoes.troca.create', ['ocorrencia_id' => $ocorrencia->id])"
                         variant="soft" icon="fa-solid fa-right-left">Registrar troca</x-ui.button>

@@ -1,6 +1,7 @@
 @extends('layouts.main_layout')
 
 @use('App\Models\Impressora')
+@use('App\Services\IndicadoresManutencao')
 
 @section('content')
     @php
@@ -107,6 +108,21 @@
         @endif
 
         <x-form.readonly id="descricao" label="Observação" :value="$equipamento->descricao" multiline />
+
+        <x-form.fieldset legend="Indicadores de manutenção">
+            <x-form.grid>
+                <x-form.readonly label="Custo de manutenção" wrapper-class="md:col-span-4"
+                    :value="\App\Models\Ocorrencia::reais($indicadores['custo']) . ($indicadores['percentual_custo'] !== null ? ' (' . IndicadoresManutencao::percentual($indicadores['percentual_custo']) . ' do valor de compra)' : '')" />
+                <x-form.readonly label="Ocorrências" wrapper-class="md:col-span-4"
+                    :value="$indicadores['ocorrencias'] . ($indicadores['abertas'] ? ' (' . $indicadores['abertas'] . ' aberta' . ($indicadores['abertas'] > 1 ? 's' : '') . ')' : '')" />
+                <x-form.readonly label="Tempo médio de resolução" wrapper-class="md:col-span-4"
+                    :value="$indicadores['resolucao_media_dias'] !== null ? str_replace('.', ',', $indicadores['resolucao_media_dias']) . ' dia(s)' : '—'" />
+                <x-form.readonly label="Tempo parado (manutenção/defeituoso)" wrapper-class="md:col-span-6"
+                    :value="IndicadoresManutencao::duracao($indicadores['segundos_parado'])" />
+                <x-form.readonly label="Disponibilidade (uptime)" wrapper-class="md:col-span-6"
+                    :value="IndicadoresManutencao::percentual($indicadores['disponibilidade'])" />
+            </x-form.grid>
+        </x-form.fieldset>
 
         <x-table title="Ocorrências" :headers="['Nº', 'Reportado em', 'Problema', 'Chamado', 'Situação', '']">
             @forelse ($equipamento->ocorrencias as $ocorrencia)

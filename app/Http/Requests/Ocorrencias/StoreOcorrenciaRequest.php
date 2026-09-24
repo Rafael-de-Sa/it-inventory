@@ -14,8 +14,16 @@ class StoreOcorrenciaRequest extends OcorrenciaRequest
                 'required', 'integer',
                 Rule::exists('equipamentos', 'id')->whereNull('apagado_em')->whereNotIn('status', ['baixado', 'descartado']),
             ],
+            'recolher' => ['boolean'],
             ...parent::rules(),
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        parent::prepareForValidation();
+
+        $this->merge(['recolher' => $this->boolean('recolher')]);
     }
 
     public function messages(): array

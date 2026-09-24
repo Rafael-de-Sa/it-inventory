@@ -135,5 +135,8 @@ Route::middleware('auth')->group(function () {
 
         //ocorrências
         Route::resource('ocorrencias', OcorrenciaController::class);
+
+        Route::get('/ocorrencias/{ocorrencia}/relatorio', [RelatorioController::class, 'ocorrencia'])
+            ->name('relatorios.ocorrencia');
     });
 });

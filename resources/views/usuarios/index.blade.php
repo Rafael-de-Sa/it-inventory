@@ -57,7 +57,7 @@
                     <x-table.cell>{{ $usuario->ativo ? 'Ativo' : 'Inativo' }}</x-table.cell>
                     {{-- O usuário logado não pode excluir a si mesmo --}}
                     <x-table.actions :show="route('usuarios.show', $usuario)" :edit="route('usuarios.edit', $usuario)"
-                        :destroy="auth()->id() != $usuario->id ? route('usuarios.destroy', $usuario) : null"
+                        :destroy="route('usuarios.destroy', $usuario)" :can-destroy="auth()->id() != $usuario->id"
                         confirm="Tem certeza que deseja excluir este usuário?" />
                 </x-table.row>
             @empty

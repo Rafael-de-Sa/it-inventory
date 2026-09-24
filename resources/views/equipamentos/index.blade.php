@@ -51,7 +51,11 @@
                     <x-table.actions :show="route('equipamentos.show', $equipamento)"
                         :edit="route('equipamentos.edit', $equipamento)"
                         :destroy="route('equipamentos.destroy', $equipamento)"
-                        confirm="Tem certeza que deseja excluir este equipamento?" />
+                        confirm="Tem certeza que deseja excluir este equipamento?">
+                        <x-ui.icon-button :href="route('relatorios.equipamentos.historico', $equipamento)"
+                            icon="fa-solid fa-clock-rotate-left" label="Histórico (abre em nova aba)"
+                            target="_blank" rel="noopener noreferrer" />
+                    </x-table.actions>
                 </x-table.row>
             @empty
                 <x-table.empty :colspan="7">Nenhum equipamento encontrado.</x-table.empty>

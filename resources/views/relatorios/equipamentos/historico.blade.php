@@ -111,6 +111,7 @@
                         <th class="texto-esquerda">Motivo devolução</th>
                         <th class="texto-esquerda">Funcionário</th>
                         <th class="texto-esquerda">Observação da devolução</th>
+                        <th>Situação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,22 +119,14 @@
                         @php
                             $movimentacao = $registroPivot->movimentacao;
                             $funcionario = $movimentacao?->funcionario;
-
-                            $nomeCompletoFuncionario = $funcionario
-                                ? trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? ''))
-                                : null;
-
+                            $nomeCompletoFuncionario = $funcionario?->nome_completo;
                             $foiDevolvido = !is_null($registroPivot->devolvido_em);
+                            $motivoPadronizado = $registroPivot->motivo_devolucao_rotulo;
 
-                            $motivoBruto = $registroPivot->motivo_devolucao;
-
-                            $motivoPadronizado = match ($motivoBruto) {
-                                'manutencao' => 'Manutenção',
-                                'defeito' => 'Defeito',
-                                'quebra' => 'Quebra',
-                                'devolucao' => 'Devolução',
-                                'cancelada' => 'Movimentação cancelada',
-                                default => null,
+                            $situacao = match (true) {
+                                !$movimentacao => '-',
+                                $movimentacao->trashed() => 'Excluída',
+                                default => $movimentacao->status_rotulo,
                             };
                         @endphp
 
@@ -151,7 +144,7 @@
                             </td>
 
                             <td>
-                                {{ $registroPivot->devolvido_em?->format('d/m/Y') ?? '-' }}
+                                {{ $registroPivot->devolvido_em?->format('d/m/Y') ?? 'Em uso' }}
                             </td>
 
                             <td class="texto-esquerda">
@@ -182,6 +175,8 @@
                                     -
                                 @endif
                             </td>
+
+                            <td>{{ $situacao }}</td>
                         </tr>
                     @endforeach
                 </tbody>

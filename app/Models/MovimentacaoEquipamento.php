@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +15,18 @@ class MovimentacaoEquipamento extends Pivot
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
     const DELETED_AT = 'apagado_em';
+
+    /** Motivos de devolução (enum da migration) e seus rótulos. */
+    public const MOTIVOS_DEVOLUCAO = [
+        'devolucao' => 'Devolução',
+        'manutencao' => 'Manutenção',
+        'defeito' => 'Defeito',
+        'quebra' => 'Quebra',
+        'cancelada' => 'Movimentação cancelada',
+    ];
+
+    /** Motivos que o usuário pode escolher ao registrar uma devolução ("cancelada" é de uso interno). */
+    public const MOTIVOS_SELECIONAVEIS = ['manutencao', 'defeito', 'quebra', 'devolucao'];
 
     protected $fillable = [
         'movimentacao_id',
@@ -35,6 +47,21 @@ class MovimentacaoEquipamento extends Pivot
     protected $attributes = [
         'motivo_devolucao' => 'devolucao'
     ];
+
+    /** Status que o equipamento assume ao ser devolvido com o motivo informado. */
+    public static function statusEquipamentoAposDevolucao(?string $motivo): string
+    {
+        return match ($motivo) {
+            'manutencao' => 'em_manutencao',
+            'defeito', 'quebra' => 'defeituoso',
+            default => 'disponivel',
+        };
+    }
+
+    protected function motivoDevolucaoRotulo(): Attribute
+    {
+        return Attribute::get(fn () => self::MOTIVOS_DEVOLUCAO[$this->motivo_devolucao] ?? null);
+    }
 
     public function movimentacao()
     {
@@ -81,6 +108,7 @@ class MovimentacaoEquipamento extends Pivot
                     ->withTrashed()
                     ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE);
             })
-            ->orderByDesc('criado_em');
+            ->orderByDesc('criado_em')
+            ->orderByDesc('id');
     }
 }

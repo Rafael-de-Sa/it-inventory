@@ -35,13 +35,7 @@
                 <label for="status" class="mb-1 block text-sm text-green-100">Status</label>
                 @php
                     $statusAtual = request('status');
-                    $mapaStatus = [
-                        '' => 'Todos',
-                        'pendente' => 'Pendente',
-                        'concluida' => 'Concluída',
-                        'encerrada' => 'Encerrada',
-                        'cancelada' => 'Cancelada',
-                    ];
+                    $mapaStatus = ['' => 'Todos'] + \App\Models\Movimentacao::STATUS;
                 @endphp
                 <select id="status" name="status" @class([
                     'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',

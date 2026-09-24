@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Requests\Movimentacoes\UploadTermoResponsabilidadeRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,6 +21,14 @@ class Movimentacao extends Model
 
     public const TIPO_RESPONSABILIDADE = 'responsabilidade';
     public const TIPO_DEVOLUCAO = 'devolucao';
+
+    /** Status válidos (enum da migration) e seus rótulos. */
+    public const STATUS = [
+        'pendente' => 'Pendente',
+        'concluida' => 'Concluída',
+        'encerrada' => 'Encerrada',
+        'cancelada' => 'Cancelada',
+    ];
 
     protected $fillable =
     [
@@ -40,6 +49,11 @@ class Movimentacao extends Model
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',
     ];
+
+    protected function statusRotulo(): Attribute
+    {
+        return Attribute::get(fn () => self::STATUS[$this->status] ?? (string) $this->status);
+    }
 
     public function setor()
     {

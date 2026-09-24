@@ -268,11 +268,7 @@ class MovimentacaoController extends Controller
                     continue;
                 }
 
-                $novoStatusEquipamento = match ($motivoDevolucaoEquipamento) {
-                    'manutencao'          => 'em_manutencao',
-                    'defeito', 'quebra'   => 'defeituoso',
-                    default               => 'disponivel',
-                };
+                $novoStatusEquipamento = MovimentacaoEquipamento::statusEquipamentoAposDevolucao($motivoDevolucaoEquipamento);
 
                 $equipamento->update([
                     'status' => $novoStatusEquipamento,

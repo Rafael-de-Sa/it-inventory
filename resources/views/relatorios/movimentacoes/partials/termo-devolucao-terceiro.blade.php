@@ -124,12 +124,7 @@
                 $numeroItem = $indiceEquipamento + 1;
                 $pivot = $equipamento->pivot;
 
-                $motivosDevolucaoLabels = [
-                    'manutencao' => 'Manutenção',
-                    'defeito' => 'Defeito',
-                    'quebra' => 'Quebra',
-                    'devolucao' => 'Devolução',
-                ];
+                $motivosDevolucaoLabels = \App\Models\MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO;
 
                 $motivoDevolucaoFormatado = $motivosDevolucaoLabels[$pivot->motivo_devolucao] ?? 'Não informado';
             @endphp

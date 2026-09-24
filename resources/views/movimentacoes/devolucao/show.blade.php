@@ -45,12 +45,7 @@
                     ? 'bg-sky-900/60 text-sky-100 border-sky-700'
                     : 'bg-indigo-900/60 text-indigo-100 border-indigo-700';
 
-                $motivosDevolucaoLabels = [
-                    'manutencao' => 'Manutenção',
-                    'defeito' => 'Defeito',
-                    'quebra' => 'Quebra',
-                    'devolucao' => 'Devolução',
-                ];
+                $motivosDevolucaoLabels = \App\Models\MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO;
             @endphp
 
             {{-- Dados principais --}}

@@ -1,0 +1,22 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "laragon",
+      "url": "http://it-inventory.test",
+      "port": 80
+    },
+    {
+      "name": "vite",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "artisan",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["artisan", "serve", "--port=8000"],
+      "port": 8000
+    }
+  ]
+}

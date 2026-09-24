@@ -50,12 +50,36 @@ class MovimentacaoEquipamento extends Pivot
     {
         $query
             ->with([
-                'movimentacao.funcionario.setor.empresa',
-                'equipamento',
+                'movimentacao' => function ($queryMovimentacao) {
+                    $queryMovimentacao
+                        ->withTrashed()
+                        ->with([
+                            'funcionario' => function ($queryFuncionario) {
+                                $queryFuncionario
+                                    ->withTrashed()
+                                    ->with([
+                                        'setor' => function ($querySetor) {
+                                            $querySetor
+                                                ->withTrashed()
+                                                ->with([
+                                                    'empresa' => function ($queryEmpresa) {
+                                                        $queryEmpresa->withTrashed();
+                                                    },
+                                                ]);
+                                        },
+                                    ]);
+                            },
+                        ]);
+                },
+                'equipamento' => function ($queryEquipamento) {
+                    $queryEquipamento->withTrashed();
+                },
             ])
             ->where('equipamento_id', $equipamentoId)
             ->whereHas('movimentacao', function ($subQuery) {
-                $subQuery->where('tipo_movimentacao', 'responsabilidade');
+                $subQuery
+                    ->withTrashed()
+                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE);
             })
             ->orderByDesc('criado_em');
     }

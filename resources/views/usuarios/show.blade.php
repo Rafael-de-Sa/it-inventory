@@ -14,6 +14,8 @@
         <x-form.grid>
             <x-form.readonly id="usuario_id" label="ID" :value="$usuario->id" wrapper-class="md:col-span-3" />
             <x-form.active-toggle id="usuario_ativo" :checked="$usuario->ativo" disabled wrapper-class="md:col-span-3" />
+            <x-form.readonly id="usuario_perfil" label="Perfil de acesso" :value="$usuario->perfil?->label()"
+                wrapper-class="md:col-span-6" />
         </x-form.grid>
 
         <x-form.readonly id="usuario_funcionario" label="Funcionário"

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Perfil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,12 +21,14 @@ class Usuario extends Authenticatable
         'funcionario_id',
         'email',
         'senha',
+        'perfil',
         'ultimo_login',
         'ativo'
     ];
 
     protected $casts = [
         'senha' => 'hashed',
+        'perfil' => Perfil::class,
         'ultimo_login' => 'datetime',
         'ativo' => 'boolean',
         'criado_em' => 'datetime',
@@ -42,6 +45,11 @@ class Usuario extends Authenticatable
     public function getAuthPassword()
     {
         return $this->senha;
+    }
+
+    public function temPerfil(Perfil ...$perfis): bool
+    {
+        return in_array($this->perfil, $perfis, true);
     }
 
     public function funcionario()

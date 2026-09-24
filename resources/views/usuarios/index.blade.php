@@ -32,7 +32,7 @@
             ]" />
         </x-form.filters>
 
-        <x-table :headers="['ID', 'Funcionário', 'E-mail', 'Último login', 'Ativo', 'Ações']">
+        <x-table :headers="['ID', 'Funcionário', 'E-mail', 'Perfil', 'Último login', 'Ativo', 'Ações']">
             @forelse ($listaDeUsuarios as $usuario)
                 <x-table.row>
                     <x-table.cell>{{ $usuario->id }}</x-table.cell>
@@ -49,6 +49,11 @@
                         @endunless
                     </x-table.cell>
                     <x-table.cell>
+                        <x-ui.badge :tone="$usuario->perfil === \App\Enums\Perfil::TIC ? 'success' : 'info'">
+                            {{ $usuario->perfil?->label() }}
+                        </x-ui.badge>
+                    </x-table.cell>
+                    <x-table.cell>
                         {{ $usuario->ultimo_login?->format('d/m/Y H:i') }}
                         @unless ($usuario->ultimo_login)
                             <x-ui.muted>Nunca acessou</x-ui.muted>
@@ -61,7 +66,7 @@
                         confirm="Tem certeza que deseja excluir este usuário?" />
                 </x-table.row>
             @empty
-                <x-table.empty :colspan="6">Nenhum usuário encontrado.</x-table.empty>
+                <x-table.empty :colspan="7">Nenhum usuário encontrado.</x-table.empty>
             @endforelse
         </x-table>
 

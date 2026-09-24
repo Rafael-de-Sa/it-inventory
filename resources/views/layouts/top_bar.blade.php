@@ -3,7 +3,14 @@
     Comportamento dos dropdowns e do menu mobile: resources/js/layout/nav.js (data-dropdown*, #btn-mobile, #mobile-menu).
 --}}
 @php
-    $menu = config('navegacao');
+    // Só os itens que o perfil do usuário pode acessar; submenus vazios somem.
+    $podeVer = fn (array $item) => !isset($item['can']) || Gate::allows($item['can']);
+    $menu = collect(config('navegacao'))
+        ->map(fn (array $item) => isset($item['itens'])
+            ? [...$item, 'itens' => array_values(array_filter($item['itens'], $podeVer))]
+            : $item)
+        ->filter(fn (array $item) => $podeVer($item) && (!isset($item['itens']) || $item['itens'] !== []))
+        ->all();
     $estaAtivo = fn (array $item) => isset($item['itens'])
         ? collect($item['itens'])->contains(fn ($subitem) => request()->routeIs($subitem['ativo']))
         : request()->routeIs($item['ativo']);

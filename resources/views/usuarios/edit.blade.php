@@ -12,11 +12,16 @@
         <x-form.grid>
             <x-form.readonly id="usuario_id" label="ID" :value="$usuario->id" wrapper-class="md:col-span-3" />
 
-            {{-- O usuário logado não pode inativar a si mesmo --}}
+            {{-- O usuário logado não pode inativar a si mesmo nem mudar o próprio perfil --}}
             @if (auth()->id() != $usuario->id)
                 <x-form.active-toggle :checked="$usuario->ativo" wrapper-class="md:col-span-3" />
+                <x-form.select name="perfil" label="Perfil de acesso" required :options="\App\Enums\Perfil::options()"
+                    :value="$usuario->perfil?->value" wrapper-class="md:col-span-6" />
             @else
                 <input type="hidden" name="ativo" value="1">
+                <input type="hidden" name="perfil" value="{{ $usuario->perfil?->value }}">
+                <x-form.readonly id="usuario_perfil" label="Perfil de acesso" :value="$usuario->perfil?->label()"
+                    wrapper-class="md:col-span-9" />
             @endif
         </x-form.grid>
 

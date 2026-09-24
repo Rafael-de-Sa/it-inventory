@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Usuarios;
 
+use App\Enums\Perfil;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUsuarioRequest extends FormRequest
 {
@@ -38,6 +40,7 @@ class StoreUsuarioRequest extends FormRequest
                 'confirmed',
                 'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
             ],
+            'perfil' => ['required', Rule::enum(Perfil::class)],
         ];
     }
 
@@ -45,6 +48,7 @@ class StoreUsuarioRequest extends FormRequest
     {
         return [
             'funcionario_id' => 'funcionário',
+            'perfil' => 'perfil de acesso',
             'email' => 'e-mail',
             'senha' => 'senha',
             'senha_confirmation' => 'confirmação da senha',

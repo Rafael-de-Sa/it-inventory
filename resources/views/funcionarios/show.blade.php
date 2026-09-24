@@ -92,6 +92,11 @@
                             <li>Existem termos de devolução pendentes de upload.</li>
                         @endif
                     </ul>
+                    @cannot('gerenciar-movimentacoes')
+                        <p class="pt-1 font-medium">
+                            Encaminhe à equipe de TIC para a devolução dos equipamentos e a regularização dos termos.
+                        </p>
+                    @endcannot
                 </x-ui.alert>
             @endif
 

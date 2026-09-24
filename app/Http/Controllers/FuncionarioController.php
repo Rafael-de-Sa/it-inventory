@@ -210,7 +210,8 @@ class FuncionarioController extends Controller
         }
         $podeMostrarBotoesGerenciais = ! $funcionarioPertenceAoUsuarioLogado;
         $podeMostrarBotaoDesligar = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
-        $podeMostrarBotaoExcluir = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento;
+        $podeMostrarBotaoExcluir = $podeMostrarBotoesGerenciais && $podeRealizarDesligamento
+            && $usuarioLogado?->can('excluir-funcionarios');
 
         return view('funcionarios.show', [
             'funcionario' => $funcionario,

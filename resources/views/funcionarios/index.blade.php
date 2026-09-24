@@ -44,7 +44,8 @@
                     <x-table.cell>{{ $funcionario->terceirizado ? 'Sim' : 'Não' }}</x-table.cell>
                     <x-table.actions :show="route('funcionarios.show', $funcionario)"
                         :edit="route('funcionarios.edit', $funcionario)"
-                        :destroy="route('funcionarios.destroy', $funcionario)" :can-destroy="$podeExcluir"
+                        :destroy="$usuarioLogado?->can('excluir-funcionarios') ? route('funcionarios.destroy', $funcionario) : null"
+                        :can-destroy="$podeExcluir"
                         confirm="Tem certeza que deseja excluir este funcionário?">
                         <x-ui.icon-button :href="route('relatorios.funcionarios.equipamentos', $funcionario)"
                             icon="fa-solid fa-file-pdf" label="Relatório de equipamentos (abre em nova aba)"

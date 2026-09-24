@@ -14,6 +14,10 @@
         <x-form.select name="funcionario_id" label="Funcionário" required placeholder="Selecione um setor primeiro..."
             data-old="{{ old('funcionario_id') }}" />
 
+        <x-form.select name="perfil" label="Perfil de acesso" required placeholder="Selecione..."
+            :options="\App\Enums\Perfil::options()"
+            help="TIC: acesso completo. Departamento Pessoal: funcionários (cadastro, edição, pendências e desligamento)." />
+
         <x-form.grid>
             <x-form.input type="email" name="email" label="E-mail" required placeholder="usuario@empresa.com.br"
                 wrapper-class="md:col-span-6" />

@@ -18,6 +18,8 @@ class EquipamentoHistorico extends Model
         'emprestimo' => 'Empréstimo',
         'devolucao' => 'Devolução',
         'alteracao_status' => 'Alteração manual de status',
+        'troca' => 'Troca',
+        'ocorrencia' => 'Ocorrência',
     ];
 
     protected $fillable = [

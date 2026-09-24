@@ -4,6 +4,23 @@ namespace App\Support;
 
 class Mask
 {
+    /** Valor digitado no padrão brasileiro para decimal: "1.234,56" → "1234.56"; "21,5" → "21.5". Mantém "1234.56". */
+    public static function decimal($valor): ?string
+    {
+        if (! filled($valor)) {
+            return null;
+        }
+
+        $valor = trim((string) $valor);
+
+        if (str_contains($valor, ',')) {
+            return str_replace(['.', ','], ['', '.'], $valor);
+        }
+
+        // "1.500" / "12.345.678": pontos como separador de milhar.
+        return preg_match('/^\d{1,3}(\.\d{3})+$/', $valor) ? str_replace('.', '', $valor) : $valor;
+    }
+
     public static function digits(?string $v, ?int $max = null): string
     {
         $d = preg_replace('/\D+/', '', (string) $v);

@@ -21,7 +21,7 @@ class UploadTermoResponsabilidadeRequest extends FormRequest
     }
 
     /**
-     * O termo só pode ser enviado uma vez, em um termo de responsabilidade não cancelado.
+     * O termo só pode ser enviado uma vez, em um termo de responsabilidade ou de troca não cancelado.
      * A tela já esconde o envio nesses casos; aqui a regra vale também para requisições diretas.
      */
     public function after(): array
@@ -32,8 +32,8 @@ class UploadTermoResponsabilidadeRequest extends FormRequest
                 $movimentacao = $this->route('movimentacao');
 
                 $erro = match (true) {
-                    $movimentacao->tipo_movimentacao !== Movimentacao::TIPO_RESPONSABILIDADE
-                        => 'Esta movimentação não é um termo de responsabilidade.',
+                    ! $movimentacao->entregaEquipamentos()
+                        => 'Esta movimentação não é um termo de responsabilidade nem de troca.',
                     $movimentacao->status === 'cancelada'
                         => 'Não é possível enviar o termo de uma movimentação cancelada.',
                     filled($movimentacao->termo_responsabilidade)

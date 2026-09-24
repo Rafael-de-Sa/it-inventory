@@ -29,10 +29,14 @@ class Equipamento extends Model
         'em_manutencao' => 'Em manutenção',
         'defeituoso' => 'Defeituoso',
         'descartado' => 'Descartado',
+        'baixado' => 'Baixado',
     ];
 
     /** "Em uso" só é atribuído pelas movimentações, não no cadastro manual. */
     public const STATUS_CADASTRO = ['disponivel', 'em_manutencao', 'defeituoso', 'descartado'];
+
+    /** Na edição também é possível dar baixa manual (a troca pelo fornecedor faz isso automaticamente). */
+    public const STATUS_EDICAO = [...self::STATUS_CADASTRO, 'baixado'];
 
     /** Acima deste valor de compra o patrimônio (plaquinha) é obrigatório. */
     public const VALOR_MINIMO_PATRIMONIO = 1500;
@@ -133,8 +137,8 @@ class Equipamento extends Model
     }
 
     /**
-     * Item de termo de responsabilidade ainda não devolvido (ignora movimentações canceladas).
-     * Enquanto existir, o status do equipamento só muda via devolução.
+     * Item de termo de responsabilidade (ou de troca) ainda não devolvido, ignorando movimentações canceladas.
+     * Enquanto existir, o status do equipamento só muda via devolução ou troca.
      */
     public function emprestimoEmAberto(): ?MovimentacaoEquipamento
     {
@@ -142,7 +146,7 @@ class Equipamento extends Model
             ->where('equipamento_id', $this->id)
             ->whereNull('devolvido_em')
             ->whereHas('movimentacao', fn ($movimentacoes) => $movimentacoes
-                ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                ->comEmprestimo()
                 ->where('status', '!=', 'cancelada'))
             ->latest('id')
             ->first();
@@ -166,6 +170,11 @@ class Equipamento extends Model
         $this->contextoHistorico = [];
 
         return $contexto;
+    }
+
+    public function ocorrencias()
+    {
+        return $this->hasMany(Ocorrencia::class);
     }
 
     public function historicos()

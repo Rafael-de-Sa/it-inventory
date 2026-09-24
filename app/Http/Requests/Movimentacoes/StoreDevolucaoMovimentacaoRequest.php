@@ -96,7 +96,7 @@ class StoreDevolucaoMovimentacaoRequest extends FormRequest
                     ->whereHas('movimentacao', function ($query) use ($funcionarioId) {
                         $query
                             ->where('funcionario_id', $funcionarioId)
-                            ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                            ->comEmprestimo()
                             ->where('status', '!=', 'cancelada');
                     })
                     ->count();

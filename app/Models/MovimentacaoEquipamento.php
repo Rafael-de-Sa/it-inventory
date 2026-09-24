@@ -24,6 +24,7 @@ class MovimentacaoEquipamento extends Pivot
         'defeito' => 'Defeito',
         'quebra' => 'Quebra',
         'cancelada' => 'Movimentação cancelada',
+        'troca_fornecedor' => 'Troca pelo fornecedor',
     ];
 
     /** Motivos que o usuário pode escolher ao registrar uma devolução ("cancelada" é de uso interno). */
@@ -32,6 +33,7 @@ class MovimentacaoEquipamento extends Pivot
     protected $fillable = [
         'movimentacao_id',
         'devolucao_movimentacao_id',
+        'substitui_item_id',
         'equipamento_id',
         'termo_devolucao',
         'observacao',
@@ -56,6 +58,7 @@ class MovimentacaoEquipamento extends Pivot
         return match ($motivo) {
             'manutencao' => 'em_manutencao',
             'defeito', 'quebra' => 'defeituoso',
+            'troca_fornecedor' => 'baixado',
             default => 'disponivel',
         };
     }
@@ -70,10 +73,16 @@ class MovimentacaoEquipamento extends Pivot
         return $this->belongsTo(Movimentacao::class);
     }
 
-    /** Movimentação de devolução que encerrou este item (só em itens de responsabilidade). */
+    /** Movimentação (devolução ou troca) que encerrou este item de empréstimo. */
     public function movimentacaoDevolucao()
     {
         return $this->belongsTo(Movimentacao::class, 'devolucao_movimentacao_id');
+    }
+
+    /** No item entregue em uma troca: o item de empréstimo que ele substituiu. */
+    public function itemSubstituido()
+    {
+        return $this->belongsTo(self::class, 'substitui_item_id');
     }
 
     public function equipamento()
@@ -117,7 +126,7 @@ class MovimentacaoEquipamento extends Pivot
             ->whereHas('movimentacao', function ($subQuery) {
                 $subQuery
                     ->withTrashed()
-                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE);
+                    ->whereIn('tipo_movimentacao', Movimentacao::TIPOS_COM_EMPRESTIMO);
             })
             ->orderByDesc('criado_em')
             ->orderByDesc('id');

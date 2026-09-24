@@ -9,6 +9,7 @@ use App\Models\Impressora;
 use App\Models\Monitor;
 use App\Models\TipoEquipamento;
 use App\Rules\ChaveAcessoNfe;
+use App\Support\Mask;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -58,7 +59,7 @@ abstract class EquipamentoRequest extends FormRequest
             'patrimonio' => $texto($this->input('patrimonio')),
             'numero_serie' => $texto($this->input('numero_serie')),
             'descricao' => filled($this->input('descricao')) ? trim($this->input('descricao')) : null,
-            'valor_compra' => self::decimal($this->input('valor_compra')),
+            'valor_compra' => Mask::decimal($this->input('valor_compra')),
             'status' => $this->input('status') ?: 'disponivel',
         ]);
 
@@ -72,7 +73,7 @@ abstract class EquipamentoRequest extends FormRequest
 
         if (is_array($this->input('monitor'))) {
             $this->merge(['monitor' => array_merge($this->input('monitor'), [
-                'polegadas' => self::decimal($this->input('monitor.polegadas')),
+                'polegadas' => Mask::decimal($this->input('monitor.polegadas')),
             ])]);
         }
 
@@ -265,23 +266,6 @@ abstract class EquipamentoRequest extends FormRequest
         }
 
         return array_map(fn ($valor) => $valor === '' ? null : $valor, $ficha);
-    }
-
-    /** "1.234,56" → "1234.56"; "21,5" → "21.5". Mantém "1234.56". */
-    private static function decimal($valor): ?string
-    {
-        if (! filled($valor)) {
-            return null;
-        }
-
-        $valor = trim((string) $valor);
-
-        if (str_contains($valor, ',')) {
-            return str_replace(['.', ','], ['', '.'], $valor);
-        }
-
-        // "1.500" / "12.345.678": pontos como separador de milhar.
-        return preg_match('/^\d{1,3}(\.\d{3})+$/', $valor) ? str_replace('.', '', $valor) : $valor;
     }
 
     /** "aa-bb-cc-dd-ee-ff" / "aabbccddeeff" → "AA:BB:CC:DD:EE:FF". Valores fora do padrão seguem para a validação. */

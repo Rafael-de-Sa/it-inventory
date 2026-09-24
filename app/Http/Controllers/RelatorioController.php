@@ -6,6 +6,7 @@ use App\Models\Equipamento;
 use App\Models\Funcionario;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
+use App\Models\Ocorrencia;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class RelatorioController extends Controller
             ->whereHas('movimentacao', function ($consultaMovimentacao) use ($funcionario) {
                 $consultaMovimentacao
                     ->where('funcionario_id', $funcionario->id)
-                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                    ->comEmprestimo()
                     ->where('status', '!=', 'cancelada');
             })
             ->with([
@@ -32,11 +33,20 @@ class RelatorioController extends Controller
             ->orderBy('criado_em')
             ->get();
 
+        // Valores cobrados do colaborador em ocorrências (informação para a folha, vista pelo DP).
+        $ocorrenciasComValor = Ocorrencia::query()
+            ->where('funcionario_id', $funcionario->id)
+            ->where('valor_cobrado', '>', 0)
+            ->with(['equipamento' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA])])
+            ->orderByDesc('reportado_em')
+            ->get();
+
         $dataGeracaoRelatorio = now();
 
         $pdf = Pdf::loadView('relatorios.funcionarios.equipamentos-por-funcionario', [
             'funcionario'              => $funcionario,
             'listaDeEquipamentosEmUso' => $listaDeEquipamentosEmUso,
+            'ocorrenciasComValor'      => $ocorrenciasComValor,
             'dataGeracaoRelatorio'     => $dataGeracaoRelatorio,
         ])->setPaper('a4', 'portrait');
 
@@ -79,10 +89,17 @@ class RelatorioController extends Controller
             ->orderByDesc('id')
             ->get();
 
+        $ocorrencias = $equipamento->ocorrencias()
+            ->with(['funcionario', 'troca'])
+            ->orderByDesc('reportado_em')
+            ->orderByDesc('id')
+            ->get();
+
         $dataHoraEmissao = now();
 
         $pdf = Pdf::loadView('relatorios.equipamentos.historico', [
             'equipamento' => $equipamento,
+            'ocorrencias' => $ocorrencias,
             'listaMovimentacoesResponsabilidade' => $listaMovimentacoesResponsabilidade,
             'linhaDoTempo' => $linhaDoTempo,
             'dataHoraEmissao' => $dataHoraEmissao,

@@ -7,6 +7,6 @@
         wrapper-class="md:col-span-6" />
 @else
     <x-form.select name="status" label="Status" required
-        :options="\Illuminate\Support\Arr::only(\App\Models\Equipamento::STATUS, \App\Models\Equipamento::STATUS_CADASTRO)"
+        :options="\Illuminate\Support\Arr::only(\App\Models\Equipamento::STATUS, \App\Models\Equipamento::STATUS_EDICAO)"
         :value="$equipamento->status" wrapper-class="md:col-span-6" />
 @endif

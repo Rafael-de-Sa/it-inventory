@@ -225,7 +225,7 @@ class MovimentacaoController extends Controller
                 ->whereHas('movimentacao', function ($query) use ($funcionarioId) {
                     $query
                         ->where('funcionario_id', $funcionarioId)
-                        ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                        ->comEmprestimo()
                         ->where('status', '!=', 'cancelada');
                 })
                 ->lockForUpdate()
@@ -281,23 +281,10 @@ class MovimentacaoController extends Controller
                 ]);
             }
 
-            $idsMovimentacoesResponsabilidade = array_unique($idsMovimentacoesResponsabilidade);
-
-            foreach ($idsMovimentacoesResponsabilidade as $idMovimentacaoResponsabilidade) {
-                $existemItensEmAberto = MovimentacaoEquipamento::query()
-                    ->where('movimentacao_id', $idMovimentacaoResponsabilidade)
-                    ->whereNull('devolvido_em')
-                    ->exists();
-
-                if (! $existemItensEmAberto) {
-                    Movimentacao::query()
-                        ->where('id', $idMovimentacaoResponsabilidade)
-                        ->where('status', '!=', 'cancelada')
-                        ->update([
-                            'status' => 'encerrada',
-                        ]);
-                }
-            }
+            Movimentacao::query()
+                ->whereIn('id', array_unique($idsMovimentacoesResponsabilidade))
+                ->get()
+                ->each(fn (Movimentacao $termo) => $termo->encerrarSeTudoDevolvido());
         });
 
         return redirect()
@@ -321,6 +308,18 @@ class MovimentacaoController extends Controller
             'equipamentos',
             $movimentacao->equipamentos->sortBy('id')->values()
         );
+
+        if ($movimentacao->tipo_movimentacao === Movimentacao::TIPO_TROCA) {
+            $movimentacao->load([
+                'equipamentos' => fn ($consulta) => $consulta->with('tipoEquipamento'),
+                'itensDevolvidosAqui.equipamento.tipoEquipamento',
+                'ocorrencias',
+            ]);
+
+            return view('movimentacoes.troca.show', [
+                'movimentacao' => $movimentacao,
+            ]);
+        }
 
         if ($movimentacao->tipo_movimentacao === Movimentacao::TIPO_RESPONSABILIDADE) {
             return view('movimentacoes.show-responsabilidade', [
@@ -458,7 +457,7 @@ class MovimentacaoController extends Controller
             ->whereHas('movimentacao', function ($query) use ($funcionario) {
                 $query
                     ->where('funcionario_id', $funcionario->id)
-                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                    ->comEmprestimo()
                     ->where('status', '!=', 'cancelada');
             })
             ->with('equipamento.tipoEquipamento')
@@ -501,6 +500,7 @@ class MovimentacaoController extends Controller
         );
 
         $movimentacao->termo_responsabilidade = $caminhoArquivo;
+        $rotuloTermo = $movimentacao->tipo_movimentacao === Movimentacao::TIPO_TROCA ? 'Termo de troca' : 'Termo de responsabilidade';
 
         // Se todos os equipamentos já foram devolvidos, o termo continua "encerrada".
         if ($movimentacao->status === 'pendente') {
@@ -511,7 +511,7 @@ class MovimentacaoController extends Controller
 
         return redirect()
             ->route('movimentacoes.index', $movimentacao->id)
-            ->with('success', 'Termo de responsabilidade enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
+            ->with('success', $rotuloTermo . ' enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
     }
 
     protected function visualizarTermoGenerico(

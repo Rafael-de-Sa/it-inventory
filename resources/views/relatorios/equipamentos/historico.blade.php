@@ -168,7 +168,51 @@
 
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
-            Histórico de termos de responsabilidade
+            Ocorrências
+        </h2>
+
+        @if (($ocorrencias ?? collect())->isEmpty())
+            <p>Não há ocorrências registradas para este equipamento.</p>
+        @else
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Reportado</th>
+                        <th class="texto-esquerda">Problema</th>
+                        <th class="texto-esquerda">Último usuário</th>
+                        <th>Chamado</th>
+                        <th>Liberado</th>
+                        <th class="texto-esquerda">Solução</th>
+                        <th>Valor cobrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ocorrencias as $ocorrencia)
+                        <tr>
+                            <td>#{{ $ocorrencia->id }}</td>
+                            <td>{{ $ocorrencia->reportado_em->format('d/m/Y') }}</td>
+                            <td class="texto-esquerda">{{ $ocorrencia->problema }}</td>
+                            <td class="texto-esquerda">{{ $ocorrencia->funcionario?->nome_completo ?? '-' }}</td>
+                            <td>{{ $ocorrencia->chamado ?? '-' }}</td>
+                            <td>{{ $ocorrencia->liberado_em?->format('d/m/Y') ?? 'Aberta' }}</td>
+                            <td class="texto-esquerda">
+                                {{ $ocorrencia->solucao ?? '-' }}
+                                @if ($ocorrencia->troca_movimentacao_id)
+                                    <br><span class="nota-discreta">Troca #{{ $ocorrencia->troca_movimentacao_id }}</span>
+                                @endif
+                            </td>
+                            <td>{{ $ocorrencia->valor_cobrado_formatado ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="secao-texto">
+        <h2 class="subtitulo-secao">
+            Histórico de termos de responsabilidade e troca
         </h2>
 
         @if ($listaMovimentacoesResponsabilidade->isEmpty())
@@ -206,6 +250,9 @@
                             <td>
                                 @if ($movimentacao)
                                     #{{ $movimentacao->id }}
+                                    @if ($movimentacao->tipo_movimentacao === \App\Models\Movimentacao::TIPO_TROCA)
+                                        <br><span class="nota-discreta">Troca</span>
+                                    @endif
                                 @else
                                     -
                                 @endif

@@ -2,18 +2,10 @@
  * Cadastro/edição de equipamento: mostra a ficha técnica da categoria do tipo escolhido.
  * As fichas das outras categorias ficam ocultas e desabilitadas (não são enviadas nem validadas pelo navegador).
  */
-import { maskChaveNfe, maskDigitos, maskMoeda } from '../util/masks';
-
-const MASCARAS = { moeda: maskMoeda, digitos: maskDigitos, 'chave-nfe': maskChaveNfe };
+import { aplicarMascaras } from '../util/data-mascara';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Campos com data-mascara: aceitam só números e formatam enquanto digita.
-    document.querySelectorAll('[data-mascara]').forEach((campo) => {
-        const mascara = MASCARAS[campo.dataset.mascara];
-        if (!mascara) return;
-        campo.addEventListener('input', () => { campo.value = mascara(campo.value); });
-        if (campo.value) campo.value = mascara(campo.value);
-    });
+    aplicarMascaras();
 
     const selectTipo = document.getElementById('tipo_equipamento_id');
     if (!selectTipo) return;

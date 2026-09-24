@@ -19,6 +19,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - **Termos e relatório por funcionário** identificam cada equipamento por tipo, fabricante/modelo, identificação interna e um resumo técnico (configuração do computador, IMEI do celular...).
 - **Relatório de histórico** com dados de aquisição e a **ficha técnica completa**.
 - Componente `x-form.checkbox-group` para escolhas múltiplas.
+- **Ocorrências de equipamento** (#10): problema reportado, data do problema, último usuário, previsão, liberação pela TI, solução, canal e protocolo do chamado (GLPI, PagBank, Cielo...), valor cobrado do colaborador e observação. Equipamento com a TI vai para "Em manutenção" e volta para "Disponível" na liberação; com um funcionário, continua "Em uso". Listagem com filtro de abertas/resolvidas, ocorrências na ficha e no relatório de histórico do equipamento, e valores cobrados no relatório do funcionário (DP).
+- **Termo de troca** (#10): substitui um equipamento em uso por outro disponível, para o mesmo funcionário, em uma só movimentação. Troca interna (o antigo vai para manutenção, defeituoso ou disponível) ou pelo fornecedor (o antigo recebe o novo status **Baixado**). A identificação interna (ex.: CELUR01) pode passar para o substituto. PDF do termo de troca, envio do termo assinado, eventos "Troca" na linha do tempo e vínculo com a ocorrência que originou a troca.
 - **Tema escuro** (#3), com botão na barra superior que alterna entre claro, escuro e o tema do sistema (padrão). A escolha fica salva no navegador, é aplicada antes de a página aparecer (sem piscar) e segue a mudança de preferência do sistema. Cores com contraste WCAG AA; relatórios PDF continuam no claro.
 - **Integração contínua** (GitHub Actions): a suíte de testes roda a cada push em `main`/`develop` e em cada PR, com MySQL 8 (#8).
 - Testes de ficha técnica, documentos, linha do tempo e status do equipamento, validações de empresa (CNPJ, CEP, telefone, consulta ao ViaCEP) e regra de CNPJ.
@@ -37,6 +39,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 php artisan migrate
 npm run build
 ```
+Migrations novas: categoria do tipo, campos de identificação e aquisição do equipamento, fichas técnicas por categoria, status "Baixado", tipo de movimentação "troca" e tabela `ocorrencias`.
 Os tipos existentes são classificados pelo nome (ex.: "Monitor" → Monitor; sem correspondência → Genérico). Equipamentos já cadastrados continuam válidos e pedem fabricante, modelo e ficha técnica na próxima edição.
 
 ## [1.1.0] - 2026-09-24

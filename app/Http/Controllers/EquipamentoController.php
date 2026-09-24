@@ -149,7 +149,10 @@ class EquipamentoController extends Controller
      */
     public function show(Equipamento $equipamento)
     {
-        $equipamento->load(['tipoEquipamento', 'computador', 'monitor', 'impressora', 'dispositivoMovel']);
+        $equipamento->load([
+            'tipoEquipamento', 'computador', 'monitor', 'impressora', 'dispositivoMovel',
+            'ocorrencias' => fn ($consulta) => $consulta->latest('reportado_em')->latest('id'),
+        ]);
 
         return view('equipamentos.show', compact('equipamento'));
     }

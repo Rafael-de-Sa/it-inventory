@@ -108,10 +108,35 @@
 
         <x-form.readonly id="descricao" label="Observação" :value="$equipamento->descricao" multiline />
 
+        <x-table title="Ocorrências" :headers="['Nº', 'Reportado em', 'Problema', 'Chamado', 'Situação', '']">
+            @forelse ($equipamento->ocorrencias as $ocorrencia)
+                <x-table.row>
+                    <x-table.cell>{{ $ocorrencia->id }}</x-table.cell>
+                    <x-table.cell>{{ $ocorrencia->reportado_em->format('d/m/Y') }}</x-table.cell>
+                    <x-table.cell class="text-left">{{ $ocorrencia->problema }}</x-table.cell>
+                    <x-table.cell>{{ $ocorrencia->chamado ?? '—' }}</x-table.cell>
+                    <x-table.cell>
+                        <x-ui.badge :tone="$ocorrencia->estaAberta() ? 'warning' : 'success'">{{ $ocorrencia->situacao_rotulo }}</x-ui.badge>
+                    </x-table.cell>
+                    <x-table.actions :show="route('ocorrencias.show', $ocorrencia)" />
+                </x-table.row>
+            @empty
+                <x-table.empty :colspan="6">Nenhuma ocorrência registrada para este equipamento.</x-table.empty>
+            @endforelse
+        </x-table>
+
         <x-form.actions>
             <x-ui.button :href="route('equipamentos.index')" icon="fa-solid fa-arrow-left">Voltar</x-ui.button>
 
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
+                @unless (in_array($equipamento->status, ['baixado', 'descartado'], true))
+                    <x-ui.button :href="route('ocorrencias.create', ['equipamento_id' => $equipamento->id])"
+                        icon="fa-solid fa-triangle-exclamation">Registrar ocorrência</x-ui.button>
+                @endunless
+                @if ($equipamento->status === 'em_uso')
+                    <x-ui.button :href="route('movimentacoes.troca.create', ['equipamento_id' => $equipamento->id])"
+                        icon="fa-solid fa-right-left">Trocar</x-ui.button>
+                @endif
                 <x-ui.button :href="route('relatorios.equipamentos.historico', $equipamento)" target="_blank"
                     rel="noopener noreferrer" icon="fa-solid fa-clock-rotate-left">Histórico</x-ui.button>
                 <x-ui.button :href="route('equipamentos.edit', $equipamento)" icon="fa-solid fa-pen-to-square">Editar</x-ui.button>

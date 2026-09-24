@@ -16,6 +16,8 @@ export default defineConfig({
                 'resources/js/movimentacoes/movimentacao-devolucao-form.js',
                 'resources/js/movimentacoes/movimentacao-filtros.js',
                 'resources/js/movimentacoes/movimentacao-form.js',
+                'resources/js/movimentacoes/troca-form.js',
+                'resources/js/ocorrencias/ocorrencia-form.js',
                 'resources/js/usuarios/usuario-form.js',
             ],
             refresh: true,

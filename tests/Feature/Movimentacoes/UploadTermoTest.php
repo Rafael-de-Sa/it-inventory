@@ -84,7 +84,7 @@ class UploadTermoTest extends TestCase
         $devolucao = Movimentacao::factory()->devolucao()->create();
 
         $this->enviarResponsabilidade($devolucao)
-            ->assertSessionHasErrors(['arquivo_termo' => 'Esta movimentação não é um termo de responsabilidade.']);
+            ->assertSessionHasErrors(['arquivo_termo' => 'Esta movimentação não é um termo de responsabilidade nem de troca.']);
     }
 
     public function test_termo_de_devolucao_encerra_a_devolucao(): void

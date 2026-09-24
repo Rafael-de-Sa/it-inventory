@@ -19,12 +19,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - **Termos e relatório por funcionário** identificam cada equipamento por tipo, fabricante/modelo, identificação interna e um resumo técnico (configuração do computador, IMEI do celular...).
 - **Relatório de histórico** com dados de aquisição e a **ficha técnica completa**.
 - Componente `x-form.checkbox-group` para escolhas múltiplas.
+- **Tema escuro** (#3), com botão na barra superior que alterna entre claro, escuro e o tema do sistema (padrão). A escolha fica salva no navegador, é aplicada antes de a página aparecer (sem piscar) e segue a mudança de preferência do sistema. Cores com contraste WCAG AA; relatórios PDF continuam no claro.
 - **Integração contínua** (GitHub Actions): a suíte de testes roda a cada push em `main`/`develop` e em cada PR, com MySQL 8 (#8).
 - Testes de ficha técnica, documentos, linha do tempo e status do equipamento, validações de empresa (CNPJ, CEP, telefone, consulta ao ViaCEP) e regra de CNPJ.
 
 ### Alterado
 - A descrição do equipamento passa a ser uma **observação opcional**. Listagens, termos e relatórios exibem "fabricante + modelo" (ou a descrição, nos cadastros anteriores).
 - A categoria de um tipo fica travada quando já existem equipamentos desse tipo.
+- A paginação das listagens passa a usar a view do projeto (`resources/views/vendor/pagination/tailwind.blade.php`), com as cores do tema.
 
 ### Corrigido
 - Cadastro de tipo de equipamento falhava ao normalizar o nome.

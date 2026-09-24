@@ -10,7 +10,7 @@
     $classes = [
         'inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors',
         'text-red-600 hover:bg-red-50 hover:text-red-700' => $variant === 'danger',
-        'text-ink-subtle hover:bg-brand-50 hover:text-brand-700' => $variant !== 'danger',
+        'text-ink-subtle hover:bg-brand-50 hover:text-brand-700 dark:hover:text-brand-300' => $variant !== 'danger',
     ];
 @endphp
 

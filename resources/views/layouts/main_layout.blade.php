@@ -7,6 +7,16 @@
     <title>@yield('title', 'IT Inventory')</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo-teste-icon2.png') }}">
 
+    {{-- Aplica o tema antes da pintura, sem piscar o claro. Botão e escolha: resources/js/layout/tema.js --}}
+    <script>
+        (function () {
+            var tema = 'sistema';
+            try { tema = localStorage.getItem('tema') || 'sistema'; } catch (e) {}
+            var escuro = tema === 'escuro' || (tema !== 'claro' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.toggle('dark', escuro);
+        })();
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://kit.fontawesome.com/c89f8cd936.js" crossorigin="anonymous"></script>
 </head>

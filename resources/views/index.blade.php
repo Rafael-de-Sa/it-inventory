@@ -28,7 +28,7 @@
             </span>
 
             <h1 class="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-                Boas-vindas ao <span class="text-brand-700">IT Inventory</span>
+                Boas-vindas ao <span class="text-brand-700 dark:text-brand-400">IT Inventory</span>
             </h1>
 
             <p class="max-w-2xl text-sm leading-relaxed text-ink-muted md:text-base">
@@ -40,7 +40,7 @@
             <div class="grid w-full max-w-3xl grid-cols-1 gap-4 pt-2 sm:grid-cols-3">
                 @foreach ($areas as $area)
                     <div class="rounded-lg border border-line bg-surface-muted p-4 text-left">
-                        <span class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-600/15">
+                        <span class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-600/15 dark:text-brand-300">
                             <i class="{{ $area['icone'] }}" aria-hidden="true"></i>
                         </span>
                         <p class="text-sm font-semibold text-ink">{{ $area['titulo'] }}</p>

@@ -28,57 +28,68 @@
                 <span class="text-base font-semibold tracking-tight text-ink">IT Inventory</span>
             </a>
 
-            @unless (Route::is('login'))
-                {{-- Desktop --}}
-                <nav class="hidden items-center gap-1 md:flex" aria-label="Menu principal">
-                    @foreach ($menu as $item)
-                        @isset($item['itens'])
-                            <div class="relative" data-dropdown>
-                                <button type="button" data-dropdown-button aria-haspopup="menu" aria-expanded="false"
-                                    @class([$linkTopo, 'cursor-pointer', $estaAtivo($item) ? $linkTopoAtivo : $linkTopoInativo])>
-                                    <i class="{{ $item['icone'] }} text-xs" aria-hidden="true"></i> {{ $item['rotulo'] }}
-                                    <i class="fa-solid fa-chevron-down text-[10px] opacity-70" aria-hidden="true"></i>
-                                </button>
+            <div class="flex items-center gap-1">
+                @unless (Route::is('login'))
+                    {{-- Desktop --}}
+                    <nav class="hidden items-center gap-1 md:flex" aria-label="Menu principal">
+                        @foreach ($menu as $item)
+                            @isset($item['itens'])
+                                <div class="relative" data-dropdown>
+                                    <button type="button" data-dropdown-button aria-haspopup="menu" aria-expanded="false"
+                                        @class([$linkTopo, 'cursor-pointer', $estaAtivo($item) ? $linkTopoAtivo : $linkTopoInativo])>
+                                        <i class="{{ $item['icone'] }} text-xs" aria-hidden="true"></i> {{ $item['rotulo'] }}
+                                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70" aria-hidden="true"></i>
+                                    </button>
 
-                                <div class="invisible absolute right-0 z-20 mt-2 w-60 rounded-lg border border-line bg-surface p-1 opacity-0 shadow-lg transition-all pointer-events-none"
-                                    data-dropdown-menu role="menu">
-                                    @foreach ($item['itens'] as $subitem)
-                                        @php $subitemAtivo = request()->routeIs($subitem['ativo']); @endphp
-                                        <a href="{{ route($subitem['rota']) }}" role="menuitem"
-                                            @if ($subitemAtivo) aria-current="page" @endif
-                                            @class([
-                                                'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
-                                                'bg-brand-50 font-medium text-brand-800' => $subitemAtivo,
-                                                'text-ink hover:bg-surface-muted' => !$subitemAtivo,
-                                            ])>
-                                            <i class="{{ $subitem['icone'] }} w-4 text-center text-xs {{ $subitemAtivo ? '' : 'text-ink-subtle' }}" aria-hidden="true"></i>
-                                            {{ $subitem['rotulo'] }}
-                                        </a>
-                                    @endforeach
+                                    <div class="invisible absolute right-0 z-20 mt-2 w-60 rounded-lg border border-line bg-surface p-1 opacity-0 shadow-lg transition-all pointer-events-none"
+                                        data-dropdown-menu role="menu">
+                                        @foreach ($item['itens'] as $subitem)
+                                            @php $subitemAtivo = request()->routeIs($subitem['ativo']); @endphp
+                                            <a href="{{ route($subitem['rota']) }}" role="menuitem"
+                                                @if ($subitemAtivo) aria-current="page" @endif
+                                                @class([
+                                                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+                                                    'bg-brand-50 font-medium text-brand-800' => $subitemAtivo,
+                                                    'text-ink hover:bg-surface-muted' => !$subitemAtivo,
+                                                ])>
+                                                <i class="{{ $subitem['icone'] }} w-4 text-center text-xs {{ $subitemAtivo ? '' : 'text-ink-subtle' }}" aria-hidden="true"></i>
+                                                {{ $subitem['rotulo'] }}
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                        @else
-                            <a href="{{ route($item['rota']) }}" @if ($estaAtivo($item)) aria-current="page" @endif
-                                @class([$linkTopo, $estaAtivo($item) ? $linkTopoAtivo : $linkTopoInativo])>
-                                <i class="{{ $item['icone'] }} text-xs" aria-hidden="true"></i> {{ $item['rotulo'] }}
-                            </a>
-                        @endisset
-                    @endforeach
+                            @else
+                                <a href="{{ route($item['rota']) }}" @if ($estaAtivo($item)) aria-current="page" @endif
+                                    @class([$linkTopo, $estaAtivo($item) ? $linkTopoAtivo : $linkTopoInativo])>
+                                    <i class="{{ $item['icone'] }} text-xs" aria-hidden="true"></i> {{ $item['rotulo'] }}
+                                </a>
+                            @endisset
+                        @endforeach
 
-                    <span class="mx-2 h-6 w-px bg-line" aria-hidden="true"></span>
+                        <span class="mx-2 h-6 w-px bg-line" aria-hidden="true"></span>
 
-                    <a href="{{ route('logout') }}" title="Encerrar sessão" @class([$linkTopo, $linkTopoInativo])>
-                        <i class="fa-solid fa-arrow-right-from-bracket text-xs" aria-hidden="true"></i> Sair
-                    </a>
-                </nav>
+                        <a href="{{ route('logout') }}" title="Encerrar sessão" @class([$linkTopo, $linkTopoInativo])>
+                            <i class="fa-solid fa-arrow-right-from-bracket text-xs" aria-hidden="true"></i> Sair
+                        </a>
+                    </nav>
 
-                {{-- Mobile: botão do menu --}}
-                <button type="button" id="btn-mobile" aria-controls="mobile-menu" aria-expanded="false"
-                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-ink-muted hover:bg-surface-muted hover:text-ink md:hidden">
-                    <span class="sr-only">Abrir menu</span>
-                    <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+                    {{-- Mobile: botão do menu --}}
+                    <button type="button" id="btn-mobile" aria-controls="mobile-menu" aria-expanded="false"
+                        class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-ink-muted hover:bg-surface-muted hover:text-ink md:hidden">
+                        <span class="sr-only">Abrir menu</span>
+                        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+                    </button>
+                @endunless
+
+                {{-- Tema: claro → escuro → sistema (resources/js/layout/tema.js) --}}
+                <button type="button" data-tema-alternar aria-label="Alterar tema" title="Alterar tema"
+                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink">
+                    {{-- Um ícone por opção: o Font Awesome troca o <i> por <svg>, então alterna-se a visibilidade. --}}
+                    <span data-tema-icone="claro" class="hidden" aria-hidden="true"><i class="fa-solid fa-sun"></i></span>
+                    <span data-tema-icone="escuro" class="hidden" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
+                    <span data-tema-icone="sistema" aria-hidden="true"><i class="fa-solid fa-desktop"></i></span>
                 </button>
-            @endunless
+            </div>
         </div>
     </div>
 

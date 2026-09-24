@@ -22,7 +22,7 @@
             <x-form.grid>
                 <x-form.readonly id="cep" label="CEP" :value="\App\Support\Mask::cep($empresa->cep)"
                     wrapper-class="md:col-span-3" />
-                <x-form.readonly id="rua" label="Logradouro" :value="$empresa->rua" wrapper-class="md:col-span-9" />
+                <x-form.readonly id="logradouro" label="Logradouro" :value="$empresa->logradouro" wrapper-class="md:col-span-9" />
                 <x-form.readonly id="numero" label="Número" :value="$empresa->numero" wrapper-class="md:col-span-3" />
                 <x-form.readonly id="bairro" label="Bairro" :value="$empresa->bairro" wrapper-class="md:col-span-4" />
                 <x-form.readonly id="complemento" label="Complemento" :value="$empresa->complemento"

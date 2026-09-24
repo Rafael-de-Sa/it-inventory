@@ -16,7 +16,7 @@ class EnderecoResource extends JsonResource
     {
         return [
             'cep' => (string) data_get($this->resource, 'cep'),
-            'rua' => (string) data_get($this->resource, 'rua'),
+            'logradouro' => (string) data_get($this->resource, 'logradouro'),
             'bairro' => (string) data_get($this->resource, 'bairro'),
             'cidade' => (string) data_get($this->resource, 'cidade'),
             'estado' => (string) strtoupper((string) data_get($this->resource, 'estado')),

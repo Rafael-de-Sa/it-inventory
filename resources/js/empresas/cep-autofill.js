@@ -8,8 +8,8 @@ function setDisabled(inputs, disabled) {
     inputs.forEach((el) => el && (el.disabled = disabled));
 }
 
-function setValues({ rua, bairro, cidade, estado }, els) {
-    if (els.rua) els.rua.value = rua || '';
+function setValues({ logradouro, bairro, cidade, estado }, els) {
+    if (els.logradouro) els.logradouro.value = logradouro || '';
     if (els.bairro) els.bairro.value = bairro || '';
     if (els.cidade) els.cidade.value = cidade || '';
     if (els.estado) els.estado.value = (estado || '').toUpperCase();
@@ -55,7 +55,7 @@ export function initCepAutofill() {
     const endpointTemplate = form.dataset.cepEndpoint || '';
 
     const elCep = document.getElementById('cep');
-    const elRua = document.getElementById('rua');
+    const elLogradouro = document.getElementById('logradouro');
     const elBairro = document.getElementById('bairro');
     const elCidade = document.getElementById('cidade');
     const elEstado = document.getElementById('estado');
@@ -63,7 +63,7 @@ export function initCepAutofill() {
 
     if (!elCep || !endpointTemplate) return;
 
-    const addressEls = [elRua, elBairro, elCidade, elEstado];
+    const addressEls = [elLogradouro, elBairro, elCidade, elEstado];
 
     const run = async () => {
         const cep8 = onlyDigits(elCep.value).slice(0, 8);
@@ -77,7 +77,7 @@ export function initCepAutofill() {
 
         try {
             const data = await fetchEndereco(endpointTemplate, cep8);
-            setValues(data, { rua: elRua, bairro: elBairro, cidade: elCidade, estado: elEstado });
+            setValues(data, { logradouro: elLogradouro, bairro: elBairro, cidade: elCidade, estado: elEstado });
             setHelpMessage(elHelp, 'Endereço preenchido automaticamente. Confira os dados.', false);
         } catch (e) {
             setHelpMessage(elHelp, e.message || 'Não foi possível buscar o CEP.', true);

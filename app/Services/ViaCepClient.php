@@ -10,13 +10,14 @@ class ViaCepClient
 {
 
     /*
-     * @return array{cep:string,rua:string,bairro:string,cidade:string,estado:string}
+     * @return array{cep:string,logradouro:string,bairro:string,cidade:string,estado:string}
      * @throws CepNaoEncontradoException|\Throwable
      */
     public function buscar(string $cep): array
     {
         $cep = preg_replace('/\D+/', '', $cep);
-        $key = "viacep:{$cep}";
+        // v2: formato com "logradouro" (antes "rua"); invalida o cache antigo.
+        $key = "viacep:v2:{$cep}";
 
         return Cache::remember($key, now()->addDay(), function () use ($cep) {
             $resp = Http::baseUrl('https://viacep.com.br/ws')
@@ -33,11 +34,11 @@ class ViaCepClient
             }
 
             return [
-                'cep'    => preg_replace('/\D+/', '', (string)($data['cep'] ?? $cep)),
-                'rua'    => (string)($data['logradouro'] ?? ''),
-                'bairro' => (string)($data['bairro'] ?? ''),
-                'cidade' => (string)($data['localidade'] ?? ''),
-                'estado' => strtoupper((string)($data['uf'] ?? '')),
+                'cep'        => preg_replace('/\D+/', '', (string)($data['cep'] ?? $cep)),
+                'logradouro' => (string)($data['logradouro'] ?? ''),
+                'bairro'     => (string)($data['bairro'] ?? ''),
+                'cidade'     => (string)($data['localidade'] ?? ''),
+                'estado'     => strtoupper((string)($data['uf'] ?? '')),
             ];
         });
     }

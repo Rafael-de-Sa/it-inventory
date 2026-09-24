@@ -16,9 +16,8 @@
             placeholder="87500-000" autocomplete="postal-code" :value="$empresa?->cep" help="Formato: 00000-000"
             wrapper-class="md:col-span-3" />
 
-        {{-- Campo "rua" será renomeado para "logradouro" em todo o sistema em um commit separado. --}}
-        <x-form.input name="rua" label="Logradouro" required maxlength="100" autocomplete="address-line1"
-            placeholder="Av. Paraná" :value="$empresa?->rua" help="Ex.: Av. Paraná" wrapper-class="md:col-span-9" />
+        <x-form.input name="logradouro" label="Logradouro" required maxlength="100" autocomplete="address-line1"
+            placeholder="Av. Paraná" :value="$empresa?->logradouro" help="Ex.: Av. Paraná" wrapper-class="md:col-span-9" />
 
         <x-form.input name="numero" label="Número" required inputmode="numeric" maxlength="8" placeholder="1234"
             autocomplete="address-line2" :value="$empresa?->numero" help="Ex.: 1234" wrapper-class="md:col-span-3" />

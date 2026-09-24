@@ -15,7 +15,7 @@
 
         $cnpjFormatado = !empty($empresaFuncionario?->cnpj) ? Mask::cnpj($empresaFuncionario->cnpj) : null;
 
-        $rua = $empresaFuncionario->rua ?? null;
+        $logradouro = $empresaFuncionario->logradouro ?? null;
         $numero = $empresaFuncionario->numero ?? null;
         $bairro = $empresaFuncionario->bairro ?? null;
         $cidade = $empresaFuncionario->cidade ?? null;
@@ -23,8 +23,8 @@
 
         $partesEndereco = [];
 
-        if (!empty($rua)) {
-            $partesEndereco[] = $rua . (!empty($numero) ? ', ' . $numero : '');
+        if (!empty($logradouro)) {
+            $partesEndereco[] = $logradouro . (!empty($numero) ? ', ' . $numero : '');
         } elseif (!empty($numero)) {
             $partesEndereco[] = 'Nº ' . $numero;
         }

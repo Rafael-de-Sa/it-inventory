@@ -9,7 +9,7 @@
 
     $cpfFormatado = !empty($funcionario->cpf) ? Mask::cpf($funcionario->cpf) : null;
 
-    $rua = $empresaFuncionario->rua ?? null;
+    $logradouro = $empresaFuncionario->logradouro ?? null;
     $numero = $empresaFuncionario->numero ?? null;
     $bairro = $empresaFuncionario->bairro ?? null;
     $cidade = $empresaFuncionario->cidade ?? null;
@@ -17,8 +17,8 @@
 
     $enderecoPartes = [];
 
-    if (!empty($rua)) {
-        $enderecoPartes[] = $rua;
+    if (!empty($logradouro)) {
+        $enderecoPartes[] = $logradouro;
     }
 
     if (!empty($numero)) {

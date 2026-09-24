@@ -161,6 +161,12 @@
             text-align: left;
         }
 
+        .nota-discreta {
+            font-size: 9px;
+            font-style: italic;
+            color: #52525b;
+        }
+
         .tabela-equipamentos tbody tr:nth-child(even) {
             background-color: #fafafa;
         }

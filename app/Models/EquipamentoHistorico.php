@@ -31,7 +31,9 @@ class EquipamentoHistorico extends Model
         'ocorrido_em',
     ];
 
+    /** `reconstruido`: evento anterior à linha do tempo, montado a partir dos dados já existentes (sem usuário). */
     protected $casts = [
+        'reconstruido' => 'boolean',
         'ocorrido_em' => 'datetime',
         'criado_em' => 'datetime',
     ];

@@ -123,7 +123,13 @@
                             <td class="texto-esquerda">
                                 {{ $evento->usuario?->funcionario?->nome_completo ?? ($evento->usuario?->email ?? '-') }}
                             </td>
-                            <td class="texto-esquerda">{{ $evento->observacao ?? '-' }}</td>
+                            <td class="texto-esquerda">
+                                {{ $evento->observacao ?? ($evento->reconstruido ? '' : '-') }}
+                                @if ($evento->reconstruido)
+                                    @if ($evento->observacao)<br>@endif
+                                    <span class="nota-discreta">Registro anterior ao histórico</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

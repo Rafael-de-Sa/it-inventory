@@ -28,7 +28,7 @@
             help="Campo opcional para complementar o termo de responsabilidade." />
 
         <section class="space-y-4">
-            <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos*</h3>
+            <h3 class="text-lg font-semibold tracking-tight text-ink">Seleção de Equipamentos<span class="text-red-600" aria-hidden="true">*</span></h3>
 
             <x-form.grid class="items-end">
                 <x-form.input name="busca_equipamento" label="Busca equipamento"

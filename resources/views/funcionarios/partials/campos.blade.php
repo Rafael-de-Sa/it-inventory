@@ -28,7 +28,7 @@
     {{-- "**": obrigatória só para funcionários próprios; o JS desabilita quando "Terceirizado" é marcado. --}}
     <x-form.input name="matricula" label="Matrícula**" maxlength="8" inputmode="numeric" pattern="\d*"
         autocomplete="off" placeholder="Somente números" :value="$funcionario?->matricula"
-        help="**Obrigatório quando não é terceirizado" class="disabled:cursor-not-allowed disabled:bg-gray-300"
+        help="**Obrigatório quando não é terceirizado" class="disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-ink-subtle"
         wrapper-class="md:col-span-6" />
 
     <x-form.input name="telefone" label="Telefone" mask="telefone" placeholder="(44) 99999-0000"

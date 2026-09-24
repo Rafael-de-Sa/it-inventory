@@ -11,11 +11,15 @@
     <script src="https://kit.fontawesome.com/c89f8cd936.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-green-950 text-white font-inter min-h-screen flex flex-col">
+<body class="flex min-h-screen flex-col">
+    <a href="#conteudo"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg">
+        Pular para o conteúdo
+    </a>
 
     @include('layouts.top_bar')
 
-    <main class="flex-1 p-6 w-full">
+    <main id="conteudo" class="w-full flex-1 px-4 py-8 sm:px-6">
         @foreach (['success', 'error'] as $type)
             @if (session($type))
                 <x-ui.flash :type="$type" :message="session($type)" />
@@ -25,7 +29,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-green-900 text-center text-sm p-4">
+    <footer class="border-t border-line bg-surface px-4 py-4 text-center text-xs text-ink-muted">
         &copy; {{ date('Y') }} IT Inventory. Todos os direitos reservados.
     </footer>
 

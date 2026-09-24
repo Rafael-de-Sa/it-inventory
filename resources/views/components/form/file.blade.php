@@ -13,6 +13,6 @@
 <x-form.field :label="$label" :for="$id" :error-key="$name" :help="$help" :required="$required" :class="$wrapperClass">
     <input id="{{ $id }}" name="{{ $name }}" type="file" @required($required) aria-describedby="{{ $id }}_help"
         {{ $attributes->class(
-            'block w-full cursor-pointer text-sm text-green-50 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-green-700 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-green-600'
+            'block w-full cursor-pointer rounded-lg border border-line-strong bg-surface text-sm text-ink-muted file:mr-3 file:cursor-pointer file:border-0 file:border-r file:border-line file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-brand-800 hover:file:bg-brand-100'
         ) }}>
 </x-form.field>

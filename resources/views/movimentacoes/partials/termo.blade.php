@@ -4,9 +4,9 @@
                $textoUpload, $rotuloGerar, $rotuloUpload, $rotuloVisualizar, $tituloEnviado.
 --}}
 <section class="space-y-4">
-    <h3 class="text-lg font-semibold tracking-wide">{{ $titulo }}</h3>
+    <h3 class="text-lg font-semibold tracking-tight text-ink">{{ $titulo }}</h3>
 
-    <div class="space-y-6 rounded-2xl border border-green-800 bg-green-900/40 p-6">
+    <div class="space-y-6 rounded-xl border border-line bg-surface-muted p-6">
         @if (!$enviado)
             <div class="grid gap-6 md:grid-cols-2 md:items-start">
                 <form id="{{ $formId }}" method="POST" action="{{ $rotaUpload }}" enctype="multipart/form-data">
@@ -25,8 +25,8 @@
         @else
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-green-100">{{ $tituloEnviado }}</p>
-                    <p class="text-xs text-green-200">
+                    <p class="text-sm font-medium text-ink">{{ $tituloEnviado }}</p>
+                    <p class="text-sm text-ink-muted">
                         Já existe um termo enviado para esta movimentação. Não é permitido enviar um novo arquivo.
                     </p>
                 </div>
@@ -35,7 +35,7 @@
             </div>
         @endif
 
-        <div class="border-t border-green-800 pt-4">
+        <div class="border-t border-line pt-4">
             <x-ui.button :href="route('movimentacoes.index')" icon="fa-solid fa-arrow-left" class="text-sm">Voltar</x-ui.button>
         </div>
     </div>

@@ -39,8 +39,8 @@
 
         <section class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <h3 class="text-lg font-semibold text-green-100">Equipamentos em uso pelo funcionário</h3>
-                <p class="text-xs text-green-200/80">
+                <h3 class="text-lg font-semibold tracking-tight text-ink">Equipamentos em uso pelo funcionário</h3>
+                <p class="text-sm text-ink-muted">
                     Selecione os equipamentos que serão devolvidos e descreva o estado de devolução.
                 </p>
             </div>
@@ -50,13 +50,13 @@
                 hint="A lista é carregada após selecionar o funcionário.">
                 <x-slot:head>
                     <th class="w-12 px-4 py-2"><span class="sr-only">Selecionar</span></th>
-                    <th class="px-4 py-2">ID</th>
-                    <th class="px-4 py-2">Patrimônio</th>
-                    <th class="px-4 py-2">Número de Série</th>
-                    <th class="px-4 py-2">Descrição</th>
-                    <th class="px-4 py-2">Tipo</th>
-                    <th class="px-4 py-2">Motivo da devolução</th>
-                    <th class="px-4 py-2">Observação da devolução</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">ID</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Patrimônio</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Número de Série</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Descrição</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Tipo</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Motivo da devolução</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Observação da devolução</th>
                 </x-slot:head>
                 {{-- Linhas inseridas pelo JS --}}
             </x-table>

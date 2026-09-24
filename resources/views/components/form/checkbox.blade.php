@@ -20,11 +20,11 @@
 <div>
     <label for="{{ $id }}" class="inline-flex cursor-pointer items-center gap-2">
         <input id="{{ $id }}" name="{{ $name }}" type="checkbox" value="{{ $value }}" @checked($isChecked)
-            {{ $attributes->class('h-5 w-5 rounded border border-green-700 disabled:cursor-not-allowed disabled:opacity-60') }}>
-        <span class="text-sm">{{ $label }}</span>
+            {{ $attributes->class('h-4 w-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60') }}>
+        <span class="text-sm text-ink">{{ $label }}</span>
     </label>
 
     @error($name)
-        <p class="mt-1 text-xs text-red-300">{{ $message }}</p>
+        <p class="mt-1.5 text-xs font-medium text-red-700">{{ $message }}</p>
     @enderror
 </div>

@@ -11,7 +11,7 @@
 ])
 
 <x-table.cell>
-    <div class="inline-flex items-center gap-2">
+    <div class="inline-flex items-center gap-1">
         @if ($show)
             <x-ui.icon-button :href="$show" icon="fa-solid fa-eye" label="Exibir" />
         @endif

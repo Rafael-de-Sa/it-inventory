@@ -22,29 +22,29 @@
     @endphp
 
     <x-ui.card size="lg">
-        <div class="flex flex-col items-center space-y-6 text-center">
-            <h1 class="text-3xl font-semibold leading-snug tracking-wide md:text-4xl">
-                <span class="block">Boas-vindas ao</span>
-                <span class="block text-green-300 md:inline">IT Inventory</span>
-                <span class="block md:inline">– Sistema de Gestão de Ativos de TI</span>
+        <div class="flex flex-col items-center space-y-6 py-4 text-center">
+            <span class="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 ring-1 ring-brand-600/20 ring-inset">
+                <i class="fa-solid fa-laptop" aria-hidden="true"></i> Gestão de Ativos de TI
+            </span>
+
+            <h1 class="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+                Boas-vindas ao <span class="text-brand-700">IT Inventory</span>
             </h1>
 
-            <p class="max-w-2xl text-sm text-green-100 md:text-base">
+            <p class="max-w-2xl text-sm leading-relaxed text-ink-muted md:text-base">
                 Utilize o sistema para cadastrar empresas, setores, funcionários, usuários e equipamentos,
                 controlar as movimentações de entrega e devolução e gerar os termos de responsabilidade
                 de forma centralizada e padronizada.
             </p>
 
-            <div class="mt-4 grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="grid w-full max-w-3xl grid-cols-1 gap-4 pt-2 sm:grid-cols-3">
                 @foreach ($areas as $area)
-                    <div class="rounded-xl border border-green-800/80 bg-green-900/40 px-4 py-3 text-left sm:text-center">
-                        <div class="flex items-center gap-3 sm:flex-col">
-                            <i class="{{ $area['icone'] }} text-lg md:text-xl" aria-hidden="true"></i>
-                            <div class="space-y-1">
-                                <p class="text-xs uppercase tracking-wide text-green-200">{{ $area['titulo'] }}</p>
-                                <p class="text-sm text-green-50">{{ $area['texto'] }}</p>
-                            </div>
-                        </div>
+                    <div class="rounded-lg border border-line bg-surface-muted p-4 text-left">
+                        <span class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-600/15">
+                            <i class="{{ $area['icone'] }}" aria-hidden="true"></i>
+                        </span>
+                        <p class="text-sm font-semibold text-ink">{{ $area['titulo'] }}</p>
+                        <p class="mt-1 text-sm leading-relaxed text-ink-muted">{{ $area['texto'] }}</p>
                     </div>
                 @endforeach
             </div>

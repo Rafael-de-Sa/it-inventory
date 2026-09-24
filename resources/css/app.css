@@ -6,38 +6,89 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/*
+ * Tema escuro por classe (.dark), não pela preferência do sistema:
+ * o projeto usa só o tema claro por enquanto (ver issue #3) e isso evita
+ * que views de terceiros (ex.: paginação) mudem de cor sozinhas.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-    --color-page: #052e16;
-    --color-surface: #14532d;
-    --color-line: #166534;
-    --color-line-strong: #15803d;
-    --color-primary: #15803d;
-    --color-primary-hover: #16a34a;
-    --color-label: #dcfce7;
-    --color-muted: #bbf7d0;
+
+    /*
+     * Cor de destaque (brand): botões principais, links ativos, foco e seleção.
+     * Valores da paleta "green" do Tailwind. Para trocar a cor do sistema,
+     * substitua esta escala pela de outra paleta (ex.: emerald, teal, blue):
+     * https://tailwindcss.com/docs/colors
+     */
+    --color-brand-50: oklch(98.2% 0.018 155.826);
+    --color-brand-100: oklch(96.2% 0.044 156.743);
+    --color-brand-200: oklch(92.5% 0.084 155.995);
+    --color-brand-300: oklch(87.1% 0.15 154.449);
+    --color-brand-400: oklch(79.2% 0.209 151.711);
+    --color-brand-500: oklch(72.3% 0.219 149.579);
+    --color-brand-600: oklch(62.7% 0.194 149.214);
+    --color-brand-700: oklch(52.7% 0.154 150.069);
+    --color-brand-800: oklch(44.8% 0.119 151.328);
+    --color-brand-900: oklch(39.3% 0.095 152.535);
+    --color-brand-950: oklch(26.6% 0.065 152.934);
+
+    /* Neutros (base "zinc"): superfícies, bordas e textos. */
+    --color-page: oklch(97.6% 0.002 286);
+    --color-surface: oklch(100% 0 0);
+    --color-surface-muted: oklch(98.5% 0 0);
+    --color-line: oklch(92% 0.004 286.32);
+    --color-line-strong: oklch(87.1% 0.006 286.286);
+    --color-ink: oklch(21% 0.006 285.885);
+    /* Contraste ≥ 4,5:1 sobre surface e page (WCAG AA). */
+    --color-ink-muted: oklch(44.2% 0.017 285.786);
+    --color-ink-subtle: oklch(55.2% 0.016 285.938);
+}
+
+@layer base {
+    html {
+        color-scheme: light;
+    }
+
+    body {
+        @apply bg-page font-sans text-ink antialiased;
+    }
+
+    /* Foco visível para navegação por teclado. Campos de formulário usam o anel do .form-control. */
+    :where(a, button, summary, [tabindex]):focus-visible {
+        @apply rounded-md outline-2 outline-offset-2 outline-brand-600;
+    }
+
+    input[type='checkbox'],
+    input[type='radio'] {
+        @apply accent-brand-700;
+    }
+
+    input[type='checkbox']:focus-visible,
+    input[type='radio']:focus-visible {
+        @apply outline-2 outline-offset-2 outline-brand-600;
+    }
 }
 
 /* Controles de formulário compartilhados pelos componentes x-form.* */
 @layer components {
     .form-control {
-        @apply w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400 focus:outline-none;
+        @apply w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink shadow-xs placeholder:text-ink-subtle transition-colors focus:border-brand-600 focus:ring-4 focus:ring-brand-600/15 focus:outline-none;
     }
 
     /* Altura fixa: o Chrome ignora o line-height do <select>, que ficava ~3px mais baixo que o <input>. */
     input.form-control,
     select.form-control {
-        @apply h-10.5;
+        @apply h-10;
     }
 
     .form-control-invalid {
-        @apply border-red-500 ring-1 ring-red-400 placeholder-red-300 focus:border-red-400 focus:ring-red-400;
+        @apply border-red-500 focus:border-red-600 focus:ring-red-600/15;
     }
 
     .form-control-readonly {
-        @apply cursor-default bg-gray-300 text-black focus:border-green-700 focus:ring-0;
+        @apply cursor-default border-line bg-surface-muted text-ink-muted shadow-none focus:border-line focus:ring-0;
     }
 }

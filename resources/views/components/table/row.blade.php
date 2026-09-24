@@ -1,3 +1,3 @@
-<tr {{ $attributes->class('border-b border-green-800/30 transition-colors hover:bg-green-800/15') }}>
+<tr {{ $attributes->class('transition-colors hover:bg-surface-muted') }}>
     {{ $slot }}
 </tr>

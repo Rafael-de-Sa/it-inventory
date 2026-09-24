@@ -13,8 +13,6 @@
             </x-slot:subtitle>
         </x-ui.card-header>
 
-        <hr class="border-green-800/50">
-
         <x-form.grid>
             <x-form.readonly label="ID" :value="$funcionario->id" wrapper-class="md:col-span-3" />
             <x-form.active-toggle id="funcionario_ativo" :checked="$funcionario->ativo" disabled
@@ -41,7 +39,7 @@
                 wrapper-class="md:col-span-3" />
         </x-form.grid>
 
-        <div class="space-y-3 border-t border-green-800 pt-4">
+        <div class="space-y-3 border-t border-line pt-5">
             <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <x-ui.button :href="route('funcionarios.index')" icon="fa-solid fa-arrow-left" class="text-sm">
                     Voltar
@@ -110,7 +108,7 @@
                 <form method="POST" action="{{ route('funcionarios.desligar', $funcionario) }}" class="space-y-5">
                     @csrf
 
-                    <p class="text-sm text-green-100">
+                    <p class="text-sm text-ink-muted">
                         O funcionário será marcado como inativo e o usuário vinculado a ele será removido.
                     </p>
 

@@ -16,27 +16,27 @@
     'hint' => null,
 ])
 
-<div {{ $attributes->class('overflow-hidden rounded-xl border border-green-800') }}>
+<div {{ $attributes->class('overflow-hidden rounded-xl border border-line bg-surface shadow-sm') }}>
     @if ($title)
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-green-800/60 px-4 py-2">
-            <span class="text-sm font-medium text-green-100">{{ $title }}</span>
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
+            <span class="text-sm font-semibold text-ink">{{ $title }}</span>
             @if ($hint)
-                <span class="text-xs text-green-200/80">{{ $hint }}</span>
+                <span class="text-xs text-ink-muted">{{ $hint }}</span>
             @endif
         </div>
     @endif
 
     <div class="overflow-x-auto">
-        <table class="min-w-full table-auto text-sm">
-            <thead class="bg-green-900/60 text-center text-green-100">
+        <table class="min-w-full table-auto text-sm text-ink">
+            <thead class="border-b border-line bg-surface-muted text-center text-xs font-semibold tracking-wide text-ink-muted uppercase">
                 <tr>
                     @foreach ($headers as $header)
-                        <th class="px-4 py-2">{{ $header }}</th>
+                        <th scope="col" class="px-4 py-3 font-semibold">{{ $header }}</th>
                     @endforeach
                     {{ $head ?? '' }}
                 </tr>
             </thead>
-            <tbody class="bg-green-950/10">
+            <tbody class="divide-y divide-line">
                 {{ $slot }}
             </tbody>
         </table>

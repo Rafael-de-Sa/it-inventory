@@ -18,8 +18,9 @@ function setValues({ rua, bairro, cidade, estado }, els) {
 function setHelpMessage(el, text, isError = false) {
     if (!el) return;
     el.textContent = text || '';
-    el.classList.toggle('text-red-300', isError);
-    el.classList.toggle('text-green-200', !isError);
+    el.classList.toggle('text-red-700', isError);
+    el.classList.toggle('font-medium', isError);
+    el.classList.toggle('text-ink-muted', !isError);
 }
 
 async function fetchEndereco(endpointTemplate, cep8) {

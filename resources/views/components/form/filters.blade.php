@@ -7,10 +7,10 @@
     'back' => null,
 ])
 
-<form method="GET" {{ $attributes->class('grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12') }}>
+<form method="GET" {{ $attributes->class('grid gap-4 rounded-xl border border-line bg-surface p-4 shadow-sm md:grid-cols-12') }}>
     {{ $slot }}
 
-    <div class="flex flex-wrap items-end justify-between gap-2 md:col-span-12">
+    <div class="flex flex-wrap items-end justify-between gap-2 border-t border-line pt-4 md:col-span-12">
         <x-ui.button :href="$back ?? route('/')" icon="fa-solid fa-arrow-left">Voltar</x-ui.button>
 
         <div class="flex items-end gap-2">

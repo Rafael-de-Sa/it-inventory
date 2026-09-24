@@ -6,14 +6,21 @@
     <title>@yield('titulo_pagina', 'Documento')</title>
 
     <style>
+        /*
+         * Paleta dos PDFs (mesma do sistema; o dompdf não suporta variáveis CSS):
+         *   texto #18181b · texto secundário #52525b · bordas #e4e4e7 · fundo suave #f4f4f5
+         *   destaque (brand) #15803d · destaque escuro #166534
+         * Ao trocar a cor de destaque em resources/css/app.css, atualize os tons de destaque aqui.
+         */
+
         /* ================== BASE ================== */
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-size: 11.5px;
+            line-height: 1.45;
             margin: 0;
             padding: 0;
-            color: #111827;
+            color: #18181b;
         }
 
         /* ================== CABEÇALHO SISTEMA ================== */
@@ -48,7 +55,7 @@
             width: 60px;
             height: 60px;
             border-radius: 9999px;
-            border: 1px solid #16a34a;
+            border: 1px solid #e4e4e7;
             object-fit: cover;
         }
 
@@ -71,7 +78,7 @@
         }
 
         .cabecalho-empresa-linha-secundaria {
-            color: #4b5563;
+            color: #52525b;
         }
 
         /* ================== TÍTULO ================== */
@@ -79,13 +86,22 @@
             text-align: center;
             font-weight: bold;
             text-transform: uppercase;
-            margin: 12px 0 18px 0;
+            letter-spacing: 0.06em;
+            margin: 14px 0 18px 0;
             font-size: 14px;
-            color: #14532d;
-            border-bottom: 1px solid #16a34a;
+            color: #18181b;
+            border-top: 1px solid #e4e4e7;
+            border-bottom: 2px solid #15803d;
+            padding: 8px 0;
+        }
+
+        .subtitulo-secao {
+            font-size: 12px;
+            font-weight: bold;
+            color: #166534;
+            margin: 16px 0 6px 0;
             padding-bottom: 4px;
-            border-top: 1px solid #16a34a;
-            padding-top: 4px;
+            border-bottom: 1px solid #e4e4e7;
         }
 
         /* ================== TEXTOS ================== */
@@ -114,22 +130,25 @@
 
         .tabela-equipamentos thead {
             display: table-header-group;
-            background-color: #065f46 !important;
-            color: #f9fafb !important;
         }
 
         .tabela-equipamentos th,
         .tabela-equipamentos td {
-            border: 1px solid #9ca3af;
-            padding: 4px 6px;
+            border-bottom: 1px solid #e4e4e7;
+            padding: 5px 6px;
         }
 
         .tabela-equipamentos th {
             text-align: center;
+            font-size: 9.5px;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
             -webkit-print-color-adjust: exact !important;
-            background-color: #065f46 !important;
-            color: #f9fafb !important;
+            background-color: #f4f4f5 !important;
+            color: #3f3f46 !important;
+            border-top: 1px solid #d4d4d8;
+            border-bottom: 1px solid #d4d4d8;
         }
 
         .tabela-equipamentos td {
@@ -137,12 +156,13 @@
             text-align: center;
         }
 
+        .tabela-equipamentos th.texto-esquerda,
         .tabela-equipamentos td.texto-esquerda {
             text-align: left;
         }
 
         .tabela-equipamentos tbody tr:nth-child(even) {
-            background-color: #f3f4f6;
+            background-color: #fafafa;
         }
 
         /* ================== RODAPÉ / ASSINATURA ================== */
@@ -162,7 +182,7 @@
 
         .linha-assinatura {
             width: 45%;
-            border-top: 1px solid #111827;
+            border-top: 1px solid #18181b;
             text-align: center;
             font-size: 11px;
             padding-top: 4px;
@@ -176,7 +196,7 @@
         @bottom-right {
             content: "Página " counter(page) " de " counter(pages);
             font-size: 10px;
-            color: #6b7280;
+            color: #52525b;
         }
 
         body {
@@ -208,7 +228,7 @@
         }
 
         .assinatura-linha {
-            border-top: 1px solid #111827;
+            border-top: 1px solid #18181b;
             width: 60%;
             margin: 0 auto;
             padding-top: 4px;
@@ -221,13 +241,15 @@
         }
 
         .cidade-data span {
-            color: #4b5563;
+            color: #52525b;
         }
 
         .rodape-emissao {
-            margin-top: 10px;
-            font-size: 10px;
-            color: #4b5563;
+            margin-top: 14px;
+            padding-top: 6px;
+            border-top: 1px solid #e4e4e7;
+            font-size: 9.5px;
+            color: #52525b;
             text-align: right;
         }
     </style>

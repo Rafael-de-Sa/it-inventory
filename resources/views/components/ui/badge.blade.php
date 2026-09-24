@@ -2,10 +2,10 @@
 @props(['tone' => 'neutral'])
 
 <span {{ $attributes->class([
-    'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
-    'border-gray-500/60 bg-gray-500/20 text-gray-200' => $tone === 'neutral',
-    'border-green-500/60 bg-green-500/20 text-green-200' => $tone === 'success',
-    'border-yellow-500/60 bg-yellow-500/20 text-yellow-200' => $tone === 'warning',
-    'border-red-500/60 bg-red-500/20 text-red-200' => $tone === 'danger',
-    'border-blue-500/60 bg-blue-500/20 text-blue-200' => $tone === 'info',
+    'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset',
+    'bg-zinc-100 text-zinc-700 ring-zinc-500/20' => $tone === 'neutral',
+    'bg-brand-50 text-brand-800 ring-brand-600/25' => $tone === 'success',
+    'bg-amber-50 text-amber-800 ring-amber-600/25' => $tone === 'warning',
+    'bg-red-50 text-red-700 ring-red-600/20' => $tone === 'danger',
+    'bg-sky-50 text-sky-800 ring-sky-600/20' => $tone === 'info',
 ]) }}>{{ $slot }}</span>

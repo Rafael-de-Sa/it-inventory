@@ -7,7 +7,7 @@
         use Illuminate\Support\Str;
 
         $nomeTipoEquipamento = $equipamento->tipoEquipamento->nome ?? null;
-        $descricaoEquipamento = $equipamento->descricao ?? null;
+        $descricaoEquipamento = $equipamento->nome_exibicao ?: null;
         $patrimonioEquipamento = $equipamento->patrimonio ?? null;
         $numeroSerieEquipamento = $equipamento->numero_serie ?? null;
 
@@ -81,7 +81,7 @@
             @endif
 
             @if (!empty($descricaoEquipamento))
-                <strong>Descrição / Modelo:</strong> {{ $descricaoEquipamento }}<br>
+                <strong>Equipamento:</strong> {{ $descricaoEquipamento }}<br>
             @endif
 
             @if (!empty($patrimonioEquipamento))

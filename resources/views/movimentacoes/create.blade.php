@@ -32,7 +32,7 @@
 
             <x-form.grid class="items-end">
                 <x-form.input name="busca_equipamento" label="Busca equipamento"
-                    placeholder="Patrimônio, número de série ou descrição..." wrapper-class="md:col-span-6" />
+                    placeholder="Patrimônio, número de série, fabricante ou modelo..." wrapper-class="md:col-span-6" />
                 <x-form.select name="filtro_tipo" label="Filtrar por tipo" placeholder="Todos os tipos"
                     wrapper-class="md:col-span-4" />
                 <div class="flex md:col-span-2 md:justify-end">
@@ -51,7 +51,7 @@
                     <x-table.row data-equipamento-id="{{ $equipamento->id }}"
                         data-equipamento-patrimonio="{{ $equipamento->patrimonio }}"
                         data-equipamento-serie="{{ $equipamento->numero_serie }}"
-                        data-equipamento-descricao="{{ $equipamento->descricao }}"
+                        data-equipamento-descricao="{{ $equipamento->nome_exibicao }}"
                         data-equipamento-tipo="{{ $equipamento->tipoEquipamento->nome ?? '' }}">
                         <x-table.cell>
                             <input type="checkbox" class="checkbox-equipamento-disponivel"
@@ -60,7 +60,7 @@
                         <x-table.cell>{{ $equipamento->id }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->patrimonio }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->numero_serie }}</x-table.cell>
-                        <x-table.cell>{{ $equipamento->descricao }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->nome_exibicao }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->tipoEquipamento->nome ?? '-' }}</x-table.cell>
                     </x-table.row>
                 @empty

@@ -468,7 +468,7 @@ class MovimentacaoController extends Controller
 
                 return [
                     'id'           => $equipamento->id,
-                    'descricao'    => $equipamento->descricao,
+                    'descricao'    => $equipamento->nome_exibicao,
                     'numero_serie' => $equipamento->numero_serie,
                     'patrimonio'   => $equipamento->patrimonio,
                     'tipo'         => $equipamento->tipoEquipamento->nome ?? null,

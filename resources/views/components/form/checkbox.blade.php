@@ -2,6 +2,7 @@
     Checkbox com rótulo ao lado. Envia `value` quando marcado; nada quando desmarcado
     (o FormRequest trata ausência como false via $this->boolean()).
     <x-form.checkbox name="terceirizado" label="Terceirizado" :checked="$model->terceirizado" />
+    Aceita nomes aninhados (ex.: computador[possui_wifi]).
 --}}
 @props([
     'name',
@@ -12,9 +13,10 @@
 ])
 
 @php
-    $id ??= $name;
+    $errorKey = rtrim(str_replace(['][', '[', ']'], ['.', '.', ''], $name), '.');
+    $id ??= str_replace('.', '_', $errorKey);
     // Após erro de validação, old() existe para campos enviados; checkbox desmarcado não é enviado.
-    $isChecked = session()->hasOldInput() ? (bool) old($name) : (bool) $checked;
+    $isChecked = session()->hasOldInput() ? (bool) old($errorKey) : (bool) $checked;
 @endphp
 
 <div>
@@ -24,7 +26,7 @@
         <span class="text-sm text-ink">{{ $label }}</span>
     </label>
 
-    @error($name)
+    @error($errorKey)
         <p class="mt-1.5 text-xs font-medium text-red-700">{{ $message }}</p>
     @enderror
 </div>

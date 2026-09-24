@@ -3,6 +3,34 @@
 Mudanças relevantes de cada versão do IT Inventory.
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
+## [Não lançado] — 2.0.0
+
+### Adicionado
+- **Ficha técnica por tipo de equipamento.** O tipo ganha uma **categoria**, e cada categoria tem sua tabela:
+  - **Computador** (`computadores`): sistema operacional, processador, placa de vídeo, memória (GB, tipo DDR a DDR5/LPDDR, formato), armazenamento (GB e tipo), MAC do cabo e do Wi-Fi, portas de vídeo, outras portas e ID do AnyDesk (sem senha).
+  - **Monitor** (`monitores`): polegadas, tipo de tela e portas de vídeo.
+  - **Impressora** (`impressoras`): tecnologia, conexões e MAC.
+  - **Dispositivo móvel** (`dispositivos_moveis`, celulares e maquininhas): IMEI 1, IMEI 2 e MAC.
+  - **Genérico**: só os campos comuns (PINPad, teclado, headset...).
+- Novos campos comuns do equipamento: **fabricante**, **modelo**, **identificação interna** (nome na rede, `CELUR01`...) e **nota fiscal**.
+- **Patrimônio obrigatório** para equipamentos acima de R$ 1.500,00.
+- Busca de equipamentos por fabricante/modelo, identificação interna e **IMEI/MAC**.
+- Componente `x-form.checkbox-group` para escolhas múltiplas.
+
+### Alterado
+- A descrição do equipamento passa a ser uma **observação opcional**. Listagens, termos e relatórios exibem "fabricante + modelo" (ou a descrição, nos cadastros anteriores).
+- A categoria de um tipo fica travada quando já existem equipamentos desse tipo.
+
+### Corrigido
+- Cadastro de tipo de equipamento falhava ao normalizar o nome.
+
+### Atualização
+```bash
+php artisan migrate
+npm run build
+```
+Os tipos existentes são classificados pelo nome (ex.: "Monitor" → Monitor; sem correspondência → Genérico). Equipamentos já cadastrados continuam válidos e pedem fabricante, modelo e ficha técnica na próxima edição.
+
 ## [1.1.0] - 2026-09-24
 
 ### Adicionado

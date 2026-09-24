@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\TipoEquipamentos;
 
+use App\Enums\CategoriaEquipamento;
+use App\Models\TipoEquipamento;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class UpdateTipoEquipamentoRequest extends FormRequest
 {
@@ -45,7 +48,27 @@ class UpdateTipoEquipamentoRequest extends FormRequest
                 'max:45',
                 Rule::unique('tipo_equipamentos', 'nome')->ignore($tipoEquipamentoId)->whereNull('apagado_em'),
             ],
+            'categoria' => ['required', Rule::enum(CategoriaEquipamento::class)],
             'ativo' => ['required', 'boolean'],
+        ];
+    }
+
+    /** A categoria define a ficha técnica: não muda enquanto houver equipamentos deste tipo. */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator) {
+                $tipo = $this->route('tipo_equipamento');
+
+                if ($tipo instanceof TipoEquipamento
+                    && $this->input('categoria') !== $tipo->categoria->value
+                    && $tipo->equipamentos()->withTrashed()->exists()) {
+                    $validator->errors()->add(
+                        'categoria',
+                        'A categoria não pode ser alterada porque já existem equipamentos cadastrados com este tipo.'
+                    );
+                }
+            },
         ];
     }
 
@@ -60,6 +83,7 @@ class UpdateTipoEquipamentoRequest extends FormRequest
     {
         return [
             'nome' => 'tipo de equipamento',
+            'categoria' => 'categoria',
             'ativo' => 'status ativo',
         ];
     }

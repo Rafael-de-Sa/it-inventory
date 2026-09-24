@@ -21,18 +21,23 @@
             <x-form.sort :options="['id' => 'ID', 'nome' => 'Nome']" />
         </x-form.filters>
 
-        <x-table :headers="['ID', 'Nome', 'Ativo', 'Ações']">
+        <x-table :headers="['ID', 'Nome', 'Categoria', 'Ativo', 'Ações']">
             @forelse ($tipos as $tipo)
                 <x-table.row>
                     <x-table.cell>{{ $tipo->id }}</x-table.cell>
                     <x-table.cell>{{ $tipo->nome }}</x-table.cell>
+                    <x-table.cell>
+                        <x-ui.badge :tone="$tipo->categoria === \App\Enums\CategoriaEquipamento::GENERICO ? 'neutral' : 'info'">
+                            {{ $tipo->categoria->label() }}
+                        </x-ui.badge>
+                    </x-table.cell>
                     <x-table.cell>{{ $tipo->ativo ? 'Ativo' : 'Inativo' }}</x-table.cell>
                     <x-table.actions :show="route('tipo-equipamentos.show', $tipo)"
                         :edit="route('tipo-equipamentos.edit', $tipo)" :destroy="route('tipo-equipamentos.destroy', $tipo)"
                         confirm="Tem certeza que deseja remover este tipo?" />
                 </x-table.row>
             @empty
-                <x-table.empty :colspan="4">Nenhum tipo encontrado.</x-table.empty>
+                <x-table.empty :colspan="5">Nenhum tipo encontrado.</x-table.empty>
             @endforelse
         </x-table>
 

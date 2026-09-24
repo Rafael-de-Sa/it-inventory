@@ -14,7 +14,7 @@
                     <x-table.row>
                         <x-table.cell>{{ $equipamento->patrimonio ?? '—' }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->tipoEquipamento->nome ?? '—' }}</x-table.cell>
-                        <x-table.cell>{{ $equipamento->descricao ?? '—' }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->nome_exibicao ?: '—' }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->numero_serie ?? '—' }}</x-table.cell>
                         <x-table.cell>
                             {{ \App\Models\MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO[$equipamento->pivot->motivo_devolucao] ?? '—' }}

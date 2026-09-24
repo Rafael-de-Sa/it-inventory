@@ -15,6 +15,8 @@
         </x-form.grid>
 
         <x-form.readonly id="nome" label="Nome" :value="$tipoEquipamento->nome" />
+        <x-form.readonly id="categoria" label="Categoria (ficha técnica)"
+            :value="$tipoEquipamento->categoria->label() . ' — ' . $tipoEquipamento->categoria->descricao()" />
 
         <x-form.actions>
             <x-ui.button :href="route('tipo-equipamentos.index')" icon="fa-solid fa-arrow-left">Voltar</x-ui.button>

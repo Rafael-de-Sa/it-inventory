@@ -2,28 +2,32 @@
 
 namespace Database\Seeders;
 
+use App\Enums\CategoriaEquipamento;
 use App\Models\TipoEquipamento;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TipoEquipamentoSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Tipos iniciais com a categoria da ficha técnica. Pode ser executado de novo sem duplicar.
      */
     public function run(): void
     {
         $tipos = [
-            'Monitor',
-            'Impressora',
-            'Teclado',
-            'Mouse',
+            'Desktop' => CategoriaEquipamento::COMPUTADOR,
+            'Notebook' => CategoriaEquipamento::COMPUTADOR,
+            'Servidor' => CategoriaEquipamento::COMPUTADOR,
+            'Monitor' => CategoriaEquipamento::MONITOR,
+            'Impressora' => CategoriaEquipamento::IMPRESSORA,
+            'Celular' => CategoriaEquipamento::DISPOSITIVO_MOVEL,
+            'Smart POS' => CategoriaEquipamento::DISPOSITIVO_MOVEL,
+            'PINPad' => CategoriaEquipamento::GENERICO,
+            'Teclado' => CategoriaEquipamento::GENERICO,
+            'Mouse' => CategoriaEquipamento::GENERICO,
         ];
 
-        foreach ($tipos as $nomeTipo) {
-            TipoEquipamento::create([
-                'nome' => $nomeTipo,
-            ]);
+        foreach ($tipos as $nome => $categoria) {
+            TipoEquipamento::firstOrCreate(['nome' => $nome], ['categoria' => $categoria]);
         }
     }
 }

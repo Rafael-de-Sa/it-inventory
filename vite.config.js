@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/empresas/empresa-form.js',
+                'resources/js/equipamentos/equipamento-form.js',
                 'resources/js/funcionarios/funcionario-form.js',
                 'resources/js/movimentacoes/movimentacao-devolucao-form.js',
                 'resources/js/movimentacoes/movimentacao-filtros.js',

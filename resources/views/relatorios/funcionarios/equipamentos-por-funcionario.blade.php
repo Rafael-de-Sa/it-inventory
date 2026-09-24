@@ -150,7 +150,7 @@
                         <tr>
                             <td>{{ $equipamento->patrimonio }}</td>
                             <td>{{ $equipamento->tipoEquipamento->nome ?? '' }}</td>
-                            <td class="texto-esquerda">{{ $equipamento->descricao ?? '' }}</td>
+                            <td class="texto-esquerda">{{ $equipamento->nome_exibicao }}</td>
                             <td>{{ $equipamento->numero_serie ?? '' }}</td>
                             <td>{{ $movimentacao->criado_em?->format('d/m/Y') ?? '' }}</td>
                         </tr>

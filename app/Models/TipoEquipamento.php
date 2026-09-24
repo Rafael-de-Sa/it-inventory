@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CategoriaEquipamento;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,10 +18,12 @@ class TipoEquipamento extends Model
 
     protected $fillable = [
         'nome',
+        'categoria',
         'ativo'
     ];
 
     protected $casts = [
+        'categoria' => CategoriaEquipamento::class,
         'ativo' => 'boolean',
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',
@@ -28,6 +31,7 @@ class TipoEquipamento extends Model
     ];
 
     protected $attributes = [
+        'categoria' => 'generico',
         'ativo' => true
     ];
 

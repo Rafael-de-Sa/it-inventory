@@ -34,10 +34,18 @@ class Equipamento extends Model
     /** "Em uso" só é atribuído pelas movimentações, não no cadastro manual. */
     public const STATUS_CADASTRO = ['disponivel', 'em_manutencao', 'defeituoso', 'descartado'];
 
+    /** Acima deste valor de compra o patrimônio (plaquinha) é obrigatório. */
+    public const VALOR_MINIMO_PATRIMONIO = 1500;
+
     protected $fillable = [
         'tipo_equipamento_id',
+        'fabricante',
+        'modelo',
+        'identificacao',
         'data_compra',
         'valor_compra',
+        'nota_fiscal',
+        'chave_acesso_nf',
         'status',
         'ativo',
         'descricao',
@@ -67,6 +75,25 @@ class Equipamento extends Model
     protected function statusRotulo(): Attribute
     {
         return Attribute::get(fn () => self::STATUS[$this->status] ?? (string) $this->status);
+    }
+
+    /** Chave de acesso da NF-e em blocos de 4 dígitos, como impressa no DANFE. */
+    protected function chaveAcessoNfFormatada(): Attribute
+    {
+        return Attribute::get(fn () => $this->chave_acesso_nf ? implode(' ', str_split($this->chave_acesso_nf, 4)) : null);
+    }
+
+    /**
+     * Nome para listagens, termos e relatórios: "Dell G15 5530". Equipamentos cadastrados antes
+     * da versão 2.0 (sem fabricante/modelo) usam a descrição.
+     */
+    protected function nomeExibicao(): Attribute
+    {
+        return Attribute::get(function () {
+            $nome = trim(($this->fabricante ?? '') . ' ' . ($this->modelo ?? ''));
+
+            return $nome !== '' ? $nome : (string) ($this->descricao ?? '');
+        });
     }
 
     /**
@@ -113,6 +140,26 @@ class Equipamento extends Model
     public function tipoEquipamento()
     {
         return $this->belongsTo(TipoEquipamento::class);
+    }
+
+    public function computador()
+    {
+        return $this->hasOne(Computador::class);
+    }
+
+    public function monitor()
+    {
+        return $this->hasOne(Monitor::class);
+    }
+
+    public function impressora()
+    {
+        return $this->hasOne(Impressora::class);
+    }
+
+    public function dispositivoMovel()
+    {
+        return $this->hasOne(DispositivoMovel::class);
     }
 
     public function movimentacoes()

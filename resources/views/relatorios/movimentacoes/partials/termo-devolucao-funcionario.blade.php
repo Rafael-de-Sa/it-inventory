@@ -125,7 +125,7 @@
                 <td>{{ $numeroItem }}</td>
                 <td>{{ $equipamento->id }}</td>
                 <td class="texto-esquerda">
-                    {{ $equipamento->descricao ?? ($equipamento->nome ?? 'Descrição não informada') }}
+                    {{ $equipamento->nome_exibicao ?: 'Descrição não informada' }}
                 </td>
                 <td>{{ $equipamento->numero_serie ?? ($equipamento->serial ?? '') }}</td>
                 <td>{{ $equipamento->patrimonio ?? ($equipamento->numero_patrimonio ?? '') }}</td>

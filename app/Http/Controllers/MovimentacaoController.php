@@ -501,12 +501,17 @@ class MovimentacaoController extends Controller
         );
 
         $movimentacao->termo_responsabilidade = $caminhoArquivo;
-        $movimentacao->status = 'concluida';
+
+        // Se todos os equipamentos já foram devolvidos, o termo continua "encerrada".
+        if ($movimentacao->status === 'pendente') {
+            $movimentacao->status = 'concluida';
+        }
+
         $movimentacao->save();
 
         return redirect()
             ->route('movimentacoes.index', $movimentacao->id)
-            ->with('success', 'Termo de responsabilidade enviado com sucesso e movimentação marcada como concluída.');
+            ->with('success', 'Termo de responsabilidade enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
     }
 
     protected function visualizarTermoGenerico(
@@ -558,13 +563,7 @@ class MovimentacaoController extends Controller
 
     public function uploadTermoDevolucao(UploadTermoDevolucaoRequest $request, Movimentacao $movimentacao)
     {
-        $dadosValidados = $request->validate([
-            'arquivo_termo' => ['required', 'file', 'mimes:pdf', 'max:10240'],
-        ], [], [
-            'arquivo_termo' => 'arquivo do termo de devolução',
-        ]);
-
-        $arquivoTermo = $dadosValidados['arquivo_termo'];
+        $arquivoTermo = $request->file('arquivo_termo');
 
         $pastaDestino = 'termos/devolucao';
 

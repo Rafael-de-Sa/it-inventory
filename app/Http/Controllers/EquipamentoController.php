@@ -153,7 +153,9 @@ class EquipamentoController extends Controller
     {
         $opcoesTiposEquipamento = TipoEquipamento::orderBy('nome')->pluck('nome', 'id');
 
-        return view('equipamentos.edit', compact('equipamento', 'opcoesTiposEquipamento'));
+        $emprestimoEmAberto = $equipamento->emprestimoEmAberto();
+
+        return view('equipamentos.edit', compact('equipamento', 'opcoesTiposEquipamento', 'emprestimoEmAberto'));
     }
 
     /**

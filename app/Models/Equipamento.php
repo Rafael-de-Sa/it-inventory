@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Equipamento extends Model
 {
     use SoftDeletes;
+
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
     const UPDATED_AT = 'atualizado_em';
@@ -59,6 +60,22 @@ class Equipamento extends Model
     protected function statusRotulo(): Attribute
     {
         return Attribute::get(fn () => self::STATUS[$this->status] ?? (string) $this->status);
+    }
+
+    /**
+     * Item de termo de responsabilidade ainda não devolvido (ignora movimentações canceladas).
+     * Enquanto existir, o status do equipamento só muda via devolução.
+     */
+    public function emprestimoEmAberto(): ?MovimentacaoEquipamento
+    {
+        return MovimentacaoEquipamento::query()
+            ->where('equipamento_id', $this->id)
+            ->whereNull('devolvido_em')
+            ->whereHas('movimentacao', fn ($movimentacoes) => $movimentacoes
+                ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                ->where('status', '!=', 'cancelada'))
+            ->latest('id')
+            ->first();
     }
 
     public function tipoEquipamento()

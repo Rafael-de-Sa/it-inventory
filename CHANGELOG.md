@@ -15,6 +15,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - Novos campos comuns do equipamento: **fabricante**, **modelo**, **identificação interna** (nome na rede, `CELUR01`...) e **nota fiscal**.
 - **Patrimônio obrigatório** para equipamentos acima de R$ 1.500,00.
 - Busca de equipamentos por fabricante/modelo, identificação interna e **IMEI/MAC**.
+- **Chave de acesso da NF-e** (opcional) com conferência do dígito verificador e do número da nota; valor da compra, nº da nota e IMEI aceitam só números.
+- **Termos e relatório por funcionário** identificam cada equipamento por tipo, fabricante/modelo, identificação interna e um resumo técnico (configuração do computador, IMEI do celular...).
+- **Relatório de histórico** com dados de aquisição e a **ficha técnica completa**.
 - Componente `x-form.checkbox-group` para escolhas múltiplas.
 
 ### Alterado

@@ -161,6 +161,13 @@
             text-align: left;
         }
 
+        .tabela-ficha td.rotulo-ficha {
+            width: 32%;
+            font-weight: bold;
+            color: #3f3f46;
+            background-color: #fafafa;
+        }
+
         .nota-discreta {
             font-size: 9px;
             font-style: italic;

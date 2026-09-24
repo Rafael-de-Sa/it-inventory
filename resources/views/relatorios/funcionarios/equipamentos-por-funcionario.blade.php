@@ -135,8 +135,7 @@
                 <thead>
                     <tr>
                         <th>Patrimônio</th>
-                        <th>Tipo</th>
-                        <th class="texto-esquerda">Descrição / Modelo</th>
+                        <th class="texto-esquerda">Equipamento</th>
                         <th>Número de série</th>
                         <th>Data da movimentação</th>
                     </tr>
@@ -149,8 +148,7 @@
                         @endphp
                         <tr>
                             <td>{{ $equipamento->patrimonio }}</td>
-                            <td>{{ $equipamento->tipoEquipamento->nome ?? '' }}</td>
-                            <td class="texto-esquerda">{{ $equipamento->nome_exibicao }}</td>
+                            <td class="texto-esquerda">@include('relatorios.partials.equipamento-celula')</td>
                             <td>{{ $equipamento->numero_serie ?? '' }}</td>
                             <td>{{ $movimentacao->criado_em?->format('d/m/Y') ?? '' }}</td>
                         </tr>

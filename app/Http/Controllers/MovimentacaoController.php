@@ -388,7 +388,7 @@ class MovimentacaoController extends Controller
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
-            'equipamentos',
+            'equipamentos' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]),
         ]);
 
         $nomeArquivo = 'termo_responsabilidade_movimentacao_' . $movimentacao->id . '.pdf';
@@ -424,7 +424,7 @@ class MovimentacaoController extends Controller
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
-            'equipamentos',
+            'equipamentos' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]),
         ]);
 
         $nomeArquivo = 'termo_devolucao_movimentacao_' . $movimentacao->id . '.pdf';

@@ -26,7 +26,7 @@ class RelatorioController extends Controller
                     ->where('status', '!=', 'cancelada');
             })
             ->with([
-                'equipamento.tipoEquipamento',
+                'equipamento' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]),
                 'movimentacao',
             ])
             ->orderBy('criado_em')
@@ -62,9 +62,7 @@ class RelatorioController extends Controller
 
     public function historicoEquipamento(Equipamento $equipamento)
     {
-        $equipamento->load([
-            'tipoEquipamento',
-        ]);
+        $equipamento->load(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]);
 
         $listaMovimentacoesResponsabilidade = MovimentacaoEquipamento::query()
             ->historicoResponsabilidadePorEquipamento($equipamento->id)

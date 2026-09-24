@@ -77,6 +77,42 @@ class Equipamento extends Model
         return Attribute::get(fn () => self::STATUS[$this->status] ?? (string) $this->status);
     }
 
+    /** Relações das fichas técnicas, para eager loading: Equipamento::with(Equipamento::RELACOES_FICHA). */
+    public const RELACOES_FICHA = ['computador', 'monitor', 'impressora', 'dispositivoMovel'];
+
+    /**
+     * Resumo da ficha técnica em uma linha, para termos e relatórios:
+     * "Intel Core i5-13450HX · 16 GB DDR5 · 512 GB SSD NVMe", "21,5 pol. LED", "IMEI 354494165730091".
+     */
+    protected function resumoTecnico(): Attribute
+    {
+        return Attribute::get(function () {
+            $gb = fn (?int $valor) => $valor >= 1000 && $valor % 1000 === 0 ? ($valor / 1000) . ' TB' : $valor . ' GB';
+            $juntar = fn (array $partes) => implode(' · ', array_filter(array_map('trim', $partes))) ?: null;
+
+            return match (true) {
+                (bool) $this->computador => $juntar([
+                    $this->computador->processador,
+                    trim($gb($this->computador->memoria_gb) . ' ' . $this->computador->memoria_tipo),
+                    $gb($this->computador->armazenamento_gb) . ' ' . $this->computador->armazenamento_tipo,
+                ]),
+                (bool) $this->monitor => $juntar([
+                    str_replace('.', ',', rtrim(rtrim((string) $this->monitor->polegadas, '0'), '.')) . ' pol.',
+                    (string) $this->monitor->tipo_tela,
+                ]),
+                (bool) $this->impressora => $juntar([
+                    Impressora::TECNOLOGIAS[$this->impressora->tecnologia] ?? $this->impressora->tecnologia,
+                    implode(', ', array_map(fn ($c) => Impressora::CONEXOES[$c] ?? $c, $this->impressora->conexoes ?? [])),
+                ]),
+                (bool) $this->dispositivoMovel => $juntar([
+                    $this->dispositivoMovel->imei_1 ? 'IMEI ' . $this->dispositivoMovel->imei_1 : null,
+                    $this->dispositivoMovel->imei_2 ? 'IMEI 2 ' . $this->dispositivoMovel->imei_2 : null,
+                ]),
+                default => null,
+            };
+        });
+    }
+
     /** Chave de acesso da NF-e em blocos de 4 dígitos, como impressa no DANFE. */
     protected function chaveAcessoNfFormatada(): Attribute
     {

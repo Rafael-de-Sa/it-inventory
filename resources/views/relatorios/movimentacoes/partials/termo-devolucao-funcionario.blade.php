@@ -104,7 +104,7 @@
         <tr>
             <th>Item</th>
             <th>ID Equip.</th>
-            <th>Descrição</th>
+            <th class="texto-esquerda">Equipamento</th>
             <th>Nº de Série</th>
             <th>Patrimônio</th>
             <th>Observação Devolução</th>
@@ -124,9 +124,7 @@
             <tr>
                 <td>{{ $numeroItem }}</td>
                 <td>{{ $equipamento->id }}</td>
-                <td class="texto-esquerda">
-                    {{ $equipamento->nome_exibicao ?: 'Descrição não informada' }}
-                </td>
+                <td class="texto-esquerda">@include('relatorios.partials.equipamento-celula')</td>
                 <td>{{ $equipamento->numero_serie ?? ($equipamento->serial ?? '') }}</td>
                 <td>{{ $equipamento->patrimonio ?? ($equipamento->numero_patrimonio ?? '') }}</td>
                 <td class="texto-esquerda">{{ $pivot->observacao }}</td>

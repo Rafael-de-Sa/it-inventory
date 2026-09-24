@@ -91,8 +91,37 @@
             @if (!empty($numeroSerieEquipamento))
                 <strong>Número de série:</strong> {{ $numeroSerieEquipamento }}<br>
             @endif
+
+            @if ($equipamento->identificacao)
+                <strong>Identificação interna:</strong> {{ $equipamento->identificacao }}<br>
+            @endif
+
+            <strong>Situação atual:</strong> {{ $equipamento->status_rotulo }}<br>
         </p>
+
+        @if ($equipamento->data_compra || filled($equipamento->valor_compra) || $equipamento->nota_fiscal || $equipamento->chave_acesso_nf)
+            <p>
+                @if ($equipamento->data_compra)
+                    <strong>Data da compra:</strong> {{ $equipamento->data_compra->format('d/m/Y') }}<br>
+                @endif
+                @if (filled($equipamento->valor_compra))
+                    <strong>Valor da compra:</strong> R$ {{ number_format((float) $equipamento->valor_compra, 2, ',', '.') }}<br>
+                @endif
+                @if ($equipamento->nota_fiscal)
+                    <strong>Nota fiscal:</strong> {{ $equipamento->nota_fiscal }}<br>
+                @endif
+                @if ($equipamento->chave_acesso_nf)
+                    <strong>Chave de acesso:</strong> {{ $equipamento->chave_acesso_nf_formatada }}<br>
+                @endif
+            </p>
+        @endif
+
+        @if ($equipamento->descricao && $equipamento->fabricante)
+            <p><strong>Observação:</strong> {{ $equipamento->descricao }}</p>
+        @endif
     </div>
+
+    @include('relatorios.equipamentos.partials.ficha-tecnica')
 
     <div class="secao-texto">
         <h2 class="subtitulo-secao">

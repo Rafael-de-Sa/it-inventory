@@ -26,6 +26,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 
 ### Corrigido
 - Cadastro de tipo de equipamento falhava ao normalizar o nome.
+- Exclusão de equipamento dava erro de banco (coluna ambígua) em qualquer caso; agora bloqueia só com empréstimo em aberto, indicando a movimentação.
 
 ### Atualização
 ```bash

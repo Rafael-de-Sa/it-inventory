@@ -249,15 +249,11 @@ class EquipamentoController extends Controller
      */
     public function destroy(Equipamento $equipamento)
     {
-        $temMovimentacaoAberta = $equipamento->movimentacoes()
-            ->whereNull('devolvido_em')
-            ->whereNull('termo_devolucao')
-            ->exists();
-
-        if ($temMovimentacaoAberta) {
+        // Mesma regra que trava o status "Em uso": item de termo de responsabilidade ainda não devolvido.
+        if ($emprestimo = $equipamento->emprestimoEmAberto()) {
             return back()->with(
                 'error',
-                'Não é possível excluir: este equipamento possui movimentação pendente (aguardando devolução com termo).'
+                "Não é possível excluir: o equipamento está em uso pela movimentação #{$emprestimo->movimentacao_id}. Registre a devolução antes."
             );
         }
 

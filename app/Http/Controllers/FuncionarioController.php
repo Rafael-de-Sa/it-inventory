@@ -69,7 +69,8 @@ class FuncionarioController extends Controller
                 'empresas.nome_fantasia as empresa_nome',
                 'empresas.cnpj as empresa_cnpj',
                 'setores.nome as setor_nome',
-            ]);
+            ])
+            ->comRestricoesDesligamento(); // usado para decidir se mostra o botão Excluir de cada linha
 
         if ($ativo !== 'todos') {
             $consulta->where('funcionarios.ativo', (int) $ativo);

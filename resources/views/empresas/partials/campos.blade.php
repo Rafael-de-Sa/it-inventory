@@ -31,9 +31,9 @@
         <x-form.input name="cidade" label="Cidade" required maxlength="30" autocomplete="address-level2"
             placeholder="Umuarama" :value="$empresa?->cidade" help="Ex.: Umuarama" wrapper-class="md:col-span-8" />
 
-        <x-form.input name="estado" label="Estado" required maxlength="2" placeholder="PR" class="uppercase"
-            oninput="this.value = this.value.toUpperCase()" :value="$empresa?->estado"
-            help="Digite a UF (ex.: PR)" wrapper-class="md:col-span-4" />
+        <x-form.select name="estado" label="Estado" required :options="\App\Enums\Uf::options()"
+            placeholder="Selecione..." :value="$empresa?->estado" autocomplete="address-level1"
+            wrapper-class="md:col-span-4" />
     </x-form.grid>
 </x-form.fieldset>
 

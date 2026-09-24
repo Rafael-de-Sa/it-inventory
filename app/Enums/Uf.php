@@ -38,6 +38,21 @@ enum Uf: string
         return array_map(fn(self $c) => $c->value, self::cases());
     }
 
+    /**
+     * Opções para selects, ordenadas pela sigla: ['PR' => 'PR — Paraná', ...].
+     * A sigla vem primeiro para que digitar a letra no select já leve à UF.
+     */
+    public static function options(): array
+    {
+        $opcoes = [];
+        foreach (self::cases() as $uf) {
+            $opcoes[$uf->value] = "{$uf->value} — {$uf->label()}";
+        }
+        ksort($opcoes);
+
+        return $opcoes;
+    }
+
     /** Rótulo bonitinho para a UI (opcional) */
     public function label(): string
     {

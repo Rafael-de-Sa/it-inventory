@@ -30,6 +30,7 @@ class MovimentacaoEquipamento extends Pivot
 
     protected $fillable = [
         'movimentacao_id',
+        'devolucao_movimentacao_id',
         'equipamento_id',
         'termo_devolucao',
         'observacao',
@@ -68,6 +69,12 @@ class MovimentacaoEquipamento extends Pivot
         return $this->belongsTo(Movimentacao::class);
     }
 
+    /** Movimentação de devolução que encerrou este item (só em itens de responsabilidade). */
+    public function movimentacaoDevolucao()
+    {
+        return $this->belongsTo(Movimentacao::class, 'devolucao_movimentacao_id');
+    }
+
     public function equipamento()
     {
         return $this->belongsTo(Equipamento::class);
@@ -97,6 +104,9 @@ class MovimentacaoEquipamento extends Pivot
                                     ]);
                             },
                         ]);
+                },
+                'movimentacaoDevolucao' => function ($queryDevolucao) {
+                    $queryDevolucao->withTrashed();
                 },
                 'equipamento' => function ($queryEquipamento) {
                     $queryEquipamento->withTrashed();

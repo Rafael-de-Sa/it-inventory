@@ -248,6 +248,7 @@ class MovimentacaoController extends Controller
                     ?? 'devolucao';
 
                 $responsabilidadePivot->update([
+                    'devolucao_movimentacao_id' => $movimentacaoDevolucao->id,
                     'devolvido_em'     => now()->toDateString(),
                     'motivo_devolucao' => $motivoDevolucaoEquipamento,
                     'observacao'       => $observacaoEquipamento

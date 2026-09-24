@@ -145,6 +145,9 @@
 
                             <td>
                                 {{ $registroPivot->devolvido_em?->format('d/m/Y') ?? 'Em uso' }}
+                                @if ($registroPivot->devolucao_movimentacao_id)
+                                    <br><span style="font-size: 9px; color: #4b5563;">Termo #{{ $registroPivot->devolucao_movimentacao_id }}</span>
+                                @endif
                             </td>
 
                             <td class="texto-esquerda">

@@ -96,6 +96,43 @@
 
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
+            Linha do tempo
+        </h2>
+
+        @if ($linhaDoTempo->isEmpty())
+            <p>Não há eventos registrados para este equipamento.</p>
+        @else
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Data / hora</th>
+                        <th class="texto-esquerda">Evento</th>
+                        <th class="texto-esquerda">Status</th>
+                        <th>Mov.</th>
+                        <th class="texto-esquerda">Usuário</th>
+                        <th class="texto-esquerda">Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($linhaDoTempo as $evento)
+                        <tr>
+                            <td>{{ $evento->ocorrido_em->format('d/m/Y H:i') }}</td>
+                            <td class="texto-esquerda">{{ $evento->evento_rotulo }}</td>
+                            <td class="texto-esquerda">{{ $evento->transicao_status ?? '-' }}</td>
+                            <td>{{ $evento->movimentacao_id ? '#' . $evento->movimentacao_id : '-' }}</td>
+                            <td class="texto-esquerda">
+                                {{ $evento->usuario?->funcionario?->nome_completo ?? ($evento->usuario?->email ?? '-') }}
+                            </td>
+                            <td class="texto-esquerda">{{ $evento->observacao ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="secao-texto">
+        <h2 class="subtitulo-secao">
             Histórico de termos de responsabilidade
         </h2>
 

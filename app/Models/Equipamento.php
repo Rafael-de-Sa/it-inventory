@@ -2,13 +2,19 @@
 
 namespace App\Models;
 
+use App\Observers\EquipamentoObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy(EquipamentoObserver::class)]
 class Equipamento extends Model
 {
     use SoftDeletes;
+
+    /** Contexto do próximo evento de histórico (ver comHistorico()); não é persistido. */
+    private array $contextoHistorico = [];
 
     public $timestamps = true;
     const CREATED_AT = 'criado_em';
@@ -76,6 +82,31 @@ class Equipamento extends Model
                 ->where('status', '!=', 'cancelada'))
             ->latest('id')
             ->first();
+    }
+
+    /**
+     * Identifica o motivo da próxima mudança de status para a linha do tempo:
+     *   $equipamento->comHistorico('emprestimo', $movimentacao)->update(['status' => 'em_uso']);
+     */
+    public function comHistorico(string $evento, ?Movimentacao $movimentacao = null, ?string $observacao = null): static
+    {
+        $this->contextoHistorico = compact('evento', 'movimentacao', 'observacao');
+
+        return $this;
+    }
+
+    /** Usado pelo EquipamentoObserver: devolve o contexto e o limpa para o próximo save. */
+    public function consumirContextoHistorico(): array
+    {
+        $contexto = $this->contextoHistorico;
+        $this->contextoHistorico = [];
+
+        return $contexto;
+    }
+
+    public function historicos()
+    {
+        return $this->hasMany(EquipamentoHistorico::class);
     }
 
     public function tipoEquipamento()

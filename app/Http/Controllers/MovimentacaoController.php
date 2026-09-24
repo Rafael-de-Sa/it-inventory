@@ -181,7 +181,7 @@ class MovimentacaoController extends Controller
             foreach ($equipamentos as $equipamento) {
                 $movimentacao->equipamentos()->attach($equipamento->id);
 
-                $equipamento->update([
+                $equipamento->comHistorico('emprestimo', $movimentacao)->update([
                     'status' => 'em_uso',
                 ]);
             }
@@ -271,7 +271,12 @@ class MovimentacaoController extends Controller
 
                 $novoStatusEquipamento = MovimentacaoEquipamento::statusEquipamentoAposDevolucao($motivoDevolucaoEquipamento);
 
-                $equipamento->update([
+                $observacaoHistorico = trim(
+                    'Motivo: ' . (MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO[$motivoDevolucaoEquipamento] ?? $motivoDevolucaoEquipamento)
+                    . '. ' . ($observacaoEquipamento ?? '')
+                );
+
+                $equipamento->comHistorico('devolucao', $movimentacaoDevolucao, $observacaoHistorico)->update([
                     'status' => $novoStatusEquipamento,
                 ]);
             }

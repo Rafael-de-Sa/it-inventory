@@ -70,11 +70,23 @@ class RelatorioController extends Controller
             ->historicoResponsabilidadePorEquipamento($equipamento->id)
             ->get();
 
+        $linhaDoTempo = $equipamento->historicos()
+            ->with([
+                'movimentacao' => fn ($query) => $query->withTrashed(),
+                'usuario' => fn ($query) => $query->withTrashed()->with([
+                    'funcionario' => fn ($queryFuncionario) => $queryFuncionario->withTrashed(),
+                ]),
+            ])
+            ->orderByDesc('ocorrido_em')
+            ->orderByDesc('id')
+            ->get();
+
         $dataHoraEmissao = now();
 
         $pdf = Pdf::loadView('relatorios.equipamentos.historico', [
             'equipamento' => $equipamento,
             'listaMovimentacoesResponsabilidade' => $listaMovimentacoesResponsabilidade,
+            'linhaDoTempo' => $linhaDoTempo,
             'dataHoraEmissao' => $dataHoraEmissao,
         ])->setPaper('a4', 'portrait');
 

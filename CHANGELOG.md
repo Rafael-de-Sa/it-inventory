@@ -19,6 +19,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - **Termos e relatório por funcionário** identificam cada equipamento por tipo, fabricante/modelo, identificação interna e um resumo técnico (configuração do computador, IMEI do celular...).
 - **Relatório de histórico** com dados de aquisição e a **ficha técnica completa**.
 - Componente `x-form.checkbox-group` para escolhas múltiplas.
+- **Integração contínua** (GitHub Actions): a suíte de testes roda a cada push em `main`/`develop` e em cada PR, com MySQL 8 (#8).
+- Testes de ficha técnica, documentos, linha do tempo e status do equipamento, validações de empresa (CNPJ, CEP, telefone, consulta ao ViaCEP) e regra de CNPJ.
 
 ### Alterado
 - A descrição do equipamento passa a ser uma **observação opcional**. Listagens, termos e relatórios exibem "fabricante + modelo" (ou a descrição, nos cadastros anteriores).

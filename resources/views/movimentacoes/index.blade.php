@@ -1,277 +1,72 @@
 @extends('layouts.main_layout')
 
 @section('content')
-    <div class="mx-auto w-full max-w-7xl space-y-4">
+    @php
+        $rotuloFuncionario = fn ($funcionario) => $funcionario->nome_completo
+            . ($funcionario->matricula ? " ({$funcionario->matricula})" : '');
+    @endphp
 
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h1 class="text-2xl font-semibold tracking-wide">Movimentações</h1>
-            </div>
+    <x-ui.page title="Movimentações">
+        <x-slot:actions>
+            <x-ui.button :href="route('movimentacoes.create')" variant="soft" icon="fa-solid fa-plus" class="text-sm">
+                Cadastrar
+            </x-ui.button>
+        </x-slot:actions>
 
-            <a href="{{ route('movimentacoes.create') }}"
-                class="inline-flex items-center rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40 gap-2">
-                <i class="fa-solid fa-plus"></i> Cadastrar
-            </a>
-        </div>
-
-        <form method="GET" data-endpoints
+        {{-- Setor e funcionário são recarregados via JS (movimentacao-filtros.js) conforme empresa/setor. --}}
+        <x-form.filters :reset="route('movimentacoes.index')" data-endpoints
             data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
             data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
             data-old-empresa-id="{{ request('empresa_id') }}" data-old-setor-id="{{ request('setor_id') }}"
-            data-old-funcionario-id="{{ request('funcionario_id') }}"
-            class="grid gap-3 rounded-xl border border-green-800 bg-green-900/10 p-3 md:grid-cols-12">
+            data-old-funcionario-id="{{ request('funcionario_id') }}">
 
-            <div class="md:col-span-3">
-                <label for="busca" class="mb-1 block text-sm text-green-100">ID da movimentação</label>
-                <input type="text" id="busca" name="busca"
-                    value="{{ old('busca', $termoBusca ?? request('busca')) }}" inputmode="numeric" pattern="\d*"
-                    placeholder="Ex.: 1024" @class([
-                        'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                        'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                    ])>
-            </div>
+            <x-form.input name="busca" label="ID da movimentação" :value="$termoBusca ?? request('busca')"
+                inputmode="numeric" pattern="\d*" placeholder="Ex.: 1024" wrapper-class="md:col-span-3" />
 
-            <div class="md:col-span-3">
-                <label for="status" class="mb-1 block text-sm text-green-100">Status</label>
-                @php
-                    $statusAtual = request('status');
-                    $mapaStatus = ['' => 'Todos'] + \App\Models\Movimentacao::STATUS;
-                @endphp
-                <select id="status" name="status" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])>
-                    @foreach ($mapaStatus as $valor => $rotulo)
-                        <option value="{{ $valor }}" @selected((string) $statusAtual === (string) $valor)>
-                            {{ $rotulo }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-form.select name="status" label="Status" placeholder="Todos" :value="request('status')"
+                :options="\App\Models\Movimentacao::STATUS" wrapper-class="md:col-span-3" />
 
-            <div class="md:col-span-3">
-                <label for="empresa_id" class="mb-1 block text-sm text-green-100">Empresa</label>
-                @php $empresaAtual = request('empresa_id'); @endphp
-                <select id="empresa_id" name="empresa_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])>
-                    <option value="">Todas</option>
-                    @foreach ($listaDeEmpresas as $empresa)
-                        <option value="{{ $empresa->id }}" @selected((string) $empresaAtual === (string) $empresa->id)>
-                            {{ $empresa->rotulo_empresa ?? $empresa->razao_social . ' - ' . $empresa->cnpj_masked }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-form.select name="empresa_id" label="Empresa" placeholder="Todas" :value="request('empresa_id')"
+                :options="$listaDeEmpresas"
+                :option-label="fn ($empresa) => $empresa->rotulo_empresa ?? $empresa->razao_social . ' - ' . $empresa->cnpj_masked"
+                wrapper-class="md:col-span-3" />
 
-            <div class="md:col-span-3">
-                <label for="setor_id" class="mb-1 block text-sm text-green-100">Setor</label>
-                @php $setorAtual = request('setor_id'); @endphp
-                <select id="setor_id" name="setor_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])
-                    {{ request('empresa_id') ? '' : 'disabled' }}>
-                    <option value="">{{ request('empresa_id') ? 'Todos' : 'Selecione uma empresa…' }}</option>
-                    @foreach ($listaDeSetores as $setor)
-                        <option value="{{ $setor->id }}" @selected((string) $setorAtual === (string) $setor->id)>
-                            {{ $setor->nome }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-form.select name="setor_id" label="Setor" :value="request('setor_id')" :disabled="!request('empresa_id')"
+                :placeholder="request('empresa_id') ? 'Todos' : 'Selecione uma empresa…'" :options="$listaDeSetores"
+                option-label="nome" wrapper-class="md:col-span-3" />
 
-            <div class="md:col-span-3">
-                <label for="funcionario_id" class="mb-1 block text-sm text-green-100">Funcionário</label>
-                @php $funcionarioAtual = request('funcionario_id'); @endphp
-                <select id="funcionario_id" name="funcionario_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])
-                    {{ request('setor_id') ? '' : 'disabled' }}>
-                    <option value="">{{ request('setor_id') ? 'Todos' : 'Selecione um setor…' }}</option>
-                    @foreach ($listaDeFuncionarios as $funcionario)
-                        <option value="{{ $funcionario->id }}" @selected((string) $funcionarioAtual === (string) $funcionario->id)>
-                            {{ trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? '')) }}
-                            @if ($funcionario->matricula)
-                                ({{ $funcionario->matricula }})
-                            @endif
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-form.select name="funcionario_id" label="Funcionário" :value="request('funcionario_id')"
+                :disabled="!request('setor_id')" :placeholder="request('setor_id') ? 'Todos' : 'Selecione um setor…'"
+                :options="$listaDeFuncionarios" :option-label="$rotuloFuncionario" wrapper-class="md:col-span-6" />
 
-            <div class="md:col-span-2">
-                <label for="ordenar_por" class="mb-1 block text-sm text-green-100">Ordenar por</label>
-                @php
-                    $ordenaveis = [
-                        'data' => 'Data',
-                        'id' => 'ID',
-                        'status' => 'Status',
-                    ];
-                    $colunaAtual = $colunaOrdenacao ?? request('ordenar_por', 'id');
-                @endphp
-                <select id="ordenar_por" name="ordenar_por" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])>
-                    @foreach ($ordenaveis as $valor => $rotulo)
-                        <option value="{{ $valor }}" @selected($colunaAtual === $valor)>
-                            {{ $rotulo }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-form.sort :default="$colunaOrdenacao ?? 'id'" :default-direction="$direcaoOrdenacao ?? 'asc'"
+                :options="['data' => 'Data', 'id' => 'ID', 'status' => 'Status']" />
+        </x-form.filters>
 
-            <div class="md:col-span-2">
-                <label for="direcao" class="mb-1 block text-sm text-green-100">Direção</label>
-                @php $dirAtual = $direcaoOrdenacao ?? request('direcao', 'asc'); @endphp
-                <select id="direcao" name="direcao" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                ])>
-                    <option value="asc" @selected($dirAtual === 'asc')>Ascendente</option>
-                    <option value="desc" @selected($dirAtual === 'desc')>Descendente</option>
-                </select>
-            </div>
+        <x-table :headers="['ID', 'Data', 'Tipo', 'Empresa', 'Setor', 'Funcionário', 'Qtd. Equip.', 'Status', 'Ações']">
+            @forelse ($listaDeMovimentacoes as $movimentacao)
+                @php $empresa = $movimentacao->setor?->empresa; @endphp
 
-            <div class="md:col-span-9"></div>
+                <x-table.row>
+                    <x-table.cell>{{ $movimentacao->id }}</x-table.cell>
+                    <x-table.cell>{{ $movimentacao->criado_em?->format('d/m/Y H:i') }}</x-table.cell>
+                    <x-table.cell>{{ $movimentacao->tipo_rotulo }}</x-table.cell>
+                    <x-table.cell>{{ $empresa?->rotulo_empresa ?? ($empresa?->razao_social ?? '-') }}</x-table.cell>
+                    <x-table.cell>{{ $movimentacao->setor?->nome ?? '-' }}</x-table.cell>
+                    <x-table.cell>{{ $movimentacao->funcionario ? $rotuloFuncionario($movimentacao->funcionario) : '-' }}</x-table.cell>
+                    <x-table.cell>{{ $movimentacao->equipamentos->count() }}</x-table.cell>
+                    <x-table.cell><x-movimentacao.status :status="$movimentacao->status" /></x-table.cell>
+                    <x-table.actions :show="route('movimentacoes.show', $movimentacao)" />
+                </x-table.row>
+            @empty
+                <x-table.empty :colspan="9">Nenhuma movimentação encontrada para os filtros informados.</x-table.empty>
+            @endforelse
+        </x-table>
 
-            <div class="md:col-span-12 flex items-end justify-between gap-2">
-
-                <a href="{{ url()->previous() }}"
-                    class="rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40 inline-flex items-center gap-2"
-                    title="Voltar" aria-label="Voltar">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Voltar</span>
-                </a>
-
-                <div class="flex items-end gap-2">
-                    <button
-                        class="rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 hover:bg-green-700/40 inline-flex items-center gap-2">
-                        <i class="fa-solid fa-filter"></i>
-                        <span>Aplicar</span>
-                    </button>
-
-                    <a href="{{ route('movimentacoes.index') }}"
-                        class="rounded-lg border border-green-700 px-4 py-2 hover:bg-green-800/40 inline-flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        <span>Limpar</span>
-                    </a>
-                </div>
-            </div>
-        </form>
-
-        <div class="overflow-x-auto rounded-2xl border border-green-800 bg-green-900/20">
-            <table class="min-w-full text-sm table-auto">
-                <thead class="bg-green-900/60 text-green-100 text-center">
-                    <tr>
-                        <th class="px-4 py-2">ID</th>
-                        <th class="px-4 py-2">Data</th>
-                        <th class="px-4 py-2">Tipo</th>
-                        <th class="px-4 py-2">Empresa</th>
-                        <th class="px-4 py-2">Setor</th>
-                        <th class="px-4 py-2">Funcionário</th>
-                        <th class="px-4 py-2">Qtd. Equip.</th>
-                        <th class="px-4 py-2">Status</th>
-                        <th class="px-4 py-2">Ações</th>
-                    </tr>
-                </thead>
-
-                <tbody class="bg-green-950/10">
-                    @forelse ($listaDeMovimentacoes as $movimentacao)
-                        @php
-                            $empresa = optional($movimentacao->setor)->empresa;
-                            $setor = $movimentacao->setor;
-                            $funcionario = $movimentacao->funcionario;
-
-                            $status = $movimentacao->status ?? '';
-                            $badgeClasses = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium';
-
-                            switch ($status) {
-                                case 'pendente':
-                                    $badgeClasses .= ' bg-yellow-500/20 text-yellow-200 border border-yellow-500/60';
-                                    break;
-
-                                case 'concluida':
-                                    $badgeClasses .= ' bg-blue-500/20 text-blue-200 border border-blue-500/60';
-                                    break;
-
-                                case 'encerrada':
-                                    $badgeClasses .= ' bg-green-500/20 text-green-200 border border-green-500/60';
-                                    break;
-
-                                case 'cancelada':
-                                    $badgeClasses .= ' bg-red-500/20 text-red-200 border border-red-500/60';
-                                    break;
-
-                                default:
-                                    $badgeClasses .= ' bg-gray-500/20 text-gray-200 border border-gray-500/60';
-                                    break;
-                            }
-                        @endphp
-                        <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15">
-                            <td class="px-4 py-2 text-center">{{ $movimentacao->id }}</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ optional($movimentacao->criado_em)->format('d/m/Y H:i') }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $movimentacao->tipo_movimentacao === \App\Models\Movimentacao::TIPO_DEVOLUCAO ? 'Devolução' : 'Responsabilidade' }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $empresa?->rotulo_empresa ?? ($empresa?->razao_social ?? '-') }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $setor?->nome ?? '-' }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                @if ($funcionario)
-                                    {{ trim(($funcionario->nome ?? '') . ' ' . ($funcionario->sobrenome ?? '')) }}
-                                    @if ($funcionario->matricula)
-                                        ({{ $funcionario->matricula }})
-                                    @endif
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $movimentacao->equipamentos->count() }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                <span class="{{ $badgeClasses }}">
-                                    {{ $status !== '' ? ucfirst($status) : '-' }}
-                                </span>
-                            </td>
-
-                            {{-- Ações --}}
-                            <td class="px-4 py-2 text-center">
-                                <div class="inline-flex items-center gap-2">
-                                    <a href="{{ route('movimentacoes.show', $movimentacao->id) }}"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-md no-underline text-current hover:bg-green-800/20 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        title="Exibir" aria-label="Exibir">
-                                        <i class="fa-solid fa-eye text-base align-middle" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" class="px-4 py-4 text-center text-sm text-green-100/80">
-                                Nenhuma movimentação encontrada para os filtros informados.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        {{-- Paginação --}}
         <div>
             {{ $listaDeMovimentacoes->onEachSide(1)->links() }}
         </div>
-
-    </div>
+    </x-ui.page>
 @endsection
 
 @push('scripts')

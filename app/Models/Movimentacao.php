@@ -22,6 +22,11 @@ class Movimentacao extends Model
     public const TIPO_RESPONSABILIDADE = 'responsabilidade';
     public const TIPO_DEVOLUCAO = 'devolucao';
 
+    public const TIPOS = [
+        self::TIPO_RESPONSABILIDADE => 'Responsabilidade',
+        self::TIPO_DEVOLUCAO => 'Devolução',
+    ];
+
     /** Status válidos (enum da migration) e seus rótulos. */
     public const STATUS = [
         'pendente' => 'Pendente',
@@ -49,6 +54,11 @@ class Movimentacao extends Model
         'criado_em' => 'datetime',
         'atualizado_em' => 'datetime',
     ];
+
+    protected function tipoRotulo(): Attribute
+    {
+        return Attribute::get(fn () => self::TIPOS[$this->tipo_movimentacao] ?? (string) $this->tipo_movimentacao);
+    }
 
     protected function statusRotulo(): Attribute
     {

@@ -1,303 +1,98 @@
 @extends('layouts.main_layout')
 
 @section('content')
-    <div class="w-full flex justify-center">
-        <form id="movimentacaoForm" action="{{ route('movimentacoes.store') }}" method="POST"
-            class="w-full max-w-6xl bg-green-900/40 border border-green-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6"
-            data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
-            data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
-            data-old-empresa-id="{{ old('empresa_id') }}" data-old-setor-id="{{ old('setor_id') }}"
-            data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos='@json(old('equipamentos', []))'>
-            @csrf
+    {{--
+        Setor/funcionário são carregados via JS (movimentacao-form.js) a partir da empresa.
+        O JS move as linhas marcadas entre as duas tabelas e gera os inputs equipamentos[].
+    --}}
+    <x-form.card id="movimentacaoForm" :action="route('movimentacoes.store')" size="xl" title="Cadastro de Movimentação"
+        subtitle="Selecione a empresa, setor e funcionário, depois inclua os equipamentos que serão movimentados."
+        data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
+        data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
+        data-old-empresa-id="{{ old('empresa_id') }}" data-old-setor-id="{{ old('setor_id') }}"
+        data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos="{{ json_encode(old('equipamentos', [])) }}">
 
-            <header class="space-y-1">
-                <h2 class="text-2xl font-semibold tracking-wide">Cadastro de Movimentação</h2>
-                <p class="text-xs text-green-200">
-                    Selecione a empresa, setor e funcionário, depois inclua os equipamentos que serão movimentados.
-                </p>
-            </header>
+        <x-form.select name="empresa_id" label="Empresa" required placeholder="Selecione…" :options="$listaDeEmpresas"
+            option-label="rotulo_empresa" help="Escolha a empresa à qual o setor e o funcionário pertencem." />
 
-            @if ($errors->any())
-                <div class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                    <strong>Ops!</strong> Encontramos {{ $errors->count() }} campo(s) para revisar.
+        <x-form.select name="setor_id" label="Setor" required :disabled="!old('empresa_id')"
+            :placeholder="old('empresa_id') ? 'Selecione…' : 'Selecione uma empresa primeiro…'"
+            help="Após escolher a empresa, selecione o setor." />
+
+        <x-form.select name="funcionario_id" label="Funcionário" required :disabled="!old('setor_id')"
+            :placeholder="old('setor_id') ? 'Selecione…' : 'Selecione um setor primeiro…'"
+            help="Selecione o destinatário da movimentação." />
+
+        <x-form.textarea name="observacao" label="Observação (opcional)" rows="3"
+            placeholder="Detalhes adicionais sobre a movimentação..."
+            help="Campo opcional para complementar o termo de responsabilidade." />
+
+        <section class="space-y-4">
+            <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos*</h3>
+
+            <x-form.grid class="items-end">
+                <x-form.input name="busca_equipamento" label="Busca equipamento"
+                    placeholder="Patrimônio, número de série ou descrição..." wrapper-class="md:col-span-6" />
+                <x-form.select name="filtro_tipo" label="Filtrar por tipo" placeholder="Todos os tipos"
+                    wrapper-class="md:col-span-4" />
+                <div class="flex md:col-span-2 md:justify-end">
+                    <x-ui.button type="button" id="botaoPesquisarEquipamentos" variant="soft"
+                        icon="fa-solid fa-magnifying-glass" class="text-sm">Pesquisar</x-ui.button>
                 </div>
-            @endif
+            </x-form.grid>
 
-            <div>
-                <label for="empresa_id" class="block mb-1 text-sm font-medium text-green-100">Empresa*</label>
-                <select id="empresa_id" name="empresa_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
-                        'empresa_id'),
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
-                        'empresa_id'),
-                ])
-                    aria-invalid="{{ $errors->has('empresa_id') ? 'true' : 'false' }}" aria-describedby="empresa_id_help">
+            <x-table id="tabela_equipamentos_disponiveis" title="Tabela de equipamentos disponíveis"
+                hint="Selecione os equipamentos e clique em Adicionar.">
+                <x-slot:head>
+                    @include('movimentacoes.partials.cabecalho-equipamentos')
+                </x-slot:head>
 
-                    <option value="">Selecione…</option>
-                    @foreach ($listaDeEmpresas as $empresa)
-                        <option value="{{ $empresa->id }}" @selected(old('empresa_id') == $empresa->id)>
-                            {{ $empresa->rotulo_empresa }}
-                        </option>
-                    @endforeach
-                </select>
+                @forelse ($listaDeEquipamentos as $equipamento)
+                    <x-table.row data-equipamento-id="{{ $equipamento->id }}"
+                        data-equipamento-patrimonio="{{ $equipamento->patrimonio }}"
+                        data-equipamento-serie="{{ $equipamento->numero_serie }}"
+                        data-equipamento-descricao="{{ $equipamento->descricao }}"
+                        data-equipamento-tipo="{{ $equipamento->tipoEquipamento->nome ?? '' }}">
+                        <x-table.cell>
+                            <input type="checkbox" class="checkbox-equipamento-disponivel"
+                                aria-label="Selecionar equipamento {{ $equipamento->id }}">
+                        </x-table.cell>
+                        <x-table.cell>{{ $equipamento->id }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->patrimonio }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->numero_serie }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->descricao }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->tipoEquipamento->nome ?? '-' }}</x-table.cell>
+                    </x-table.row>
+                @empty
+                    <x-table.empty :colspan="6">Nenhum equipamento disponível para movimentação.</x-table.empty>
+                @endforelse
+            </x-table>
 
-                @if ($errors->has('empresa_id'))
-                    <p id="empresa_id_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('empresa_id') }}
-                    </p>
-                @else
-                    <p id="empresa_id_help" class="mt-1 text-xs text-green-200">
-                        Escolha a empresa à qual o setor e o funcionário pertencem.
-                    </p>
-                @endif
+            <div class="flex items-center justify-end gap-3">
+                <x-ui.button type="button" id="botaoAdicionarEquipamentos" variant="primary" icon="fa-solid fa-plus"
+                    class="text-sm">Adicionar</x-ui.button>
+                <x-ui.button type="button" id="botaoRemoverEquipamentos" variant="danger" icon="fa-solid fa-minus"
+                    class="text-sm">Remover</x-ui.button>
             </div>
 
-            <div>
-                <label for="setor_id" class="block mb-1 text-sm font-medium text-green-100">Setor*</label>
-                <select id="setor_id" name="setor_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
-                        'setor_id'),
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
-                        'setor_id'),
-                ])
-                    aria-invalid="{{ $errors->has('setor_id') ? 'true' : 'false' }}" aria-describedby="setor_id_help"
-                    {{ old('empresa_id') ? '' : 'disabled' }}>
-                    <option value="">
-                        {{ old('empresa_id') ? 'Selecione…' : 'Selecione uma empresa primeiro…' }}
-                    </option>
-                </select>
+            <x-table id="tabela_equipamentos_selecionados" title="Equipamentos selecionados"
+                hint="Estes equipamentos serão vinculados à movimentação.">
+                <x-slot:head>
+                    @include('movimentacoes.partials.cabecalho-equipamentos')
+                </x-slot:head>
+                {{-- Preenchida pelo JS --}}
+            </x-table>
 
-                @if ($errors->has('setor_id'))
-                    <p id="setor_id_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('setor_id') }}
-                    </p>
-                @else
-                    <p id="setor_id_help" class="mt-1 text-xs text-green-200">
-                        Após escolher a empresa, selecione o setor.
-                    </p>
-                @endif
-            </div>
+            <x-form.field error-key="equipamentos" help="Selecione ao menos um equipamento para gerar a movimentação.">
+                <div id="container_inputs_equipamentos">{{-- Preenchido pelo JS --}}</div>
+            </x-form.field>
+        </section>
 
-            <div>
-                <label for="funcionario_id" class="block mb-1 text-sm font-medium text-green-100">Funcionário*</label>
-                <select id="funcionario_id" name="funcionario_id" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
-                        'funcionario_id'),
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
-                        'funcionario_id'),
-                ])
-                    aria-invalid="{{ $errors->has('funcionario_id') ? 'true' : 'false' }}"
-                    aria-describedby="funcionario_id_help" {{ old('setor_id') ? '' : 'disabled' }}>
-                    <option value="">
-                        {{ old('setor_id') ? 'Selecione…' : 'Selecione um setor primeiro…' }}
-                    </option>
-                </select>
-
-                @if ($errors->has('funcionario_id'))
-                    <p id="funcionario_id_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('funcionario_id') }}
-                    </p>
-                @else
-                    <p id="funcionario_id_help" class="mt-1 text-xs text-green-200">
-                        Selecione o destinatário da movimentação.
-                    </p>
-                @endif
-            </div>
-
-            <div>
-                <label for="observacao" class="block mb-1 text-sm font-medium text-green-100">Observação (opcional)</label>
-                <textarea id="observacao" name="observacao" rows="3" @class([
-                    'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                    'border-red-500 ring-1 ring-red-400 focus:ring-red-400 focus:border-red-400 placeholder-red-300' => $errors->has(
-                        'observacao'),
-                    'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400' => !$errors->has(
-                        'observacao'),
-                ])
-                    aria-invalid="{{ $errors->has('observacao') ? 'true' : 'false' }}" aria-describedby="observacao_help"
-                    placeholder="Detalhes adicionais sobre a movimentação...">{{ old('observacao') }}</textarea>
-
-                @if ($errors->has('observacao'))
-                    <p id="observacao_help" class="mt-1 text-xs text-red-300 flex items-center gap-1">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('observacao') }}
-                    </p>
-                @else
-                    <p id="observacao_help" class="mt-1 text-xs text-green-200">
-                        Campo opcional para complementar o termo de responsabilidade.
-                    </p>
-                @endif
-            </div>
-
-            <section class="space-y-4">
-                <h3 class="text-lg font-semibold text-green-100">Seleção de Equipamentos*</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                    <div class="md:col-span-6">
-                        <label for="busca_equipamento" class="mb-1 block text-sm text-green-100">Busca equipamento</label>
-                        <input type="text" id="busca_equipamento" name="busca_equipamento"
-                            placeholder="Patrimônio, número de série ou descrição..."
-                            class="w-full rounded-lg border border-green-700 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400">
-                    </div>
-
-                    <div class="md:col-span-4">
-                        <label for="filtro_tipo" class="mb-1 block text-sm text-green-100">Filtrar por tipo</label>
-                        <select id="filtro_tipo" @class([
-                            'w-full rounded-lg border px-3 py-2 bg-white text-gray-900 placeholder-gray-500 focus:outline-none',
-                            'border-green-700 focus:ring-2 focus:ring-green-400 focus:border-green-400',
-                        ])>
-                            <option value="">Todos os tipos</option>
-                        </select>
-                    </div>
-
-                    <div class="md:col-span-2 flex md:justify-end">
-                        <button type="button" id="botaoPesquisarEquipamentos"
-                            class="inline-flex items-center gap-2 rounded-lg border border-green-700 bg-green-800/40 px-4 py-2 text-sm hover:bg-green-700/40">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            Pesquisar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="rounded-2xl bg-green-900/30 border border-green-800 shadow-sm">
-                    <div class="px-4 py-2 border-b border-green-800/60 flex items-center justify-between">
-                        <span class="text-sm font-medium text-green-100">Tabela de equipamentos disponíveis</span>
-                        <span class="text-[11px] text-green-200/80">
-                            Selecione os equipamentos e clique em <strong>Adicionar</strong>.
-                        </span>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm table-auto" id="tabela_equipamentos_disponiveis">
-                            <thead class="bg-green-900/60 text-green-100">
-                                <tr>
-                                    <th class="px-4 py-2 text-center w-12">
-                                        <span class="sr-only">Selecionar</span>
-                                    </th>
-                                    <th class="px-4 py-2">ID</th>
-                                    <th class="px-4 py-2">Patrimônio</th>
-                                    <th class="px-4 py-2">Número de Série</th>
-                                    <th class="px-4 py-2">Descrição</th>
-                                    <th class="px-4 py-2">Tipo</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-green-950/10">
-                                @forelse ($listaDeEquipamentos as $equipamento)
-                                    <tr class="border-b border-green-800/30 transition-colors hover:bg-green-800/15"
-                                        data-equipamento-id="{{ $equipamento->id }}"
-                                        data-equipamento-patrimonio="{{ $equipamento->patrimonio }}"
-                                        data-equipamento-serie="{{ $equipamento->numero_serie }}"
-                                        data-equipamento-descricao="{{ $equipamento->descricao }}"
-                                        data-equipamento-tipo="{{ $equipamento->tipoEquipamento->nome ?? '' }}">
-                                        <td class="px-4 py-2 text-center">
-                                            <input type="checkbox" class="checkbox-equipamento-disponivel">
-                                        </td>
-                                        <td class="px-4 py-2 text-center">{{ $equipamento->id }}</td>
-                                        <td class="px-4 py-2 text-center">{{ $equipamento->patrimonio }}</td>
-                                        <td class="px-4 py-2 text-center">{{ $equipamento->numero_serie }}</td>
-                                        <td class="px-4 py-2 text-center">{{ $equipamento->descricao }}</td>
-                                        <td class="px-4 py-2 text-center">
-                                            {{ $equipamento->tipoEquipamento->nome ?? '-' }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-4 py-3 text-center text-sm text-green-100/80">
-                                            Nenhum equipamento disponível para movimentação.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-3">
-                    <button type="button" id="botaoAdicionarEquipamentos"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600">
-                        <i class="fa-solid fa-plus"></i> Adicionar
-                    </button>
-
-                    <button type="button" id="botaoRemoverEquipamentos"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-600">
-                        <i class="fa-solid fa-minus"></i> Remover
-                    </button>
-                </div>
-
-                <div class="rounded-2xl bg-green-900/30 border border-green-800 shadow-sm">
-                    <div class="px-4 py-2 border-b border-green-800/60 flex items-center justify-between">
-                        <span class="text-sm font-medium text-green-100">Equipamentos selecionados</span>
-                        <span class="text-[11px] text-green-200/80">
-                            Estes equipamentos serão vinculados à movimentação.
-                        </span>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm table-auto" id="tabela_equipamentos_selecionados">
-                            <thead class="bg-green-900/60 text-green-100">
-                                <tr>
-                                    <th class="px-4 py-2 text-center w-12">
-                                        <span class="sr-only">Selecionar</span>
-                                    </th>
-                                    <th class="px-4 py-2">ID</th>
-                                    <th class="px-4 py-2">Patrimônio</th>
-                                    <th class="px-4 py-2">Número de Série</th>
-                                    <th class="px-4 py-2">Descrição</th>
-                                    <th class="px-4 py-2">Tipo</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-green-950/10">
-                                {{-- JS --}}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="container_inputs_equipamentos">
-                    {{-- JS --}}
-                </div>
-
-                @if ($errors->has('equipamentos'))
-                    <p class="mt-1 text-xs text-red-300 flex items-center gap-1">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-5.5h1.5v1.5h-1.5V12.5zm0-6h1.5V11h-1.5V6.5z" />
-                        </svg>
-                        {{ $errors->first('equipamentos') }}
-                    </p>
-                @else
-                    <p class="mt-1 text-xs text-green-200">
-                        Selecione ao menos um equipamento para gerar a movimentação.
-                    </p>
-                @endif
-            </section>
-
-            {{-- Ações --}}
-            <div class="flex items-center justify-between gap-3 pt-4">
-                <a href="{{ route('movimentacoes.index') }}"
-                    class="inline-flex items-center gap-2 rounded-lg border border-green-700 px-4 py-2 text-sm hover:bg-green-800/40">
-                    <i class="fa-solid fa-arrow-left"></i> Cancelar
-                </a>
-
-                <button type="submit"
-                    class="inline-flex items-center gap-2 rounded-lg bg-green-700 px-5 py-2 text-sm font-medium text-white hover:bg-green-600">
-                    <i class="fa-solid fa-floppy-disk"></i> Gerar Movimentação
-                </button>
-            </div>
-        </form>
-    </div>
+        <x-form.actions class="pt-4">
+            <x-ui.button :href="route('movimentacoes.index')" icon="fa-solid fa-arrow-left" class="text-sm">Cancelar</x-ui.button>
+            <x-ui.button variant="primary" icon="fa-solid fa-floppy-disk" class="text-sm">Gerar Movimentação</x-ui.button>
+        </x-form.actions>
+    </x-form.card>
 @endsection
 
 @push('scripts')

@@ -1,222 +1,122 @@
-{{-- resources/views/layouts/partials/header.blade.php --}}
-<header class="bg-green-900/95 backdrop-blur shadow-md">
-    <div class="w-full px-3"> {{-- << antes: mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 --}}
+{{--
+    Barra superior. Os itens vêm de config/navegacao.php (fonte única para desktop e mobile).
+    Comportamento dos dropdowns e do menu mobile: resources/js/layout/nav.js (data-dropdown*, #btn-mobile, #mobile-menu).
+--}}
+@php
+    $menu = config('navegacao');
+    $estaAtivo = fn (array $item) => isset($item['itens'])
+        ? collect($item['itens'])->contains(fn ($subitem) => request()->routeIs($subitem['ativo']))
+        : request()->routeIs($item['ativo']);
+@endphp
+
+<header class="bg-green-900/95 shadow-md backdrop-blur">
+    <div class="w-full px-3">
         <div class="flex h-16 items-center justify-between">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('/') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('assets/logo-teste.png') }}" alt="Logo"
-                        class="h-10 w-10 rounded-full border border-green-600">
-                    <span class="text-lg font-semibold tracking-wider">IT Inventory</span>
-                </a>
-            </div>
+            <a href="{{ route('/') }}" class="flex items-center gap-3">
+                <img src="{{ asset('assets/logo-teste.png') }}" alt="" class="h-10 w-10 rounded-full border border-green-600">
+                <span class="text-lg font-semibold tracking-wider">IT Inventory</span>
+            </a>
 
-            @if (!Route::is('login'))
-                {{-- Desktop nav --}}
-                <nav class="hidden md:flex items-center gap-1">
-                    {{-- Dashboard --}}
-                    <a href="{{ route('/') }}" @class([
-                        'px-3 py-2 rounded-md text-sm font-medium transition',
-                        'text-green-300 bg-green-800/40' => request()->routeIs('/'),
-                        'hover:text-green-300' => !request()->routeIs('/'),
-                    ])>
-                        <i class="fa-solid fa-gauge"></i> Dashboard
-                    </a>
+            @unless (Route::is('login'))
+                {{-- Desktop --}}
+                <nav class="hidden items-center gap-1 md:flex" aria-label="Menu principal">
+                    @foreach ($menu as $item)
+                        @isset($item['itens'])
+                            <div class="relative" data-dropdown>
+                                <button type="button" data-dropdown-button aria-haspopup="menu" aria-expanded="false"
+                                    @class([
+                                        'flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition hover:text-green-300',
+                                        'text-green-300' => $estaAtivo($item),
+                                    ])>
+                                    <i class="{{ $item['icone'] }}" aria-hidden="true"></i> {{ $item['rotulo'] }}
+                                    <i class="fa-solid fa-chevron-down text-xs" aria-hidden="true"></i>
+                                </button>
 
-                    {{-- Cadastros (dropdown) --}}
-                    <div class="relative" data-dropdown>
-                        <button type="button"
-                            class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-2 hover:text-green-300"
-                            data-dropdown-button aria-haspopup="menu" aria-expanded="false">
-                            <i class="fa-solid fa-folder-tree"></i> Cadastros
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </button>
-
-                        <div class="invisible opacity-0 pointer-events-none absolute right-0 mt-2 w-56 rounded-lg border border-green-800 bg-green-900/95 shadow-xl transition-all"
-                            data-dropdown-menu>
-                            <div class="py-2 text-sm">
-                                <a href="{{ route('empresas.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('empresas.*'),
-                                ])>
-                                    <i class="fa-regular fa-building"></i> Empresas
-                                </a>
-                                <a href="{{ route('setores.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('setores.*'),
-                                ])>
-                                    <i class="fa-solid fa-diagram-project"></i> Setores
-                                </a>
-                                <a href="{{ route('tipo-equipamentos.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('tipo-equipamentos.*'),
-                                ])>
-                                    <i class="fa-solid fa-sitemap"></i> Tipos de Equipamento
-                                </a>
-                                <a href="{{ route('equipamentos.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('equipamentos.*'),
-                                ])>
-                                    <i class="fa-solid fa-computer"></i> Equipamentos
-                                </a>
-                                <a href="{{ route('funcionarios.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('funcionarios.*'),
-                                ])>
-                                    <i class="fa-solid fa-user-tie"></i> Funcionários
-                                </a>
-                                {{-- usuários --}}
-                                <a href="{{ route('usuarios.index') }}" @class([
-                                    'block px-4 py-2 hover:bg-green-800/50',
-                                    'text-green-300' => request()->routeIs('usuarios.*'),
-                                ])>
-                                    <i class="fa-solid fa-users-gear"></i> Usuários
-                                </a>
+                                <div class="invisible absolute right-0 z-20 mt-2 w-56 rounded-lg border border-green-800 bg-green-900/95 opacity-0 shadow-xl transition-all pointer-events-none"
+                                    data-dropdown-menu role="menu">
+                                    <div class="py-2 text-sm">
+                                        @foreach ($item['itens'] as $subitem)
+                                            <a href="{{ route($subitem['rota']) }}" role="menuitem"
+                                                @if (request()->routeIs($subitem['ativo'])) aria-current="page" @endif
+                                                @class([
+                                                    'block px-4 py-2 hover:bg-green-800/50',
+                                                    'text-green-300' => request()->routeIs($subitem['ativo']),
+                                                ])>
+                                                <i class="{{ $subitem['icone'] }}" aria-hidden="true"></i> {{ $subitem['rotulo'] }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        @else
+                            <a href="{{ route($item['rota']) }}" @if ($estaAtivo($item)) aria-current="page" @endif
+                                @class([
+                                    'rounded-md px-3 py-2 text-sm font-medium transition',
+                                    'bg-green-800/40 text-green-300' => $estaAtivo($item),
+                                    'hover:text-green-300' => !$estaAtivo($item),
+                                ])>
+                                <i class="{{ $item['icone'] }}" aria-hidden="true"></i> {{ $item['rotulo'] }}
+                            </a>
+                        @endisset
+                    @endforeach
 
-                    {{-- Operações (dropdown) --}}
-                    <div class="relative" data-dropdown>
-                        <button type="button"
-                            class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-2 hover:text-green-300"
-                            data-dropdown-button aria-haspopup="menu" aria-expanded="false">
-                            <i class="fa-solid fa-arrows-rotate"></i> Operações
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </button>
-
-                        <div class="invisible opacity-0 pointer-events-none absolute right-0 mt-2 w-56 rounded-lg border border-green-800 bg-green-900/95 shadow-xl transition-all"
-                            data-dropdown-menu>
-                            <div class="py-2 text-sm">
-                                @if (Route::has('movimentacoes.index'))
-                                    <a href="{{ route('movimentacoes.index') }}" @class([
-                                        'block px-4 py-2 hover:bg-green-800/50',
-                                        'text-green-300' => request()->routeIs('movimentacoes.index'),
-                                    ])>
-                                        <i class="fa-solid fa-list"></i> Movimentações
-                                    </a>
-                                    <a href="{{ route('movimentacoes.create') }}" @class([
-                                        'block px-4 py-2 hover:bg-green-800/50',
-                                        'text-green-300' => request()->routeIs('movimentacoes.create'),
-                                    ])>
-                                        <i class="fa-solid fa-file-signature"></i> Termo de responsabilidade
-                                    </a>
-                                    <a href="{{ route('movimentacoes.devolucao.create') }}" @class([
-                                        'block px-4 py-2 hover:bg-green-800/50',
-                                        'text-green-300' => request()->routeIs('movimentacoes.devolucao.*'),
-                                    ])>
-                                        <i class="fa-solid fa-box-open"></i> Termo de devolução
-                                    </a>
-                                @else
-                                    <span class="block px-4 py-2 text-green-200/60 cursor-not-allowed">
-                                        <i class="fa-solid fa-right-left"></i> Movimentações
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Sair --}}
-                    <a href="{{ route('logout') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium transition hover:text-green-300"
-                        title="Encerrar sessão">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                    <a href="{{ route('logout') }}" title="Encerrar sessão"
+                        class="rounded-md px-3 py-2 text-sm font-medium transition hover:text-green-300">
+                        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
                     </a>
                 </nav>
 
-                {{-- Mobile: botão hambúrguer --}}
-                <button class="md:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-green-800/40"
-                    type="button" aria-controls="mobile-menu" aria-expanded="false" id="btn-mobile">
+                {{-- Mobile: botão do menu --}}
+                <button type="button" id="btn-mobile" aria-controls="mobile-menu" aria-expanded="false"
+                    class="inline-flex items-center justify-center rounded-md p-2 hover:bg-green-800/40 md:hidden">
                     <span class="sr-only">Abrir menu</span>
-                    <i class="fa-solid fa-bars text-lg"></i>
+                    <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
                 </button>
+            @endunless
         </div>
-
-        @endif
     </div>
 
-    {{-- Mobile menu --}}
-    <div class="md:hidden hidden border-t border-green-800" id="mobile-menu">
-        <div class="space-y-1 px-4 py-3">
-            <a href="{{ route('/') }}" @class([
-                'block rounded-md px-3 py-2 text-base font-medium',
-                'text-green-300 bg-green-800/40' => request()->routeIs('/'),
-                'hover:text-green-300' => !request()->routeIs('/'),
-            ])>
-                <i class="fa-solid fa-gauge"></i> Dashboard
-            </a>
-
-            {{-- MOBILE MENU (substitua só o bloco <details> de Cadastros e Operações) --}}
-            <details class="group">
-                <summary
-                    class="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
-                    <span><i class="fa-solid fa-folder-tree mr-2"></i> Cadastros</span>
-                    <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
-                </summary>
-                <div class="mt-1 space-y-1 pl-6">
-                    <a href="{{ route('empresas.index') }}"
-                        class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('empresas.*')) text-green-300 @endif">
-                        <i class="fa-regular fa-building mr-2"></i> Empresas
-                    </a>
-                    <a href="{{ route('setores.index') }}"
-                        class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('setores.*')) text-green-300 @endif">
-                        <i class="fa-solid fa-diagram-project mr-2"></i> Setores
-                    </a>
-                    <a href="{{ route('tipo-equipamentos.index') }}"
-                        class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('tipo-equipamentos.*')) text-green-300 @endif">
-                        <i class="fa-solid fa-sitemap mr-2"></i> Tipos de Equipamento
-                    </a>
-                    <a href="{{ route('equipamentos.index') }}"
-                        class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('equipamentos.*')) text-green-300 @endif">
-                        <i class="fa-solid fa-computer mr-2"></i> Equipamentos
-                    </a>
-                    <a href="{{ route('funcionarios.index') }}"
-                        class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('funcionarios.*')) text-green-300 @endif">
-                        <i class="fa-solid fa-user-tie mr-2"></i> Funcionários
-                    </a>
-                    @if (Route::has('usuarios.index'))
-                        <a href="{{ route('usuarios.index') }}"
-                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('usuarios.*')) text-green-300 @endif">
-                            <i class="fa-solid fa-users-gear mr-2"></i> Usuários
-                        </a>
-                    @endif
-                </div>
-            </details>
-
-            <details class="group">
-                <summary
-                    class="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
-                    <span><i class="fa-solid fa-arrows-rotate mr-2"></i> Operações</span>
-                    <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
-                </summary>
-                <div class="mt-1 space-y-1 pl-6">
-                    @if (Route::has('movimentacoes.index'))
-                        <a href="{{ route('movimentacoes.index') }}"
-                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.index')) text-green-300 @endif">
-                            <i class="fa-solid fa-list mr-2"></i> Movimentações
-                        </a>
-                        <a href="{{ route('movimentacoes.create') }}"
-                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.create')) text-green-300 @endif">
-                            <i class="fa-solid fa-file-signature mr-2"></i> Termo de responsabilidade
-                        </a>
-                        <a href="{{ route('movimentacoes.devolucao.create') }}"
-                            class="block rounded-md px-3 py-2 hover:bg-green-800/40 @if (request()->routeIs('movimentacoes.devolucao.*')) text-green-300 @endif">
-                            <i class="fa-solid fa-box-open mr-2"></i> Termo de devolução
-                        </a>
+    @unless (Route::is('login'))
+        {{-- Mobile: menu --}}
+        <nav id="mobile-menu" class="hidden border-t border-green-800 md:hidden" aria-label="Menu principal">
+            <div class="space-y-1 px-4 py-3">
+                @foreach ($menu as $item)
+                    @isset($item['itens'])
+                        <details class="group" @if ($estaAtivo($item)) open @endif>
+                            <summary
+                                class="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
+                                <span><i class="{{ $item['icone'] }} mr-2" aria-hidden="true"></i> {{ $item['rotulo'] }}</span>
+                                <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180" aria-hidden="true"></i>
+                            </summary>
+                            <div class="mt-1 space-y-1 pl-6">
+                                @foreach ($item['itens'] as $subitem)
+                                    <a href="{{ route($subitem['rota']) }}"
+                                        @if (request()->routeIs($subitem['ativo'])) aria-current="page" @endif
+                                        @class([
+                                            'block rounded-md px-3 py-2 hover:bg-green-800/40',
+                                            'text-green-300' => request()->routeIs($subitem['ativo']),
+                                        ])>
+                                        <i class="{{ $subitem['icone'] }} mr-2" aria-hidden="true"></i> {{ $subitem['rotulo'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </details>
                     @else
-                        <span class="block rounded-md px-3 py-2 text-green-200/60">
-                            <i class="fa-solid fa-right-left mr-2"></i> Movimentações
-                        </span>
-                    @endif
-                </div>
-            </details>
+                        <a href="{{ route($item['rota']) }}" @if ($estaAtivo($item)) aria-current="page" @endif
+                            @class([
+                                'block rounded-md px-3 py-2 text-base font-medium',
+                                'bg-green-800/40 text-green-300' => $estaAtivo($item),
+                                'hover:text-green-300' => !$estaAtivo($item),
+                            ])>
+                            <i class="{{ $item['icone'] }} mr-2" aria-hidden="true"></i> {{ $item['rotulo'] }}
+                        </a>
+                    @endisset
+                @endforeach
 
-
-            <a href="{{ route('logout') }}"
-                class="mt-1 block rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
-                <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Sair
-            </a>
-        </div>
-    </div>
+                <a href="{{ route('logout') }}" class="mt-1 block rounded-md px-3 py-2 text-base font-medium hover:text-green-300">
+                    <i class="fa-solid fa-arrow-right-from-bracket mr-2" aria-hidden="true"></i> Sair
+                </a>
+            </div>
+        </nav>
+    @endunless
 </header>
-
-@vite(['resources/css/app.css', 'resources/js/app.js'])

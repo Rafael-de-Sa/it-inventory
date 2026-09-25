@@ -1,15 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 /*
- * Tema escuro por classe (.dark), não pela preferência do sistema:
- * o projeto usa só o tema claro por enquanto (ver issue #3) e isso evita
- * que views de terceiros (ex.: paginação) mudem de cor sozinhas.
+ * Tema escuro por classe (.dark no <html>), aplicada por resources/js/layout/tema.js
+ * conforme a escolha do usuário (claro, escuro ou sistema). Relatórios PDF ficam sempre no claro.
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -34,6 +32,8 @@
     --color-brand-800: oklch(44.8% 0.119 151.328);
     --color-brand-900: oklch(39.3% 0.095 152.535);
     --color-brand-950: oklch(26.6% 0.065 152.934);
+    /* Fundo do botão principal ao passar o mouse (igual ao brand-800, mas não muda no tema escuro). */
+    --color-brand-strong: oklch(44.8% 0.119 151.328);
 
     /* Neutros (base "zinc"): superfícies, bordas e textos. */
     --color-page: oklch(97.6% 0.002 286);
@@ -58,7 +58,7 @@
 
     /* Foco visível para navegação por teclado. Campos de formulário usam o anel do .form-control. */
     :where(a, button, summary, [tabindex]):focus-visible {
-        @apply rounded-md outline-2 outline-offset-2 outline-brand-600;
+        @apply rounded-md outline-2 outline-offset-2 outline-brand-600 dark:outline-brand-400;
     }
 
     input[type='checkbox'],
@@ -68,7 +68,58 @@
 
     input[type='checkbox']:focus-visible,
     input[type='radio']:focus-visible {
-        @apply outline-2 outline-offset-2 outline-brand-600;
+        @apply outline-2 outline-offset-2 outline-brand-600 dark:outline-brand-400;
+    }
+}
+
+/*
+ * Tema escuro. Os neutros (page, surface, ink...) são tokens e trocam direto.
+ * As cores de status seguem a convenção "fundo claro (50–300) + texto escuro (600–900)"
+ * nos componentes; no escuro essas mesmas classes viram "fundo escuro + texto claro".
+ * brand-600/700 não mudam: são fundo de botão com texto branco (onde aparecem como texto, a view usa dark:text-brand-300/400).
+ */
+@layer base {
+    html.dark {
+        color-scheme: dark;
+
+        --color-page: oklch(14.1% 0.005 285.823);
+        --color-surface: oklch(21% 0.006 285.885);
+        --color-surface-muted: oklch(25% 0.006 285.9);
+        --color-line: oklch(29% 0.006 286.033);
+        --color-line-strong: oklch(38% 0.012 285.805);
+        --color-ink: oklch(96.7% 0.001 286.375);
+        --color-ink-muted: oklch(76% 0.012 286.067);
+        --color-ink-subtle: oklch(66% 0.014 286);
+
+        --color-brand-50: oklch(27% 0.045 152);
+        --color-brand-100: oklch(31% 0.06 152);
+        --color-brand-200: oklch(38% 0.08 152);
+        --color-brand-800: oklch(87.1% 0.15 154.449);
+        --color-brand-900: oklch(92.5% 0.084 155.995);
+
+        --color-red-50: oklch(26% 0.06 25);
+        --color-red-200: oklch(39% 0.1 25);
+        --color-red-300: oklch(47% 0.13 25);
+        --color-red-600: oklch(70.4% 0.191 22.216);
+        --color-red-700: oklch(80.8% 0.114 19.571);
+        --color-red-800: oklch(88.5% 0.062 18.334);
+
+        --color-amber-50: oklch(27% 0.05 70);
+        --color-amber-200: oklch(40% 0.08 70);
+        --color-amber-300: oklch(48% 0.1 70);
+        --color-amber-600: oklch(82.8% 0.189 84.429);
+        --color-amber-700: oklch(87.9% 0.169 91.605);
+        --color-amber-800: oklch(92.4% 0.12 95.746);
+        --color-amber-900: oklch(92.4% 0.12 95.746);
+
+        --color-sky-50: oklch(27% 0.05 237);
+        --color-sky-200: oklch(40% 0.08 237);
+        --color-sky-600: oklch(74.6% 0.16 232.661);
+        --color-sky-800: oklch(90.1% 0.058 230.902);
+        --color-sky-900: oklch(90.1% 0.058 230.902);
+
+        --color-zinc-100: oklch(29% 0.006 286);
+        --color-zinc-700: oklch(87.1% 0.006 286.286);
     }
 }
 

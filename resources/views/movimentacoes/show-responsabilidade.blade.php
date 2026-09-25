@@ -23,7 +23,7 @@
                     @php $estaDevolvido = filled($equipamento->pivot->devolvido_em); @endphp
                     <x-table.row>
                         <x-table.cell>{{ $equipamento->id }}</x-table.cell>
-                        <x-table.cell>{{ $equipamento->descricao ?? '-' }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->nome_exibicao ?: '-' }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->patrimonio ?? '-' }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->numero_serie ?? '-' }}</x-table.cell>
                         <x-table.cell>

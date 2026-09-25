@@ -15,6 +15,8 @@
         <x-form.input name="nome" label="Nome" required autocomplete="off" :value="$tipoEquipamento->nome"
             placeholder="Ex.: Notebook, Desktop, Impressora..." help="Informe um nome claro, ex.: “Notebook”." />
 
+        @include('tipo-equipamentos.partials.categoria')
+
         <x-form.actions>
             <x-ui.button :href="route('tipo-equipamentos.show', $tipoEquipamento)" icon="fa-solid fa-arrow-left">
                 Cancelar

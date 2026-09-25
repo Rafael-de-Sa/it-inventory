@@ -7,7 +7,7 @@
         use Illuminate\Support\Str;
 
         $nomeTipoEquipamento = $equipamento->tipoEquipamento->nome ?? null;
-        $descricaoEquipamento = $equipamento->descricao ?? null;
+        $descricaoEquipamento = $equipamento->nome_exibicao ?: null;
         $patrimonioEquipamento = $equipamento->patrimonio ?? null;
         $numeroSerieEquipamento = $equipamento->numero_serie ?? null;
 
@@ -81,7 +81,7 @@
             @endif
 
             @if (!empty($descricaoEquipamento))
-                <strong>Descrição / Modelo:</strong> {{ $descricaoEquipamento }}<br>
+                <strong>Equipamento:</strong> {{ $descricaoEquipamento }}<br>
             @endif
 
             @if (!empty($patrimonioEquipamento))
@@ -91,8 +91,37 @@
             @if (!empty($numeroSerieEquipamento))
                 <strong>Número de série:</strong> {{ $numeroSerieEquipamento }}<br>
             @endif
+
+            @if ($equipamento->identificacao)
+                <strong>Identificação interna:</strong> {{ $equipamento->identificacao }}<br>
+            @endif
+
+            <strong>Situação atual:</strong> {{ $equipamento->status_rotulo }}<br>
         </p>
+
+        @if ($equipamento->data_compra || filled($equipamento->valor_compra) || $equipamento->nota_fiscal || $equipamento->chave_acesso_nf)
+            <p>
+                @if ($equipamento->data_compra)
+                    <strong>Data da compra:</strong> {{ $equipamento->data_compra->format('d/m/Y') }}<br>
+                @endif
+                @if (filled($equipamento->valor_compra))
+                    <strong>Valor da compra:</strong> R$ {{ number_format((float) $equipamento->valor_compra, 2, ',', '.') }}<br>
+                @endif
+                @if ($equipamento->nota_fiscal)
+                    <strong>Nota fiscal:</strong> {{ $equipamento->nota_fiscal }}<br>
+                @endif
+                @if ($equipamento->chave_acesso_nf)
+                    <strong>Chave de acesso:</strong> {{ $equipamento->chave_acesso_nf_formatada }}<br>
+                @endif
+            </p>
+        @endif
+
+        @if ($equipamento->descricao && $equipamento->fabricante)
+            <p><strong>Observação:</strong> {{ $equipamento->descricao }}</p>
+        @endif
     </div>
+
+    @include('relatorios.equipamentos.partials.ficha-tecnica')
 
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
@@ -137,9 +166,88 @@
         @endif
     </div>
 
+    @isset($indicadores)
+        <div class="secao-texto">
+            <h2 class="subtitulo-secao">
+                Indicadores de manutenção
+            </h2>
+
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Custo de manutenção</th>
+                        <th>% do valor de compra</th>
+                        <th>Ocorrências</th>
+                        <th>Resolução média</th>
+                        <th>Tempo parado</th>
+                        <th>Disponibilidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ \App\Models\Ocorrencia::reais($indicadores['custo']) }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::percentual($indicadores['percentual_custo']) }}</td>
+                        <td>{{ $indicadores['ocorrencias'] }}{{ $indicadores['abertas'] ? ' (' . $indicadores['abertas'] . ' em aberto)' : '' }}</td>
+                        <td>{{ $indicadores['resolucao_media_dias'] !== null ? str_replace('.', ',', $indicadores['resolucao_media_dias']) . ' dia(s)' : '—' }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::duracao($indicadores['segundos_parado']) }}</td>
+                        <td>{{ \App\Services\IndicadoresManutencao::percentual($indicadores['disponibilidade']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="nota-discreta">
+                Tempo parado e disponibilidade consideram os períodos em manutenção ou defeituoso na linha do tempo,
+                desde o primeiro registro do equipamento até hoje (ou até a baixa/descarte).
+            </p>
+        </div>
+    @endisset
+
     <div class="secao-texto">
         <h2 class="subtitulo-secao">
-            Histórico de termos de responsabilidade
+            Ocorrências
+        </h2>
+
+        @if (($ocorrencias ?? collect())->isEmpty())
+            <p>Não há ocorrências registradas para este equipamento.</p>
+        @else
+            <table class="tabela-equipamentos">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Reportado</th>
+                        <th class="texto-esquerda">Problema</th>
+                        <th class="texto-esquerda">Último usuário</th>
+                        <th>Chamado</th>
+                        <th>Liberado</th>
+                        <th class="texto-esquerda">Solução</th>
+                        <th>Custo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ocorrencias as $ocorrencia)
+                        <tr>
+                            <td>#{{ $ocorrencia->id }}</td>
+                            <td>{{ $ocorrencia->reportado_em->format('d/m/Y') }}</td>
+                            <td class="texto-esquerda">{{ $ocorrencia->problema }}</td>
+                            <td class="texto-esquerda">{{ $ocorrencia->funcionario?->nome_completo ?? '-' }}</td>
+                            <td>{{ $ocorrencia->chamado ?? '-' }}</td>
+                            <td>{{ $ocorrencia->liberado_em?->format('d/m/Y') ?? 'Aberta' }}</td>
+                            <td class="texto-esquerda">
+                                {{ $ocorrencia->solucao ?? '-' }}
+                                @if ($ocorrencia->troca_movimentacao_id)
+                                    <br><span class="nota-discreta">Troca #{{ $ocorrencia->troca_movimentacao_id }}</span>
+                                @endif
+                            </td>
+                            <td>{{ $ocorrencia->custo_manutencao_formatado ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="secao-texto">
+        <h2 class="subtitulo-secao">
+            Histórico de termos de responsabilidade e troca
         </h2>
 
         @if ($listaMovimentacoesResponsabilidade->isEmpty())
@@ -177,6 +285,9 @@
                             <td>
                                 @if ($movimentacao)
                                     #{{ $movimentacao->id }}
+                                    @if ($movimentacao->tipo_movimentacao === \App\Models\Movimentacao::TIPO_TROCA)
+                                        <br><span class="nota-discreta">Troca</span>
+                                    @endif
                                 @else
                                     -
                                 @endif

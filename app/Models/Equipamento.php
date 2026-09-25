@@ -29,15 +29,27 @@ class Equipamento extends Model
         'em_manutencao' => 'Em manutenção',
         'defeituoso' => 'Defeituoso',
         'descartado' => 'Descartado',
+        'baixado' => 'Baixado',
     ];
 
     /** "Em uso" só é atribuído pelas movimentações, não no cadastro manual. */
     public const STATUS_CADASTRO = ['disponivel', 'em_manutencao', 'defeituoso', 'descartado'];
 
+    /** Na edição também é possível dar baixa manual (a troca pelo fornecedor faz isso automaticamente). */
+    public const STATUS_EDICAO = [...self::STATUS_CADASTRO, 'baixado'];
+
+    /** Acima deste valor de compra o patrimônio (plaquinha) é obrigatório. */
+    public const VALOR_MINIMO_PATRIMONIO = 1500;
+
     protected $fillable = [
         'tipo_equipamento_id',
+        'fabricante',
+        'modelo',
+        'identificacao',
         'data_compra',
         'valor_compra',
+        'nota_fiscal',
+        'chave_acesso_nf',
         'status',
         'ativo',
         'descricao',
@@ -69,9 +81,64 @@ class Equipamento extends Model
         return Attribute::get(fn () => self::STATUS[$this->status] ?? (string) $this->status);
     }
 
+    /** Relações das fichas técnicas, para eager loading: Equipamento::with(Equipamento::RELACOES_FICHA). */
+    public const RELACOES_FICHA = ['computador', 'monitor', 'impressora', 'dispositivoMovel'];
+
     /**
-     * Item de termo de responsabilidade ainda não devolvido (ignora movimentações canceladas).
-     * Enquanto existir, o status do equipamento só muda via devolução.
+     * Resumo da ficha técnica em uma linha, para termos e relatórios:
+     * "Intel Core i5-13450HX · 16 GB DDR5 · 512 GB SSD NVMe", "21,5 pol. LED", "IMEI 354494165730091".
+     */
+    protected function resumoTecnico(): Attribute
+    {
+        return Attribute::get(function () {
+            $gb = fn (?int $valor) => $valor >= 1000 && $valor % 1000 === 0 ? ($valor / 1000) . ' TB' : $valor . ' GB';
+            $juntar = fn (array $partes) => implode(' · ', array_filter(array_map('trim', $partes))) ?: null;
+
+            return match (true) {
+                (bool) $this->computador => $juntar([
+                    $this->computador->processador,
+                    trim($gb($this->computador->memoria_gb) . ' ' . $this->computador->memoria_tipo),
+                    $gb($this->computador->armazenamento_gb) . ' ' . $this->computador->armazenamento_tipo,
+                ]),
+                (bool) $this->monitor => $juntar([
+                    str_replace('.', ',', rtrim(rtrim((string) $this->monitor->polegadas, '0'), '.')) . ' pol.',
+                    (string) $this->monitor->tipo_tela,
+                ]),
+                (bool) $this->impressora => $juntar([
+                    Impressora::TECNOLOGIAS[$this->impressora->tecnologia] ?? $this->impressora->tecnologia,
+                    implode(', ', array_map(fn ($c) => Impressora::CONEXOES[$c] ?? $c, $this->impressora->conexoes ?? [])),
+                ]),
+                (bool) $this->dispositivoMovel => $juntar([
+                    $this->dispositivoMovel->imei_1 ? 'IMEI ' . $this->dispositivoMovel->imei_1 : null,
+                    $this->dispositivoMovel->imei_2 ? 'IMEI 2 ' . $this->dispositivoMovel->imei_2 : null,
+                ]),
+                default => null,
+            };
+        });
+    }
+
+    /** Chave de acesso da NF-e em blocos de 4 dígitos, como impressa no DANFE. */
+    protected function chaveAcessoNfFormatada(): Attribute
+    {
+        return Attribute::get(fn () => $this->chave_acesso_nf ? implode(' ', str_split($this->chave_acesso_nf, 4)) : null);
+    }
+
+    /**
+     * Nome para listagens, termos e relatórios: "Dell G15 5530". Equipamentos cadastrados antes
+     * da versão 2.0 (sem fabricante/modelo) usam a descrição.
+     */
+    protected function nomeExibicao(): Attribute
+    {
+        return Attribute::get(function () {
+            $nome = trim(($this->fabricante ?? '') . ' ' . ($this->modelo ?? ''));
+
+            return $nome !== '' ? $nome : (string) ($this->descricao ?? '');
+        });
+    }
+
+    /**
+     * Item de termo de responsabilidade (ou de troca) ainda não devolvido, ignorando movimentações canceladas.
+     * Enquanto existir, o status do equipamento só muda via devolução ou troca.
      */
     public function emprestimoEmAberto(): ?MovimentacaoEquipamento
     {
@@ -79,7 +146,7 @@ class Equipamento extends Model
             ->where('equipamento_id', $this->id)
             ->whereNull('devolvido_em')
             ->whereHas('movimentacao', fn ($movimentacoes) => $movimentacoes
-                ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                ->comEmprestimo()
                 ->where('status', '!=', 'cancelada'))
             ->latest('id')
             ->first();
@@ -105,6 +172,11 @@ class Equipamento extends Model
         return $contexto;
     }
 
+    public function ocorrencias()
+    {
+        return $this->hasMany(Ocorrencia::class);
+    }
+
     public function historicos()
     {
         return $this->hasMany(EquipamentoHistorico::class);
@@ -113,6 +185,26 @@ class Equipamento extends Model
     public function tipoEquipamento()
     {
         return $this->belongsTo(TipoEquipamento::class);
+    }
+
+    public function computador()
+    {
+        return $this->hasOne(Computador::class);
+    }
+
+    public function monitor()
+    {
+        return $this->hasOne(Monitor::class);
+    }
+
+    public function impressora()
+    {
+        return $this->hasOne(Impressora::class);
+    }
+
+    public function dispositivoMovel()
+    {
+        return $this->hasOne(DispositivoMovel::class);
     }
 
     public function movimentacoes()

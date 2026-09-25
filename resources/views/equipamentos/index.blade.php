@@ -14,9 +14,11 @@
                     '' => 'Todos os campos',
                     'id' => 'ID',
                     'tipo' => 'Tipo do Equipamento',
-                    'descricao' => 'Descrição',
+                    'equipamento' => 'Fabricante / Modelo',
+                    'identificacao' => 'Identificação interna',
                     'patrimonio' => 'Patrimônio',
                     'numero_serie' => 'Número de Série',
+                    'imei_mac' => 'IMEI / MAC',
                     'status' => 'Status',
                 ]" />
 
@@ -35,15 +37,18 @@
             ]" />
         </x-form.filters>
 
-        <x-table :headers="['ID', 'Tipo Equipamento', 'Descrição', 'Status', 'Patrimônio', 'Número de Série', 'Ações']">
+        <x-table :headers="['ID', 'Tipo Equipamento', 'Equipamento', 'Status', 'Patrimônio', 'Número de Série', 'Ações']">
             @forelse ($listaDeEquipamentos as $equipamento)
                 <x-table.row>
                     <x-table.cell>{{ $equipamento->id }}</x-table.cell>
                     <x-table.cell>{{ $equipamento->tipoEquipamento?->nome ?? '-' }}</x-table.cell>
                     <x-table.cell>
-                        <span class="block max-w-[28rem] truncate" title="{{ $equipamento->descricao }}">
-                            {{ \Illuminate\Support\Str::limit($equipamento->descricao ?? '', 80) }}
+                        <span class="block max-w-[28rem] truncate" title="{{ $equipamento->nome_exibicao }}">
+                            {{ \Illuminate\Support\Str::limit($equipamento->nome_exibicao, 60) ?: '-' }}
                         </span>
+                        @if ($equipamento->identificacao)
+                            <span class="block text-xs text-ink-muted">{{ $equipamento->identificacao }}</span>
+                        @endif
                     </x-table.cell>
                     <x-table.cell>{{ $equipamento->status_rotulo }}</x-table.cell>
                     <x-table.cell>{{ $equipamento->patrimonio ?? '-' }}</x-table.cell>

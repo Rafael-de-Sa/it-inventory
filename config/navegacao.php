@@ -35,6 +35,8 @@ return [
             ['rotulo' => 'Movimentações', 'icone' => 'fa-solid fa-list', 'rota' => 'movimentacoes.index', 'ativo' => 'movimentacoes.index', 'can' => 'gerenciar-movimentacoes'],
             ['rotulo' => 'Termo de responsabilidade', 'icone' => 'fa-solid fa-file-signature', 'rota' => 'movimentacoes.create', 'ativo' => 'movimentacoes.create', 'can' => 'gerenciar-movimentacoes'],
             ['rotulo' => 'Termo de devolução', 'icone' => 'fa-solid fa-box-open', 'rota' => 'movimentacoes.devolucao.create', 'ativo' => 'movimentacoes.devolucao.*', 'can' => 'gerenciar-movimentacoes'],
+            ['rotulo' => 'Termo de troca', 'icone' => 'fa-solid fa-right-left', 'rota' => 'movimentacoes.troca.create', 'ativo' => 'movimentacoes.troca.*', 'can' => 'gerenciar-movimentacoes'],
+            ['rotulo' => 'Ocorrências', 'icone' => 'fa-solid fa-triangle-exclamation', 'rota' => 'ocorrencias.index', 'ativo' => 'ocorrencias.*', 'can' => 'gerenciar-movimentacoes'],
         ],
     ],
 ];

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CategoriaEquipamento;
+use App\Http\Requests\Equipamentos\EquipamentoRequest;
 use App\Http\Requests\Equipamentos\IndexRequest;
 use App\Http\Requests\Equipamentos\StoreEquipamentoRequest;
 use App\Http\Requests\Equipamentos\UpdateEquipamentoRequest;
 use App\Models\Equipamento;
 use App\Models\TipoEquipamento;
+use App\Services\IndicadoresManutencao;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class EquipamentoController extends Controller
@@ -42,8 +46,14 @@ class EquipamentoController extends Controller
                 case 'tipo':
                     $consulta->where('tipo_equipamentos.nome', 'like', $buscaLike);
                     break;
-                case 'descricao':
-                    $consulta->where('equipamentos.descricao', 'like', $buscaLike);
+                case 'equipamento':
+                    $consulta->where(fn ($q) => $this->filtrarPorNome($q, $buscaLike));
+                    break;
+                case 'identificacao':
+                    $consulta->where('equipamentos.identificacao', 'like', $buscaLike);
+                    break;
+                case 'imei_mac':
+                    $consulta->where(fn ($q) => $this->filtrarPorImeiMac($q, $buscaLike));
                     break;
                 case 'patrimonio':
                     $consulta->where('equipamentos.patrimonio', 'like', $buscaLike);
@@ -58,9 +68,11 @@ class EquipamentoController extends Controller
                     $consulta->where(function ($q) use ($termoBusca, $buscaLike) {
                         $q->orWhere('equipamentos.id', (int) $termoBusca)
                             ->orWhere('tipo_equipamentos.nome', 'like', $buscaLike)
-                            ->orWhere('equipamentos.descricao', 'like', $buscaLike)
+                            ->orWhere(fn ($nome) => $this->filtrarPorNome($nome, $buscaLike))
+                            ->orWhere('equipamentos.identificacao', 'like', $buscaLike)
                             ->orWhere('equipamentos.patrimonio', 'like', $buscaLike)
                             ->orWhere('equipamentos.numero_serie', 'like', $buscaLike)
+                            ->orWhere(fn ($rede) => $this->filtrarPorImeiMac($rede, $buscaLike))
                             ->orWhere('equipamentos.status', 'like', $buscaLike);
                     });
                     break;
@@ -103,15 +115,18 @@ class EquipamentoController extends Controller
     public function create()
     {
         // Tipos ativos e não arquivados, ordenados por nome (padrão dos cadastros)
-        $opcoesTipos = TipoEquipamento::query()
+        $tipos = TipoEquipamento::query()
             ->where('ativo', true)
-            ->whereNull('apagado_em')
             ->orderBy('nome')
-            ->pluck('nome', 'id');
+            ->get(['id', 'nome', 'categoria']);
 
         $listaStatus = Arr::only(Equipamento::STATUS, Equipamento::STATUS_CADASTRO);
 
-        return view('equipamentos.create', compact('opcoesTipos', 'listaStatus'));
+        return view('equipamentos.create', [
+            'equipamento' => null,
+            'tipos' => $tipos,
+            'listaStatus' => $listaStatus,
+        ]);
     }
 
     /**
@@ -119,17 +134,11 @@ class EquipamentoController extends Controller
      */
     public function store(StoreEquipamentoRequest $request)
     {
-        $dadosValidados = $request->validated();
+        DB::transaction(function () use ($request) {
+            $equipamento = Equipamento::create(Arr::only($request->validated(), self::CAMPOS_COMUNS));
 
-        $equipamento = Equipamento::create([
-            'tipo_equipamento_id' => $dadosValidados['tipo_equipamento_id'],
-            'data_compra'         => $dadosValidados['data_compra'] ?? null,
-            'valor_compra'        => $dadosValidados['valor_compra'] ?? null,
-            'status'              => $dadosValidados['status'],
-            'descricao'           => $dadosValidados['descricao'] ?? null,
-            'patrimonio'          => $dadosValidados['patrimonio'] ?? null,
-            'numero_serie'        => $dadosValidados['numero_serie'] ?? null,
-        ]);
+            $this->salvarFichaTecnica($equipamento, $request);
+        });
 
         return redirect()
             ->route('equipamentos.index')
@@ -141,9 +150,14 @@ class EquipamentoController extends Controller
      */
     public function show(Equipamento $equipamento)
     {
-        $equipamento->load('tipoEquipamento:id,nome');
+        $equipamento->load([
+            'tipoEquipamento', 'computador', 'monitor', 'impressora', 'dispositivoMovel',
+            'ocorrencias' => fn ($consulta) => $consulta->latest('reportado_em')->latest('id'),
+        ]);
 
-        return view('equipamentos.show', compact('equipamento'));
+        $indicadores = IndicadoresManutencao::doEquipamento($equipamento, ocorrencias: $equipamento->ocorrencias);
+
+        return view('equipamentos.show', compact('equipamento', 'indicadores'));
     }
 
     /**
@@ -151,11 +165,17 @@ class EquipamentoController extends Controller
      */
     public function edit(Equipamento $equipamento)
     {
-        $opcoesTiposEquipamento = TipoEquipamento::orderBy('nome')->pluck('nome', 'id');
+        $equipamento->load(['tipoEquipamento', 'computador', 'monitor', 'impressora', 'dispositivoMovel']);
+
+        // Inclui o tipo atual mesmo que tenha sido inativado.
+        $tipos = TipoEquipamento::query()
+            ->where(fn ($query) => $query->where('ativo', true)->orWhere('id', $equipamento->tipo_equipamento_id))
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'categoria']);
 
         $emprestimoEmAberto = $equipamento->emprestimoEmAberto();
 
-        return view('equipamentos.edit', compact('equipamento', 'opcoesTiposEquipamento', 'emprestimoEmAberto'));
+        return view('equipamentos.edit', compact('equipamento', 'tipos', 'emprestimoEmAberto'));
     }
 
     /**
@@ -163,29 +183,71 @@ class EquipamentoController extends Controller
      */
     public function update(UpdateEquipamentoRequest $request, Equipamento $equipamento)
     {
-        $dados = $request->validated();
+        DB::transaction(function () use ($request, $equipamento) {
+            $equipamento->fill(Arr::only($request->validated(), self::CAMPOS_COMUNS))->save();
 
-        foreach (['data_compra', 'valor_compra', 'descricao', 'patrimonio', 'numero_serie'] as $k) {
-            if (($dados[$k] ?? '') === '') $dados[$k] = null;
-        }
-
-        if (!empty($dados['numero_serie'])) {
-            $dados['numero_serie'] = mb_strtoupper(trim($dados['numero_serie']));
-        }
-
-        $equipamento->fill([
-            'tipo_equipamento_id' => $dados['tipo_equipamento_id'],
-            'data_compra'         => $dados['data_compra'] ?? null,
-            'valor_compra'        => $dados['valor_compra'] ?? null,
-            'status'              => $dados['status'],
-            'descricao'           => $dados['descricao'] ?? null,
-            'patrimonio'          => $dados['patrimonio'] ?? null,
-            'numero_serie'        => $dados['numero_serie'] ?? null,
-        ])->save();
+            $this->salvarFichaTecnica($equipamento->refresh(), $request);
+        });
 
         return redirect()
             ->route('equipamentos.index')
             ->with('success', 'Equipamento atualizado com sucesso.');
+    }
+
+    /** Fabricante, modelo ou descrição (equipamentos anteriores à 2.0 só têm descrição). */
+    private function filtrarPorNome($consulta, string $buscaLike): void
+    {
+        $consulta->where('equipamentos.fabricante', 'like', $buscaLike)
+            ->orWhere('equipamentos.modelo', 'like', $buscaLike)
+            ->orWhereRaw("CONCAT_WS(' ', equipamentos.fabricante, equipamentos.modelo) LIKE ?", [$buscaLike])
+            ->orWhere('equipamentos.descricao', 'like', $buscaLike);
+    }
+
+    /**
+     * IMEI ou MAC em qualquer ficha técnica. O MAC é buscado com ou sem separadores, e só quando o termo
+     * parece um trecho de MAC (apenas hexadecimais e separadores, ao menos 4 dígitos): assim "Dell" não
+     * encontra MACs que contenham "DE".
+     */
+    private function filtrarPorImeiMac($consulta, string $buscaLike): void
+    {
+        $termo = trim($buscaLike, '%');
+        $hex = preg_replace('/[:\-.\s]/', '', $termo);
+        $pareceMac = strlen($hex) >= 4 && ctype_xdigit($hex);
+        $mac = fn (string $coluna) => ["REPLACE({$coluna}, ':', '') LIKE ?", ['%' . $hex . '%']];
+
+        $consulta->whereHas('dispositivoMovel', fn ($q) => $q->where('imei_1', 'like', $buscaLike)
+                ->orWhere('imei_2', 'like', $buscaLike)
+                ->when($pareceMac, fn ($q) => $q->orWhereRaw(...$mac('mac'))))
+            ->when($pareceMac, fn ($q) => $q
+                ->orWhereHas('computador', fn ($c) => $c->whereRaw(...$mac('mac_ethernet'))->orWhereRaw(...$mac('mac_wifi')))
+                ->orWhereHas('impressora', fn ($i) => $i->whereRaw(...$mac('mac'))));
+    }
+
+    /** Campos da tabela equipamentos preenchidos pelo formulário. */
+    private const CAMPOS_COMUNS = [
+        'tipo_equipamento_id', 'fabricante', 'modelo', 'identificacao', 'numero_serie', 'patrimonio',
+        'data_compra', 'valor_compra', 'nota_fiscal', 'chave_acesso_nf', 'status', 'descricao',
+    ];
+
+    /**
+     * Grava a ficha técnica da categoria do tipo e remove a de outra categoria
+     * (quando o tipo do equipamento foi trocado por um de categoria diferente).
+     */
+    private function salvarFichaTecnica(Equipamento $equipamento, EquipamentoRequest $request): void
+    {
+        $categoriaAtual = $request->categoria();
+
+        foreach (CategoriaEquipamento::cases() as $categoria) {
+            $relacao = $categoria->relacao();
+
+            if ($relacao && $categoria !== $categoriaAtual) {
+                $equipamento->{$relacao}()->delete();
+            }
+        }
+
+        if ($relacao = $categoriaAtual?->relacao()) {
+            $equipamento->{$relacao}()->updateOrCreate([], $request->fichaTecnica());
+        }
     }
 
     /**
@@ -193,15 +255,11 @@ class EquipamentoController extends Controller
      */
     public function destroy(Equipamento $equipamento)
     {
-        $temMovimentacaoAberta = $equipamento->movimentacoes()
-            ->whereNull('devolvido_em')
-            ->whereNull('termo_devolucao')
-            ->exists();
-
-        if ($temMovimentacaoAberta) {
+        // Mesma regra que trava o status "Em uso": item de termo de responsabilidade ainda não devolvido.
+        if ($emprestimo = $equipamento->emprestimoEmAberto()) {
             return back()->with(
                 'error',
-                'Não é possível excluir: este equipamento possui movimentação pendente (aguardando devolução com termo).'
+                "Não é possível excluir: o equipamento está em uso pela movimentação #{$emprestimo->movimentacao_id}. Registre a devolução antes."
             );
         }
 

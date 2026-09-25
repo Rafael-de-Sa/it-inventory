@@ -24,7 +24,7 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'campo' => ['nullable', 'in:,id,tipo,descricao,patrimonio,numero_serie,status'],
+            'campo' => ['nullable', 'in:,id,tipo,equipamento,identificacao,patrimonio,numero_serie,imei_mac,status'],
             'busca' => ['nullable', 'string', 'max:255'],
             'ordenar_por' => ['nullable', 'in:id,tipo,patrimonio,numero_serie,status'],
             'direcao' => ['nullable', 'in:asc,desc'],

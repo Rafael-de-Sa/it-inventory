@@ -144,14 +144,14 @@ class Funcionario extends Model
         return MovimentacaoEquipamento::query()
             ->whereNull('devolvido_em')
             ->whereHas('movimentacao', fn (Builder $movimentacoes) => $doFuncionario($movimentacoes)
-                ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                ->comEmprestimo()
                 ->where('status', '!=', 'cancelada'));
     }
 
     private static function consultaTermosResponsabilidadePendentes(Closure $doFuncionario): Builder
     {
         return $doFuncionario(Movimentacao::query())
-            ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+            ->comEmprestimo()
             ->where('status', '!=', 'cancelada')
             ->whereNull('termo_responsabilidade');
     }

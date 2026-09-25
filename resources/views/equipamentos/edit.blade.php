@@ -1,46 +1,19 @@
 @extends('layouts.main_layout')
 
 @section('content')
-    <x-form.card id="equipamentoEditForm" :action="route('equipamentos.update', $equipamento)" method="PUT"
+    <x-form.card id="equipamentoEditForm" :action="route('equipamentos.update', $equipamento)" method="PUT" size="lg"
         :title="'Editar Equipamento — #' . $equipamento->id">
         <x-slot:subtitle>
             <x-ui.timestamps :model="$equipamento" />
         </x-slot:subtitle>
 
-        <x-form.grid>
-            <x-form.readonly id="equipamento_id" label="ID" :value="$equipamento->id" wrapper-class="md:col-span-3" />
-            {{-- Com empréstimo em aberto o status fica travado em "Em uso"; sem empréstimo, "Em uso" não é oferecido. --}}
-            @if ($emprestimoEmAberto)
-                <input type="hidden" name="status" value="em_uso">
-                <x-form.select name="status" id="status_travado" label="Status" disabled
-                    :options="['em_uso' => \App\Models\Equipamento::STATUS['em_uso']]" value="em_uso"
-                    :help="'Em uso pela movimentação #' . $emprestimoEmAberto->movimentacao_id . '. Para alterar, registre a devolução.'"
-                    wrapper-class="md:col-span-9" />
-            @else
-                <x-form.select name="status" label="Status" required
-                    :options="\Illuminate\Support\Arr::only(\App\Models\Equipamento::STATUS, \App\Models\Equipamento::STATUS_CADASTRO)"
-                    :value="$equipamento->status" wrapper-class="md:col-span-4" />
-            @endif
+        @if (blank($equipamento->fabricante) || blank($equipamento->modelo))
+            <x-ui.alert variant="info" icon="fa-solid fa-circle-info" title="Cadastro anterior à versão 2.0">
+                <p>Informe fabricante, modelo e a ficha técnica. A descrição antiga foi mantida em "Observação".</p>
+            </x-ui.alert>
+        @endif
 
-            <x-form.select name="tipo_equipamento_id" label="Tipo do Equipamento" required placeholder="Selecione..."
-                :options="$opcoesTiposEquipamento" :value="$equipamento->tipo_equipamento_id"
-                wrapper-class="md:col-span-6" />
-            <x-form.input name="patrimonio" label="Patrimônio" :value="$equipamento->patrimonio"
-                wrapper-class="md:col-span-3" />
-            <x-form.input name="numero_serie" label="Número de Série" :value="$equipamento->numero_serie"
-                wrapper-class="md:col-span-3" />
-        </x-form.grid>
-
-        <x-form.fieldset legend="Aquisição">
-            <x-form.grid>
-                <x-form.input type="date" name="data_compra" label="Data da compra"
-                    :value="$equipamento->data_compra?->format('Y-m-d')" wrapper-class="md:col-span-6" />
-                <x-form.input type="number" name="valor_compra" label="Valor da compra" step="0.01" inputmode="decimal"
-                    :value="$equipamento->valor_compra" wrapper-class="md:col-span-6" />
-            </x-form.grid>
-        </x-form.fieldset>
-
-        <x-form.textarea name="descricao" label="Descrição" required rows="4" :value="$equipamento->descricao" />
+        @include('equipamentos.partials.campos')
 
         <x-form.actions>
             <x-ui.button :href="route('equipamentos.show', $equipamento)" icon="fa-solid fa-arrow-left">Cancelar</x-ui.button>

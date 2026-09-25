@@ -13,6 +13,7 @@ use App\Models\Funcionario;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoEquipamento;
 use App\Models\Setor;
+use App\Services\RegistroDevolucao;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -194,111 +195,17 @@ class MovimentacaoController extends Controller
 
     public function storeDevolucao(StoreDevolucaoMovimentacaoRequest $request)
     {
-        $dadosValidados      = $request->validated();
-        $setorId             = $dadosValidados['setor_id'];
-        $funcionarioId       = $dadosValidados['funcionario_id'];
-        $idsEquipamentos     = $dadosValidados['equipamentos'];
-        $observacaoGeral     = $dadosValidados['observacao'] ?? null;
-        $motivoDevolucaoGeral = $dadosValidados['motivo_devolucao'] ?? 'devolucao';
+        $dados = $request->validated();
+        $motivoGeral = $dados['motivo_devolucao'] ?? 'devolucao';
 
-        DB::transaction(function () use (
-            $setorId,
-            $funcionarioId,
-            $idsEquipamentos,
-            $observacaoGeral,
-            $motivoDevolucaoGeral,
-            $dadosValidados
-        ) {
+        $itens = collect($dados['equipamentos'])->mapWithKeys(fn ($equipamentoId) => [
+            (int) $equipamentoId => [
+                'motivo' => $dados['motivos_devolucao_equipamentos'][$equipamentoId] ?? $motivoGeral,
+                'observacao' => $dados['observacoes_equipamentos'][$equipamentoId] ?? null,
+            ],
+        ])->all();
 
-            $movimentacaoDevolucao = Movimentacao::create([
-                'setor_id'          => $setorId,
-                'funcionario_id'    => $funcionarioId,
-                'observacao'        => $observacaoGeral,
-                'status'            => 'pendente',
-                'tipo_movimentacao' => Movimentacao::TIPO_DEVOLUCAO,
-            ]);
-
-
-            $responsabilidadesEmAberto = MovimentacaoEquipamento::query()
-                ->whereIn('equipamento_id', $idsEquipamentos)
-                ->whereNull('devolvido_em')
-                ->whereHas('movimentacao', function ($query) use ($funcionarioId) {
-                    $query
-                        ->where('funcionario_id', $funcionarioId)
-                        ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
-                        ->where('status', '!=', 'cancelada');
-                })
-                ->lockForUpdate()
-                ->get();
-
-            $idsMovimentacoesResponsabilidade = [];
-
-            foreach ($responsabilidadesEmAberto as $responsabilidadePivot) {
-                /** @var MovimentacaoEquipamento $responsabilidadePivot */
-                $equipamentoId = $responsabilidadePivot->equipamento_id;
-                $idsMovimentacoesResponsabilidade[] = $responsabilidadePivot->movimentacao_id;
-
-                $observacoesEquipamentos = $dadosValidados['observacoes_equipamentos'] ?? [];
-                $observacaoEquipamento   = $observacoesEquipamentos[$equipamentoId] ?? $observacaoGeral;
-
-                $motivosDevolucaoEquipamentos = $dadosValidados['motivos_devolucao_equipamentos'] ?? [];
-
-                $motivoDevolucaoEquipamento = $motivosDevolucaoEquipamentos[$equipamentoId]
-                    ?? $motivoDevolucaoGeral
-                    ?? 'devolucao';
-
-                $responsabilidadePivot->update([
-                    'devolucao_movimentacao_id' => $movimentacaoDevolucao->id,
-                    'devolvido_em'     => now()->toDateString(),
-                    'motivo_devolucao' => $motivoDevolucaoEquipamento,
-                    'observacao'       => $observacaoEquipamento
-                ]);
-
-                $movimentacaoDevolucao->equipamentos()->attach($equipamentoId, [
-                    'motivo_devolucao' => $motivoDevolucaoEquipamento,
-                    'observacao'       => $observacaoEquipamento,
-                    'devolvido_em'     => now()->toDateString()
-                ]);
-
-                $equipamento = Equipamento::query()
-                    ->where('id', $equipamentoId)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (! $equipamento) {
-                    continue;
-                }
-
-                $novoStatusEquipamento = MovimentacaoEquipamento::statusEquipamentoAposDevolucao($motivoDevolucaoEquipamento);
-
-                $observacaoHistorico = trim(
-                    'Motivo: ' . (MovimentacaoEquipamento::MOTIVOS_DEVOLUCAO[$motivoDevolucaoEquipamento] ?? $motivoDevolucaoEquipamento)
-                    . '. ' . ($observacaoEquipamento ?? '')
-                );
-
-                $equipamento->comHistorico('devolucao', $movimentacaoDevolucao, $observacaoHistorico)->update([
-                    'status' => $novoStatusEquipamento,
-                ]);
-            }
-
-            $idsMovimentacoesResponsabilidade = array_unique($idsMovimentacoesResponsabilidade);
-
-            foreach ($idsMovimentacoesResponsabilidade as $idMovimentacaoResponsabilidade) {
-                $existemItensEmAberto = MovimentacaoEquipamento::query()
-                    ->where('movimentacao_id', $idMovimentacaoResponsabilidade)
-                    ->whereNull('devolvido_em')
-                    ->exists();
-
-                if (! $existemItensEmAberto) {
-                    Movimentacao::query()
-                        ->where('id', $idMovimentacaoResponsabilidade)
-                        ->where('status', '!=', 'cancelada')
-                        ->update([
-                            'status' => 'encerrada',
-                        ]);
-                }
-            }
-        });
+        RegistroDevolucao::registrar($dados['setor_id'], $dados['funcionario_id'], $itens, $dados['observacao'] ?? null);
 
         return redirect()
             ->route('movimentacoes.index')
@@ -321,6 +228,18 @@ class MovimentacaoController extends Controller
             'equipamentos',
             $movimentacao->equipamentos->sortBy('id')->values()
         );
+
+        if ($movimentacao->tipo_movimentacao === Movimentacao::TIPO_TROCA) {
+            $movimentacao->load([
+                'equipamentos' => fn ($consulta) => $consulta->with('tipoEquipamento'),
+                'itensDevolvidosAqui.equipamento.tipoEquipamento',
+                'ocorrencias',
+            ]);
+
+            return view('movimentacoes.troca.show', [
+                'movimentacao' => $movimentacao,
+            ]);
+        }
 
         if ($movimentacao->tipo_movimentacao === Movimentacao::TIPO_RESPONSABILIDADE) {
             return view('movimentacoes.show-responsabilidade', [
@@ -388,7 +307,7 @@ class MovimentacaoController extends Controller
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
-            'equipamentos',
+            'equipamentos' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]),
         ]);
 
         $nomeArquivo = 'termo_responsabilidade_movimentacao_' . $movimentacao->id . '.pdf';
@@ -424,7 +343,7 @@ class MovimentacaoController extends Controller
         $movimentacao->load([
             'setor.empresa',
             'funcionario',
-            'equipamentos',
+            'equipamentos' => fn ($consulta) => $consulta->with(['tipoEquipamento', ...Equipamento::RELACOES_FICHA]),
         ]);
 
         $nomeArquivo = 'termo_devolucao_movimentacao_' . $movimentacao->id . '.pdf';
@@ -458,7 +377,7 @@ class MovimentacaoController extends Controller
             ->whereHas('movimentacao', function ($query) use ($funcionario) {
                 $query
                     ->where('funcionario_id', $funcionario->id)
-                    ->where('tipo_movimentacao', Movimentacao::TIPO_RESPONSABILIDADE)
+                    ->comEmprestimo()
                     ->where('status', '!=', 'cancelada');
             })
             ->with('equipamento.tipoEquipamento')
@@ -468,7 +387,7 @@ class MovimentacaoController extends Controller
 
                 return [
                     'id'           => $equipamento->id,
-                    'descricao'    => $equipamento->descricao,
+                    'descricao'    => $equipamento->nome_exibicao,
                     'numero_serie' => $equipamento->numero_serie,
                     'patrimonio'   => $equipamento->patrimonio,
                     'tipo'         => $equipamento->tipoEquipamento->nome ?? null,
@@ -501,6 +420,7 @@ class MovimentacaoController extends Controller
         );
 
         $movimentacao->termo_responsabilidade = $caminhoArquivo;
+        $rotuloTermo = $movimentacao->tipo_movimentacao === Movimentacao::TIPO_TROCA ? 'Termo de troca' : 'Termo de responsabilidade';
 
         // Se todos os equipamentos já foram devolvidos, o termo continua "encerrada".
         if ($movimentacao->status === 'pendente') {
@@ -511,7 +431,7 @@ class MovimentacaoController extends Controller
 
         return redirect()
             ->route('movimentacoes.index', $movimentacao->id)
-            ->with('success', 'Termo de responsabilidade enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
+            ->with('success', $rotuloTermo . ' enviado com sucesso. Situação: ' . $movimentacao->status_rotulo . '.');
     }
 
     protected function visualizarTermoGenerico(

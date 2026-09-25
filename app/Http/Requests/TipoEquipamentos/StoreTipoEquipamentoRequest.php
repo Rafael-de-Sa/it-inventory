@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\TipoEquipamentos;
 
+use App\Enums\CategoriaEquipamento;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,7 @@ class StoreTipoEquipamentoRequest extends FormRequest
         $nome = $this->input('nome');
 
         $this->merge([
-            'nome' => is_string($nome) ? (string) str($nome)->squish->trim : $nome,
+            'nome' => is_string($nome) ? (string) str($nome)->squish() : $nome,
         ]);
     }
 
@@ -34,6 +35,7 @@ class StoreTipoEquipamentoRequest extends FormRequest
     {
         return [
             'nome' => ['required', 'string', 'min:3', 'max:45', Rule::unique('tipo_equipamentos', 'nome')->whereNull('apagado_em')],
+            'categoria' => ['required', Rule::enum(CategoriaEquipamento::class)],
             'ativo' => ['nullable', 'boolean']
         ];
     }
@@ -53,6 +55,7 @@ class StoreTipoEquipamentoRequest extends FormRequest
     {
         return [
             'nome' => 'tipo de equipamento',
+            'categoria' => 'categoria',
             'ativo' => 'status ativo',
         ];
     }

@@ -15,7 +15,9 @@ class EquipamentoFactory extends Factory
     {
         return [
             'tipo_equipamento_id' => TipoEquipamento::factory(),
-            'descricao' => fake('pt_BR')->sentence(3),
+            'fabricante' => fake()->randomElement(['Dell', 'Lenovo', 'Samsung', 'Epson', 'SUNMI']),
+            'modelo' => fake()->bothify('Modelo ??-###'),
+            'descricao' => null,
             'patrimonio' => (string) fake()->unique()->numberBetween(100000, 999999),
             'numero_serie' => fake()->unique()->bothify('SN-########'),
             'status' => 'disponivel',

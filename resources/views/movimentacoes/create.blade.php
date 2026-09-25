@@ -1,6 +1,14 @@
 @extends('layouts.main_layout')
 
 @section('content')
+    @php
+        // Aceita pré-seleção via query string (ex.: "Devolver ao funcionário" na ocorrência) além do old().
+        $empresaId = old('empresa_id', request('empresa_id'));
+        $setorId = old('setor_id', request('setor_id'));
+        $funcionarioId = old('funcionario_id', request('funcionario_id'));
+        $equipamentosSelecionados = array_map('intval', (array) old('equipamentos', request('equipamentos', [])));
+    @endphp
+
     {{--
         Setor/funcionário são carregados via JS (movimentacao-form.js) a partir da empresa.
         O JS move as linhas marcadas entre as duas tabelas e gera os inputs equipamentos[].
@@ -9,18 +17,18 @@
         subtitle="Selecione a empresa, setor e funcionário, depois inclua os equipamentos que serão movimentados."
         data-carregar-setores-endpoint="{{ route('movimentacoes.setores-para-movimentacao', ['empresa' => 'EMPRESA_ID']) }}"
         data-carregar-funcionarios-endpoint="{{ route('movimentacoes.funcionarios-para-movimentacao', ['setor' => 'SETOR_ID']) }}"
-        data-old-empresa-id="{{ old('empresa_id') }}" data-old-setor-id="{{ old('setor_id') }}"
-        data-old-funcionario-id="{{ old('funcionario_id') }}" data-old-equipamentos="{{ json_encode(old('equipamentos', [])) }}">
+        data-old-empresa-id="{{ $empresaId }}" data-old-setor-id="{{ $setorId }}"
+        data-old-funcionario-id="{{ $funcionarioId }}" data-old-equipamentos="{{ json_encode($equipamentosSelecionados) }}">
 
         <x-form.select name="empresa_id" label="Empresa" required placeholder="Selecione…" :options="$listaDeEmpresas"
-            option-label="rotulo_empresa" help="Escolha a empresa à qual o setor e o funcionário pertencem." />
+            option-label="rotulo_empresa" :value="$empresaId" help="Escolha a empresa à qual o setor e o funcionário pertencem." />
 
-        <x-form.select name="setor_id" label="Setor" required :disabled="!old('empresa_id')"
-            :placeholder="old('empresa_id') ? 'Selecione…' : 'Selecione uma empresa primeiro…'"
+        <x-form.select name="setor_id" label="Setor" required :disabled="!$empresaId"
+            :placeholder="$empresaId ? 'Selecione…' : 'Selecione uma empresa primeiro…'"
             help="Após escolher a empresa, selecione o setor." />
 
-        <x-form.select name="funcionario_id" label="Funcionário" required :disabled="!old('setor_id')"
-            :placeholder="old('setor_id') ? 'Selecione…' : 'Selecione um setor primeiro…'"
+        <x-form.select name="funcionario_id" label="Funcionário" required :disabled="!$setorId"
+            :placeholder="$setorId ? 'Selecione…' : 'Selecione um setor primeiro…'"
             help="Selecione o destinatário da movimentação." />
 
         <x-form.textarea name="observacao" label="Observação (opcional)" rows="3"
@@ -32,7 +40,7 @@
 
             <x-form.grid class="items-end">
                 <x-form.input name="busca_equipamento" label="Busca equipamento"
-                    placeholder="Patrimônio, número de série ou descrição..." wrapper-class="md:col-span-6" />
+                    placeholder="Patrimônio, número de série, fabricante ou modelo..." wrapper-class="md:col-span-6" />
                 <x-form.select name="filtro_tipo" label="Filtrar por tipo" placeholder="Todos os tipos"
                     wrapper-class="md:col-span-4" />
                 <div class="flex md:col-span-2 md:justify-end">
@@ -51,7 +59,7 @@
                     <x-table.row data-equipamento-id="{{ $equipamento->id }}"
                         data-equipamento-patrimonio="{{ $equipamento->patrimonio }}"
                         data-equipamento-serie="{{ $equipamento->numero_serie }}"
-                        data-equipamento-descricao="{{ $equipamento->descricao }}"
+                        data-equipamento-descricao="{{ $equipamento->nome_exibicao }}"
                         data-equipamento-tipo="{{ $equipamento->tipoEquipamento->nome ?? '' }}">
                         <x-table.cell>
                             <input type="checkbox" class="checkbox-equipamento-disponivel"
@@ -60,7 +68,7 @@
                         <x-table.cell>{{ $equipamento->id }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->patrimonio }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->numero_serie }}</x-table.cell>
-                        <x-table.cell>{{ $equipamento->descricao }}</x-table.cell>
+                        <x-table.cell>{{ $equipamento->nome_exibicao }}</x-table.cell>
                         <x-table.cell>{{ $equipamento->tipoEquipamento->nome ?? '-' }}</x-table.cell>
                     </x-table.row>
                 @empty

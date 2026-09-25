@@ -42,6 +42,20 @@ const maskCPF = (v) => {
     return d;
 };
 
+// Moeda: os dígitos preenchem da direita para a esquerda ("123456" → "1.234,56").
+export const maskMoeda = (v) => {
+    const d = onlyDigits(v).replace(/^0+(?=\d)/, '').slice(0, 12);
+    if (d.length === 0) return '';
+    const centavos = d.padStart(3, '0');
+    const inteiro = centavos.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${inteiro},${centavos.slice(-2)}`;
+};
+
+// Chave de acesso da NF-e: 44 dígitos em blocos de 4.
+export const maskChaveNfe = (v) => onlyDigits(v).slice(0, 44).replace(/(\d{4})(?=\d)/g, '$1 ');
+
+export const maskDigitos = (v) => onlyDigits(v);
+
 const bindMask = (el, masker) => {
     if (!el) return;
     el.addEventListener('input', () => {

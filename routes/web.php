@@ -6,9 +6,11 @@ use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\MovimentacaoController;
+use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\SetorController;
 use App\Http\Controllers\TipoEquipamentoController;
+use App\Http\Controllers\TrocaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ViaCepController;
 use Illuminate\Support\Facades\Route;
@@ -120,5 +122,27 @@ Route::middleware('auth')->group(function () {
             '/movimentacoes/{movimentacao}/termo-devolucao/visualizar',
             [MovimentacaoController::class, 'visualizarTermoDevolucao']
         )->name('movimentacoes.termo.devolucao.visualizar');
+
+        //troca
+        Route::get('/movimentacoes/troca/create', [TrocaController::class, 'create'])
+            ->name('movimentacoes.troca.create');
+
+        Route::post('/movimentacoes/troca', [TrocaController::class, 'store'])
+            ->name('movimentacoes.troca.store');
+
+        Route::get('/movimentacoes/{movimentacao}/termo-troca', [TrocaController::class, 'termo'])
+            ->name('movimentacoes.termo-troca');
+
+        //ocorrências
+        Route::resource('ocorrencias', OcorrenciaController::class);
+
+        Route::get('/ocorrencias/{ocorrencia}/relatorio', [RelatorioController::class, 'ocorrencia'])
+            ->name('relatorios.ocorrencia');
+
+        Route::post('/ocorrencias/{ocorrencia}/encerrar', [OcorrenciaController::class, 'encerrar'])
+            ->name('ocorrencias.encerrar');
+
+        Route::post('/ocorrencias/{ocorrencia}/reabrir', [OcorrenciaController::class, 'reabrir'])
+            ->name('ocorrencias.reabrir');
     });
 });

@@ -3,7 +3,7 @@
 Mudanças relevantes de cada versão do IT Inventory.
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
-## [Não lançado] — 2.0.0
+## [2.0.0] - 2026-09-24
 
 ### Adicionado
 - **Ficha técnica por tipo de equipamento.** O tipo ganha uma **categoria**, e cada categoria tem sua tabela:
@@ -84,5 +84,6 @@ Migrations novas: `admitido_em` em funcionários, vínculo item ↔ devolução,
 
 Primeira versão: cadastros de empresas, setores, funcionários, usuários, tipos de equipamento e equipamentos; termos de responsabilidade e devolução com geração de PDF e upload do termo assinado; relatórios de equipamentos por funcionário e histórico do equipamento.
 
+[2.0.0]: https://github.com/Rafael-de-Sa/it-inventory/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/Rafael-de-Sa/it-inventory/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Rafael-de-Sa/it-inventory/releases/tag/v1.0.0

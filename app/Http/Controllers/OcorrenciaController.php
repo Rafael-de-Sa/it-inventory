@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Ocorrencias\OcorrenciaRequest;
+use App\Http\Requests\Ocorrencias\EncerrarOcorrenciaRequest;
 use App\Http\Requests\Ocorrencias\StoreOcorrenciaRequest;
+use App\Http\Requests\Ocorrencias\UpdateOcorrenciaRequest;
 use App\Models\Equipamento;
 use App\Models\Funcionario;
 use App\Models\MovimentacaoEquipamento;
@@ -13,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Ocorrências de equipamento (issue #10): problema reportado, acompanhamento e liberação pela TI.
+ * Ocorrências de equipamento (issues #10 e #11): abertura (registro), acompanhamento (edição), encerramento
+ * (liberação pela TI) e reabertura. A troca vinculada também encerra a ocorrência (TrocaController).
  * O efeito no status do equipamento fica no model (Ocorrencia::recolherEquipamento / colocarEquipamentoEmManutencao /
  * liberarEquipamento).
  */
@@ -89,6 +91,7 @@ class OcorrenciaController extends Controller
         return view('ocorrencias.show', [
             'ocorrencia' => $ocorrencia,
             'emprestimo' => $ocorrencia->equipamento?->emprestimoEmAberto(),
+            'fornecedores' => Ocorrencia::query()->whereNotNull('fornecedor')->distinct()->orderBy('fornecedor')->pluck('fornecedor'),
         ]);
     }
 
@@ -103,24 +106,44 @@ class OcorrenciaController extends Controller
         ]);
     }
 
-    public function update(OcorrenciaRequest $request, Ocorrencia $ocorrencia)
+    /** Corrige os dados; não abre nem encerra (ver encerrar() e reabrir()). */
+    public function update(UpdateOcorrenciaRequest $request, Ocorrencia $ocorrencia)
     {
-        DB::transaction(function () use ($request, $ocorrencia) {
-            $estavaAberta = $ocorrencia->estaAberta();
-
-            $ocorrencia->update($request->validated());
-
-            if ($estavaAberta && ! $ocorrencia->estaAberta()) {
-                $ocorrencia->liberarEquipamento();
-            } elseif (! $estavaAberta && $ocorrencia->estaAberta()) {
-                // Reaberta: volta para manutenção se o equipamento estiver com a TI.
-                $ocorrencia->colocarEquipamentoEmManutencao();
-            }
-        });
+        $ocorrencia->update($request->validated());
 
         return redirect()
             ->route('ocorrencias.show', $ocorrencia)
             ->with('success', "Ocorrência #{$ocorrencia->id} atualizada.");
+    }
+
+    /** Liberação pela TI: registra a solução e os custos e devolve o equipamento a "Disponível" (se foi recolhido). */
+    public function encerrar(EncerrarOcorrenciaRequest $request, Ocorrencia $ocorrencia)
+    {
+        DB::transaction(function () use ($request, $ocorrencia) {
+            $ocorrencia->update($request->validated());
+            $ocorrencia->liberarEquipamento();
+        });
+
+        return redirect()
+            ->route('ocorrencias.show', $ocorrencia)
+            ->with('success', "Ocorrência #{$ocorrencia->id} encerrada.");
+    }
+
+    /** Volta a ocorrência para "Aberta"; o equipamento com a TI retorna para "Em manutenção". */
+    public function reabrir(Ocorrencia $ocorrencia)
+    {
+        if ($ocorrencia->estaAberta()) {
+            return back()->with('error', "A ocorrência #{$ocorrencia->id} já está aberta.");
+        }
+
+        DB::transaction(function () use ($ocorrencia) {
+            $ocorrencia->update(['liberado_em' => null]);
+            $ocorrencia->colocarEquipamentoEmManutencao();
+        });
+
+        return redirect()
+            ->route('ocorrencias.show', $ocorrencia)
+            ->with('success', "Ocorrência #{$ocorrencia->id} reaberta.");
     }
 
     public function destroy(Ocorrencia $ocorrencia)

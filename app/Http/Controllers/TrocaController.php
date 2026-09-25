@@ -106,9 +106,11 @@ class TrocaController extends Controller
             $itemEmprestimo->movimentacao->encerrarSeTudoDevolvido();
 
             if (! empty($dados['ocorrencia_id'])) {
+                // A troca resolve a ocorrência: fica encerrada na data da troca.
                 $ocorrencia = Ocorrencia::find($dados['ocorrencia_id']);
                 $ocorrencia->update([
                     'troca_movimentacao_id' => $troca->id,
+                    'liberado_em' => $ocorrencia->liberado_em ?? today(),
                     'solucao' => $ocorrencia->solucao ?: "Troca do equipamento (termo de troca #{$troca->id}).",
                 ]);
             }

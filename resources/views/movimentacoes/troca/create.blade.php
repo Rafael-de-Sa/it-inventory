@@ -23,11 +23,12 @@
 
         <x-form.fieldset legend="Equipamentos">
             <x-form.select name="equipamento_antigo_id" label="Equipamento substituído (em uso)" required
-                placeholder="Selecione…" :options="$equipamentosEmUso" :value="$equipamentoAntigoId"
+                placeholder="Digite o modelo, a identificação ou o funcionário…" :options="$equipamentosEmUso"
+                :value="$equipamentoAntigoId" data-combobox
                 help="Equipamentos em uso, com o funcionário responsável." />
 
             <x-form.select name="equipamento_novo_id" label="Equipamento substituto (disponível)" required
-                placeholder="Selecione…" :options="$equipamentosDisponiveis"
+                placeholder="Digite o modelo, a identificação ou o nº de série…" :options="$equipamentosDisponiveis" data-combobox
                 help="Cadastre o equipamento novo antes, se ele ainda não estiver no sistema (ex.: o que veio do fornecedor)." />
 
             <x-form.checkbox name="transferir_identificacao" label="Transferir a identificação interna para o substituto"

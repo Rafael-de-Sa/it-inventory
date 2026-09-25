@@ -3,7 +3,7 @@
 @section('content')
     <x-form.card :action="route('ocorrencias.update', $ocorrencia)" method="PUT" size="lg"
         :title="'Editar ocorrência — #' . $ocorrencia->id"
-        subtitle="Informe a data de liberação e a solução para resolver a ocorrência.">
+        subtitle="Corrige os dados da ocorrência. Para encerrar ou reabrir, use os botões na tela da ocorrência.">
         @include('ocorrencias.partials.campos')
 
         <x-form.actions class="pt-2">

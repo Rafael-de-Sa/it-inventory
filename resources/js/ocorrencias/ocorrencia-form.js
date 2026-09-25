@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const responsaveis = JSON.parse(equipamento.dataset.responsaveis || '{}');
     const recolher = document.getElementById('recolher');
     let preenchidoAutomaticamente = false;
+    let atualizandoFuncionario = false;
 
     const atualizar = () => {
         const responsavel = responsaveis[equipamento.value];
@@ -22,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Troca o último usuário sugerido, sem sobrescrever uma escolha feita à mão.
         if (!funcionario.value || preenchidoAutomaticamente) {
             funcionario.value = responsavel ? String(responsavel.funcionario_id) : '';
+            atualizandoFuncionario = true;
+            funcionario.dispatchEvent(new Event('change', { bubbles: true })); // atualiza o combobox
+            atualizandoFuncionario = false;
             preenchidoAutomaticamente = Boolean(responsavel);
         }
 
@@ -34,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    funcionario.addEventListener('change', () => { preenchidoAutomaticamente = false; });
+    funcionario.addEventListener('change', () => {
+        if (!atualizandoFuncionario) preenchidoAutomaticamente = false;
+    });
     equipamento.addEventListener('change', atualizar);
     atualizar();
 });

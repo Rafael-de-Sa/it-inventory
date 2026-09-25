@@ -1,20 +1,22 @@
 {{--
-    Campos de registro/edição de ocorrência. Variáveis: $ocorrencia (ou null), $equipamentoId, $equipamentos,
-    $funcionarios, $responsaveis (equipamento_id => funcionario_id), $problemasAnteriores, $canais.
-    Máscara do valor e sugestão do último usuário: resources/js/ocorrencias/ocorrencia-form.js
+    Campos de registro (abertura) e edição de ocorrência. Variáveis: $ocorrencia (ou null), $equipamentoId, $equipamentos,
+    $funcionarios, $responsaveis (equipamento_id => quem está com ele), $problemasAnteriores, $canais.
+    O encerramento (liberação, solução e custos) é feito pela ação "Encerrar ocorrência" (partials/encerrar).
+    Busca nos selects (data-combobox), máscaras e quem está com o equipamento: resources/js/ocorrencias/ocorrencia-form.js
 --}}
 @php
     $data = fn (string $campo, $padrao = null) => $ocorrencia?->{$campo}?->format('Y-m-d') ?? $padrao;
     $moeda = fn ($valor) => filled($valor) ? number_format((float) $valor, 2, ',', '.') : null;
+    $resolvida = $ocorrencia && ! $ocorrencia->estaAberta();
 @endphp
 
 <x-form.fieldset legend="Equipamento">
     @if ($ocorrencia)
         <x-form.readonly label="Equipamento" :value="$equipamentos[$ocorrencia->equipamento_id] ?? '#' . $ocorrencia->equipamento_id" />
     @else
-        <x-form.select name="equipamento_id" label="Equipamento" required placeholder="Selecione…"
-            :options="$equipamentos" :value="$equipamentoId" data-responsaveis="{{ $responsaveis->toJson() }}"
-            help="O equipamento passa para “Em manutenção” até a liberação." />
+        <x-form.select name="equipamento_id" label="Equipamento" required placeholder="Digite o modelo, a identificação ou o nº de série…"
+            :options="$equipamentos" :value="$equipamentoId" data-combobox data-responsaveis="{{ $responsaveis->toJson() }}"
+            help="O equipamento passa para “Em manutenção” até o encerramento da ocorrência." />
 
         {{-- Preenchido pelo JS quando o equipamento está com um funcionário. --}}
         <div data-responsavel hidden class="space-y-2 rounded-lg border border-line bg-surface p-3">
@@ -31,8 +33,8 @@
         </div>
     @endif
 
-    <x-form.select name="funcionario_id" label="Último usuário" placeholder="Não informado"
-        :options="$funcionarios" :value="$ocorrencia?->funcionario_id"
+    <x-form.select name="funcionario_id" label="Último usuário" placeholder="Digite o nome ou a matrícula…"
+        :options="$funcionarios" :value="$ocorrencia?->funcionario_id" data-combobox
         help="Quem usava o equipamento quando o problema aconteceu. Em branco, vale quem está com ele." />
 </x-form.fieldset>
 
@@ -57,12 +59,9 @@
 
     <x-form.grid>
         <x-form.input name="canal" label="Canal do chamado" maxlength="30" list="canais_chamado"
-            :value="$ocorrencia?->canal" placeholder="GLPI, PagBank, Cielo…" wrapper-class="md:col-span-4" />
+            :value="$ocorrencia?->canal" placeholder="GLPI, PagBank, Cielo…" wrapper-class="md:col-span-6" />
         <x-form.input name="protocolo" label="Protocolo / nº do chamado" maxlength="50"
-            :value="$ocorrencia?->protocolo" wrapper-class="md:col-span-4" />
-        <x-form.input name="valor_cobrado" label="Valor cobrado do colaborador (R$)" inputmode="numeric"
-            placeholder="0,00" data-mascara="moeda" :value="$moeda($ocorrencia?->valor_cobrado)" wrapper-class="md:col-span-4"
-            help="Registro para a TI; não aparece nos relatórios do DP." />
+            :value="$ocorrencia?->protocolo" wrapper-class="md:col-span-6" />
     </x-form.grid>
     <datalist id="canais_chamado">
         @foreach ($canais as $canal)
@@ -71,18 +70,28 @@
     </datalist>
 </x-form.fieldset>
 
-<x-form.fieldset legend="Liberação">
-    <x-form.grid>
-        <x-form.input name="liberado_em" type="date" label="Liberado pela TI em" :value="$data('liberado_em')"
-            wrapper-class="md:col-span-4" help="Preenchida, a ocorrência fica resolvida." />
-        <x-form.textarea name="solucao" label="Solução" rows="2" :value="$ocorrencia?->solucao"
-            placeholder="Ex.: limpeza do app, troca do equipamento…" wrapper-class="md:col-span-8" />
-        <x-form.input name="custo_manutencao" label="Custo da manutenção (R$)" inputmode="numeric" placeholder="0,00"
-            data-mascara="moeda" :value="$moeda($ocorrencia?->custo_manutencao)" wrapper-class="md:col-span-4"
-            help="O que a empresa pagou (peças, serviço)." />
-        <x-form.input name="fornecedor" label="Fornecedor / assistência técnica" maxlength="80"
-            :value="$ocorrencia?->fornecedor" wrapper-class="md:col-span-8" />
-    </x-form.grid>
-</x-form.fieldset>
+@if ($resolvida)
+    <x-form.fieldset legend="Liberação">
+        <x-form.grid>
+            <x-form.input name="liberado_em" type="date" label="Liberado pela TI em" required :value="$data('liberado_em')"
+                wrapper-class="md:col-span-4" help="Para reabrir a ocorrência, use “Reabrir”." />
+            <x-form.textarea name="solucao" label="Solução" required rows="2" :value="$ocorrencia->solucao"
+                wrapper-class="md:col-span-8" />
+        </x-form.grid>
+    </x-form.fieldset>
+@endif
+
+@if ($ocorrencia)
+    <x-form.fieldset legend="Custos">
+        <x-form.grid>
+            <x-form.input name="custo_manutencao" label="Custo da manutenção (R$)" inputmode="numeric" placeholder="0,00"
+                data-mascara="moeda" :value="$moeda($ocorrencia->custo_manutencao)" wrapper-class="md:col-span-4" />
+            <x-form.input name="fornecedor" label="Fornecedor / assistência técnica" maxlength="80"
+                :value="$ocorrencia->fornecedor" wrapper-class="md:col-span-4" />
+            <x-form.input name="valor_cobrado" label="Valor cobrado do colaborador (R$)" inputmode="numeric" placeholder="0,00"
+                data-mascara="moeda" :value="$moeda($ocorrencia->valor_cobrado)" wrapper-class="md:col-span-4" />
+        </x-form.grid>
+    </x-form.fieldset>
+@endif
 
 <x-form.textarea name="observacao" label="Observação (opcional)" rows="2" :value="$ocorrencia?->observacao" />

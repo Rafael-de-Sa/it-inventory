@@ -46,6 +46,14 @@ class OcorrenciaTest extends TestCase
         ], $dados));
     }
 
+    private function encerrar(Ocorrencia $ocorrencia, array $dados = [])
+    {
+        return $this->post(route('ocorrencias.encerrar', $ocorrencia), array_merge([
+            'liberado_em' => today()->format('Y-m-d'),
+            'solucao' => 'Limpeza do app',
+        ], $dados));
+    }
+
     /** Equipamento emprestado a um funcionário (termo de responsabilidade em aberto). */
     private function emUsoCom(Funcionario $funcionario): Equipamento
     {
@@ -72,7 +80,7 @@ class OcorrenciaTest extends TestCase
         $this->assertSame('ocorrencia', $evento->evento);
         $this->assertStringContainsString("Ocorrência #{$ocorrencia->id}", $evento->observacao);
 
-        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Limpeza do app'])
+        $this->encerrar($ocorrencia, ['solucao' => 'Limpeza do app'])
             ->assertSessionHasNoErrors();
 
         $this->assertFalse($ocorrencia->fresh()->estaAberta());
@@ -133,7 +141,7 @@ class OcorrenciaTest extends TestCase
         $this->get(route('movimentacoes.termo-devolucao', $devolucao))->assertOk();
 
         // Liberado: volta para a TI como disponível.
-        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Tela substituída'])
+        $this->encerrar($ocorrencia, ['solucao' => 'Tela substituída'])
             ->assertSessionHasNoErrors();
         $this->assertSame('disponivel', $equipamento->fresh()->status);
     }
@@ -149,7 +157,7 @@ class OcorrenciaTest extends TestCase
         // Aberta: ainda em manutenção, sem opção de devolver.
         $this->get(route('ocorrencias.show', $ocorrencia))->assertDontSee('Devolver ao funcionário');
 
-        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Tela substituída'])
+        $this->encerrar($ocorrencia, ['solucao' => 'Tela substituída'])
             ->assertSessionHasNoErrors();
 
         $url = $ocorrencia->fresh()->urlDevolverAoFuncionario();
@@ -203,14 +211,96 @@ class OcorrenciaTest extends TestCase
         $this->assertSame($outro->id, Ocorrencia::sole()->funcionario_id);
     }
 
-    public function test_ocorrencia_registrada_ja_resolvida_nao_muda_o_status(): void
+    public function test_registro_e_edicao_nao_encerram_a_ocorrencia(): void
     {
         $equipamento = Equipamento::factory()->create();
 
         $this->registrar($equipamento, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Reinstalado'])
+            ->assertSessionHasErrors(['liberado_em' => 'Use "Encerrar ocorrência" para registrar a liberação.']);
+
+        $this->registrar($equipamento)->assertSessionHasNoErrors();
+        $ocorrencia = Ocorrencia::sole();
+
+        $this->atualizar($ocorrencia, ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'x'])
+            ->assertSessionHasErrors('liberado_em');
+        $this->atualizar($ocorrencia, ['problema' => 'Tela piscando', 'solucao' => 'Rascunho'])->assertSessionHasNoErrors();
+
+        $this->assertTrue($ocorrencia->fresh()->estaAberta());
+        $this->assertSame('Tela piscando', $ocorrencia->fresh()->problema);
+        $this->assertSame('em_manutencao', $equipamento->fresh()->status);
+    }
+
+    public function test_encerramento_registra_solucao_e_custos(): void
+    {
+        $equipamento = Equipamento::factory()->create();
+        $this->registrar($equipamento)->assertSessionHasNoErrors();
+        $ocorrencia = Ocorrencia::sole();
+
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertOk()
+            ->assertSee('Encerrar ocorrência')->assertSee('modal-encerrar')->assertDontSee('Reabrir');
+
+        $this->encerrar($ocorrencia, [
+            'solucao' => 'Troca do display',
+            'custo_manutencao' => '350,00',
+            'valor_cobrado' => '50,00',
+            'fornecedor' => ' Assistência   Central ',
+        ])->assertSessionHasNoErrors()->assertRedirect(route('ocorrencias.show', $ocorrencia));
+
+        $ocorrencia->refresh();
+        $this->assertFalse($ocorrencia->estaAberta());
+        $this->assertSame('Troca do display', $ocorrencia->solucao);
+        $this->assertSame('350.00', $ocorrencia->custo_manutencao);
+        $this->assertSame('50.00', $ocorrencia->valor_cobrado);
+        $this->assertSame('Assistência Central', $ocorrencia->fornecedor);
+        $this->assertSame('disponivel', $equipamento->fresh()->status);
+
+        $this->get(route('ocorrencias.show', $ocorrencia))->assertSee('Reabrir')->assertDontSee('modal-encerrar');
+    }
+
+    public function test_validacoes_do_encerramento(): void
+    {
+        $ocorrencia = Ocorrencia::factory()->create(['reportado_em' => today()->subDays(3)]);
+
+        $this->encerrar($ocorrencia, ['solucao' => ''])->assertSessionHasErrors('solucao');
+        $this->encerrar($ocorrencia, ['liberado_em' => today()->subDays(4)->format('Y-m-d')])
+            ->assertSessionHasErrors(['liberado_em' => 'A liberação não pode ser anterior à data em que o problema foi reportado.']);
+        $this->encerrar($ocorrencia, ['liberado_em' => today()->addDay()->format('Y-m-d')])
+            ->assertSessionHasErrors(['liberado_em' => 'A data de liberação não pode ser futura.']);
+        $this->encerrar($ocorrencia, ['custo_manutencao' => 'abc'])->assertSessionHasErrors('custo_manutencao');
+        $this->assertTrue($ocorrencia->fresh()->estaAberta());
+
+        $this->encerrar($ocorrencia)->assertSessionHasNoErrors();
+        $this->encerrar($ocorrencia)->assertSessionHasErrors(['liberado_em' => 'Esta ocorrência já está encerrada.']);
+    }
+
+    public function test_edicao_de_ocorrencia_resolvida_corrige_sem_reabrir(): void
+    {
+        $ocorrencia = Ocorrencia::factory()->create(['reportado_em' => today()->subDays(2)]);
+        $this->encerrar($ocorrencia)->assertSessionHasNoErrors();
+
+        $this->atualizar($ocorrencia->fresh(), ['liberado_em' => '', 'solucao' => 'Limpeza do app'])
+            ->assertSessionHasErrors('liberado_em');
+        $this->atualizar($ocorrencia->fresh(), ['liberado_em' => today()->subDay()->format('Y-m-d'), 'solucao' => 'Limpeza e atualização'])
             ->assertSessionHasNoErrors();
 
+        $this->assertSame(today()->subDay()->format('Y-m-d'), $ocorrencia->fresh()->liberado_em->format('Y-m-d'));
+        $this->assertSame('Limpeza e atualização', $ocorrencia->fresh()->solucao);
+    }
+
+    public function test_reabrir_volta_o_equipamento_para_manutencao(): void
+    {
+        $equipamento = Equipamento::factory()->create();
+        $this->registrar($equipamento)->assertSessionHasNoErrors();
+        $ocorrencia = Ocorrencia::sole();
+        $this->encerrar($ocorrencia)->assertSessionHasNoErrors();
         $this->assertSame('disponivel', $equipamento->fresh()->status);
+
+        $this->post(route('ocorrencias.reabrir', $ocorrencia))->assertRedirect(route('ocorrencias.show', $ocorrencia));
+
+        $this->assertTrue($ocorrencia->fresh()->estaAberta());
+        $this->assertSame('em_manutencao', $equipamento->fresh()->status);
+
+        $this->post(route('ocorrencias.reabrir', $ocorrencia))->assertSessionHas('error');
     }
 
     public function test_liberacao_nao_mexe_em_status_alterado_por_outra_via(): void
@@ -218,7 +308,7 @@ class OcorrenciaTest extends TestCase
         $equipamento = Equipamento::factory()->create(['status' => 'defeituoso']);
         $this->registrar($equipamento)->assertSessionHasNoErrors();
 
-        $this->atualizar(Ocorrencia::sole(), ['liberado_em' => today()->format('Y-m-d'), 'solucao' => 'Sem conserto'])
+        $this->encerrar(Ocorrencia::sole(), ['solucao' => 'Sem conserto'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('defeituoso', $equipamento->fresh()->status);
@@ -234,8 +324,6 @@ class OcorrenciaTest extends TestCase
             ->assertSessionHasErrors('reportado_em');
         $this->registrar($equipamento, ['previsao_em' => today()->subDay()->format('Y-m-d')])
             ->assertSessionHasErrors('previsao_em');
-        $this->registrar($equipamento, ['liberado_em' => today()->format('Y-m-d')])
-            ->assertSessionHasErrors(['solucao' => 'Informe a solução ao liberar o equipamento.']);
         $this->registrar($equipamento, ['problema' => ''])->assertSessionHasErrors('problema');
 
         $this->assertSame(0, Ocorrencia::count());

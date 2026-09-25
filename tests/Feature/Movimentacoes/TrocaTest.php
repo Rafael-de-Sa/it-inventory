@@ -214,9 +214,12 @@ class TrocaTest extends TestCase
 
         $this->trocar(['ocorrencia_id' => $ocorrencia->id])->assertSessionHasNoErrors();
 
+        // A troca resolve a ocorrência.
         $ocorrencia->refresh();
         $this->assertSame($this->troca()->id, $ocorrencia->troca_movimentacao_id);
         $this->assertStringContainsString('Troca do equipamento', $ocorrencia->solucao);
+        $this->assertFalse($ocorrencia->estaAberta());
+        $this->assertSame(today()->format('Y-m-d'), $ocorrencia->liberado_em->format('Y-m-d'));
 
         // Ocorrência de outro equipamento não pode ser vinculada.
         $outra = Ocorrencia::factory()->create();

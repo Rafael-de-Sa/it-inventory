@@ -93,17 +93,23 @@ class IndicadoresManutencaoTest extends TestCase
             ->assertSee('Indicadores de manutenção')->assertSee('R$ 200,00 (20% do valor de compra)');
     }
 
-    public function test_custo_e_fornecedor_no_registro_da_ocorrencia(): void
+    public function test_custo_e_fornecedor_no_encerramento_da_ocorrencia(): void
     {
         $this->post(route('ocorrencias.store'), [
             'equipamento_id' => Equipamento::factory()->create()->id,
             'reportado_em' => today()->format('Y-m-d'),
             'problema' => 'Tela quebrada',
+        ])->assertSessionHasNoErrors();
+
+        $ocorrencia = Ocorrencia::sole();
+        $this->post(route('ocorrencias.encerrar', $ocorrencia), [
+            'liberado_em' => today()->format('Y-m-d'),
+            'solucao' => 'Troca da tela',
             'custo_manutencao' => '1.350,00',
             'fornecedor' => 'Assistência Central',
         ])->assertSessionHasNoErrors();
 
-        $ocorrencia = Ocorrencia::sole();
+        $ocorrencia->refresh();
         $this->assertSame('1350.00', $ocorrencia->custo_manutencao);
         $this->assertSame('Assistência Central', $ocorrencia->fornecedor);
 

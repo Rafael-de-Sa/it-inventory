@@ -82,16 +82,18 @@
             </x-form.grid>
         </x-form.fieldset>
 
-        <x-form.fieldset legend="Liberação">
-            <x-form.grid>
-                <x-form.readonly label="Liberado pela TI em" :value="$data($ocorrencia->liberado_em)" wrapper-class="md:col-span-4" />
-                <x-form.readonly label="Solução" :value="$ocorrencia->solucao" multiline wrapper-class="md:col-span-8" />
-                <x-form.readonly label="Custo da manutenção" :value="$ocorrencia->custo_manutencao_formatado"
-                    wrapper-class="md:col-span-4" />
-                <x-form.readonly label="Fornecedor / assistência técnica" :value="$ocorrencia->fornecedor"
-                    wrapper-class="md:col-span-8" />
-            </x-form.grid>
-        </x-form.fieldset>
+        @unless ($ocorrencia->estaAberta())
+            <x-form.fieldset legend="Liberação">
+                <x-form.grid>
+                    <x-form.readonly label="Liberado pela TI em" :value="$data($ocorrencia->liberado_em)" wrapper-class="md:col-span-4" />
+                    <x-form.readonly label="Solução" :value="$ocorrencia->solucao" multiline wrapper-class="md:col-span-8" />
+                    <x-form.readonly label="Custo da manutenção" :value="$ocorrencia->custo_manutencao_formatado"
+                        wrapper-class="md:col-span-4" />
+                    <x-form.readonly label="Fornecedor / assistência técnica" :value="$ocorrencia->fornecedor"
+                        wrapper-class="md:col-span-8" />
+                </x-form.grid>
+            </x-form.fieldset>
+        @endunless
 
         <x-form.readonly label="Observação" :value="$ocorrencia->observacao" multiline />
 
@@ -99,6 +101,16 @@
             <x-ui.button :href="route('ocorrencias.index')" icon="fa-solid fa-arrow-left">Voltar</x-ui.button>
 
             <div class="flex flex-wrap items-center gap-3">
+                @if ($ocorrencia->estaAberta())
+                    <x-ui.button type="button" variant="primary" icon="fa-solid fa-circle-check"
+                        onclick="document.getElementById('modal-encerrar').showModal()">Encerrar ocorrência</x-ui.button>
+                @else
+                    <form method="POST" action="{{ route('ocorrencias.reabrir', $ocorrencia) }}" class="inline"
+                        onsubmit="return confirm({{ Js::from('Reabrir a ocorrência #' . $ocorrencia->id . '? Se o equipamento estiver com a TI, ele volta para “Em manutenção”.') }});">
+                        @csrf
+                        <x-ui.button variant="warning" icon="fa-solid fa-rotate-left">Reabrir</x-ui.button>
+                    </form>
+                @endif
                 @if ($urlDevolver = $ocorrencia->urlDevolverAoFuncionario())
                     <x-ui.button :href="$urlDevolver" variant="soft" icon="fa-solid fa-user-check">
                         Devolver ao funcionário
@@ -116,4 +128,12 @@
             </div>
         </x-form.actions>
     </x-ui.card>
+
+    @if ($ocorrencia->estaAberta())
+        @include('ocorrencias.partials.encerrar')
+    @endif
 @endsection
+
+@push('scripts')
+    @vite('resources/js/ocorrencias/ocorrencia-form.js')
+@endpush

@@ -7,7 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Regras comuns ao registro e à edição de ocorrência. O equipamento só é informado no registro.
+ * Regras comuns ao registro e à edição de ocorrência: dados do problema e custos. O equipamento só é informado
+ * no registro; a liberação tem regras próprias (EncerrarOcorrenciaRequest, e na edição de uma já resolvida).
  */
 class OcorrenciaRequest extends FormRequest
 {
@@ -38,8 +39,9 @@ class OcorrenciaRequest extends FormRequest
             'data_problema' => ['nullable', 'date', 'before_or_equal:reportado_em'],
             'problema' => ['required', 'string', 'max:255'],
             'previsao_em' => ['nullable', 'date', 'after_or_equal:reportado_em'],
-            'liberado_em' => ['nullable', 'date', 'after_or_equal:reportado_em', 'before_or_equal:today'],
-            'solucao' => ['nullable', 'required_with:liberado_em', 'string', 'max:2000'],
+            // O registro e a edição não abrem nem encerram: isso é feito pelas ações "Encerrar" e "Reabrir".
+            'liberado_em' => ['prohibited'],
+            'solucao' => ['nullable', 'string', 'max:2000'],
             'canal' => ['nullable', 'string', 'max:30'],
             'protocolo' => ['nullable', 'string', 'max:50'],
             'valor_cobrado' => ['nullable', 'numeric', 'decimal:0,2', 'between:0,99999999.99'],
@@ -57,7 +59,7 @@ class OcorrenciaRequest extends FormRequest
             'liberado_em.after_or_equal' => 'A liberação não pode ser anterior à data em que o problema foi reportado.',
             'liberado_em.before_or_equal' => 'A data de liberação não pode ser futura.',
             'reportado_em.before_or_equal' => 'A data em que o problema foi reportado não pode ser futura.',
-            'solucao.required_with' => 'Informe a solução ao liberar o equipamento.',
+            'liberado_em.prohibited' => 'Use "Encerrar ocorrência" para registrar a liberação.',
             'valor_cobrado.numeric' => 'Informe o valor apenas com números (ex.: 150,00).',
             'custo_manutencao.numeric' => 'Informe o custo apenas com números (ex.: 350,00).',
         ];

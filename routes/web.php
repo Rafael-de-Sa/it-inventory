@@ -138,5 +138,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/ocorrencias/{ocorrencia}/relatorio', [RelatorioController::class, 'ocorrencia'])
             ->name('relatorios.ocorrencia');
+
+        Route::post('/ocorrencias/{ocorrencia}/encerrar', [OcorrenciaController::class, 'encerrar'])
+            ->name('ocorrencias.encerrar');
+
+        Route::post('/ocorrencias/{ocorrencia}/reabrir', [OcorrenciaController::class, 'reabrir'])
+            ->name('ocorrencias.reabrir');
     });
 });

@@ -105,7 +105,8 @@ class OcorrenciaTest extends TestCase
 
     public function test_recolher_registra_a_devolucao_e_gera_o_termo(): void
     {
-        $funcionario = Funcionario::factory()->create();
+        // Nome fixo: com acento, o JSON do formulário traz \uXXXX e a comparação de texto falharia.
+        $funcionario = Funcionario::factory()->create(['nome' => 'Maria', 'sobrenome' => 'Souza']);
         $equipamento = $this->emUsoCom($funcionario);
         $termoOriginal = MovimentacaoEquipamento::where('equipamento_id', $equipamento->id)->value('movimentacao_id');
 
